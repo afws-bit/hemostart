@@ -28,6 +28,12 @@ Objetivo: armazenar, controlar e distribuir bolsas de sangue de forma segura e r
 ## Documentação
 
 - 📄 [Histórias de Usuário (BDD)](docs/historias-usuario-rota-vital.md)
+ 
+
+## Figma
+
+-https://www.figma.com/proto/CBJbIvf3z3tfEXEEG7daIm/rascunho-rota-vital?t=cgiM3bFyiB5J0S8J-1
+  
 
 ## Status
 
