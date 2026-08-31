@@ -12,7 +12,8 @@ Objetivo: armazenar, controlar e distribuir bolsas de sangue de forma segura e r
 - Kelly
 - Elisa Martins
 - Augusto Freitas
-- Glaubersom
+- Glauberson
+- Daniel Luiz
 
 ## Disciplinas integradas
 
