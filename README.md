@@ -34,6 +34,10 @@ Objetivo: armazenar, controlar e distribuir bolsas de sangue de forma segura e r
 
 -https://www.figma.com/proto/CBJbIvf3z3tfEXEEG7daIm/rascunho-rota-vital?t=cgiM3bFyiB5J0S8J-1
   
+##Screencast
+
+- https://youtu.be/VbNkdUrYwnA?si=KJtaPPikWFK2a72j
+
 
 ## Status
 
