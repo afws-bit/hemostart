@@ -107,7 +107,6 @@ install_language_dependency() {
 }
 
 # Install all language dependencies (main + additional tools)
-# This function does NOT check ONLINE_MODE; it always runs when called
 install_language_deps() {
     echo "=== Checking and installing language dependencies ==="
     
@@ -423,13 +422,12 @@ if [ -d "$INSTALL_DIR" ]; then
 fi
 
 
-# Install missing language dependencies if --online was passed
+# Install language dependencies if ONLINE_MODE is true
 if [ "$ONLINE_MODE" = true ]; then
-    echo "========================================="
-    echo "ONLINE MODE ACTIVE"
-    echo "Installing missing language dependencies"
-    echo "========================================="
+    echo "Installing language dependencies..."
     install_language_deps
+else
+    echo "Skipping dependency installation (use --online to enable)"
 fi
 
 
