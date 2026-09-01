@@ -108,7 +108,6 @@ install_language_dependency() {
 
 # Install all language dependencies (main + additional tools)
 install_language_deps() {
-    [ "$ONLINE_MODE" = true ] || return 0
     echo "=== Checking and installing language dependencies ==="
     
     # Main entry point
@@ -424,7 +423,9 @@ fi
 
 
 # Install missing language dependencies if --online was passed
-install_language_deps
+if [ "$ONLINE_MODE" = true ]; then
+    install_language_deps
+fi
 
 
 # Create installation directory and copy files
