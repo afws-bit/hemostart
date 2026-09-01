@@ -364,7 +364,6 @@ while [ $# -gt 0 ]; do
     case "$1" in
         -h|--help) show_help; exit 0 ;;
         --online) ONLINE_MODE=true ;;
-        --no-online) ONLINE_MODE=false ;;
         --build) BUILD_MODE=true ;;
         --tar) BUILD_TAR=true ;;
         --config) BUILD_CONFIG=true ;;
