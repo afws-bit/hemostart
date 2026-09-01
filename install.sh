@@ -107,6 +107,7 @@ install_language_dependency() {
 }
 
 # Install all language dependencies (main + additional tools)
+# NOTE: This function does NOT check ONLINE_MODE; the caller decides whether to invoke it.
 install_language_deps() {
     echo "=== Checking and installing language dependencies ==="
     
