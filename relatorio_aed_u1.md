@@ -1,7 +1,7 @@
 # Relatório AED Unidade 1
 
-**Título:** Entrega U1 - Projeto HemoStart  
-**Aluno:** Augusto Freitas Wanderley
+**Entrega U1 - Projeto HemoStart**  
+
 
 ## 1. Introdução
 O presente relatório descreve a implementação das estruturas de dados básicas do sistema HemoStart, referentes à Unidade 1, na linguagem C++. Foram desenvolvidas três estruturas de domínio: Lista Encadeada (Estoque), Fila (Requisições) e Pilha (Histórico). Todas as estruturas foram construídas utilizando alocação manual de memória e manipulação explícita de ponteiros, conforme os requisitos da disciplina.
