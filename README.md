@@ -51,6 +51,27 @@ https://docs.google.com/document/d/1pvN2DdHupPwdKikVTwpOW34SZLH7y-uA_THajAqoH8A/
 
 https://www.youtube.com/watch?v=-s2cwjNmQJ8
 
+# 🎓 Infraestrutura de Software - Unidade 1 (U1)
+
+---
+
+## 1. Atividade Prática: Mesa DJ (Concorrência e Sincronização)
+
+**Descrição:**  
+Simulador de uma mesa de DJ controlada via terminal, onde cada instrumento é executado em uma Thread independente, permitindo a reprodução simultânea de múltiplas faixas de áudio com o Pygame.
+
+**Tecnologias:** Python 3.12 + Pygame.
+
+🔗 **Link do Repositório:** [Clique aqui para acessar o projeto Mesa DJ](https://github.com/MateusDS-dev/mesa_dj)
+
+## 2. Módulo de Paralelismo: Threads II (Projeto Hemostart)
+Descrição:
+Aceleração de uma operação CPU-bound (Validação em Lote de Compatibilidade Sanguínea ABO+Rh) utilizando processamento paralelo com ExecutorService e Virtual Threads do Java 21 (Project Loom).
+
+Tecnologias: Java 21 + Spring Boot 3.2 + Maven + JUnit 5.
+
+🔗 Link do Repositório: Clique aqui para acessar o projeto Threads II (Hemostart)
+
 ## Status
 
 🚧 Em desenvolvimento
