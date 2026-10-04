@@ -39,13 +39,17 @@ Objetivo: armazenar, controlar e distribuir bolsas de sangue de forma segura e r
 
 -https://www.figma.com/proto/CBJbIvf3z3tfEXEEG7daIm/rascunho-rota-vital?t=cgiM3bFyiB5J0S8J-1
   
-##Screencast
+## Screencast
 
 - https://youtu.be/VbNkdUrYwnA?si=KJtaPPikWFK2a72j
 
-##Relatório de Algoritmos e Estrutura de Dados U1
+## Relatório de Algoritmos e Estrutura de Dados U1
 
 https://docs.google.com/document/d/1pvN2DdHupPwdKikVTwpOW34SZLH7y-uA_THajAqoH8A/edit?tab=t.0
+
+## Apresentação de Estatística
+
+https://www.youtube.com/watch?v=-s2cwjNmQJ8
 
 ## Status
 
