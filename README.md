@@ -43,9 +43,9 @@ Objetivo: armazenar, controlar e distribuir bolsas de sangue de forma segura e r
 
 - https://youtu.be/VbNkdUrYwnA?si=KJtaPPikWFK2a72j
 
-##Escopo do grafo
+##Relatório de Algoritmos e Estrutura de Dados U1
 
-<img width="2037" height="2573" alt="deepseek_mermaid_20260919_f82d7e (1)" src="https://github.com/user-attachments/assets/c77d3e60-d6ee-44b0-944a-49d421a19b40" />
+https://docs.google.com/document/d/1pvN2DdHupPwdKikVTwpOW34SZLH7y-uA_THajAqoH8A/edit?tab=t.0
 
 ## Status
 
