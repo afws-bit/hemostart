@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Rastreio de Bolsa - RotaVital</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header><h1>🩸 RotaVital — Banco de Sangue</h1></header>
+<nav>
+    <a th:href="@{/}">Início</a>
+    <a th:href="@{/doadores}">Doadores</a>
+    <a th:href="@{/coleta}">Coleta</a>
+    <a th:href="@{/estoque}">Estoque</a>
+    <a th:href="@{/estoque/validade}">Validade/Descarte</a>
+    <a th:href="@{/requisicoes}">Fila de Pedidos</a>
+    <a th:href="@{/requisicoes/nova}">Nova Solicitação</a>
+    <a th:href="@{/hospitais}">Hospitais</a>
+    <a th:href="@{/historico}">Histórico</a>
+    <a th:href="@{/historico/rastreio}">Rastreio</a>
+    <a th:href="@{/historico/relatorio}">Relatório</a>
+    <a th:href="@{/estoque/configurar}">Config. Estoque</a>
+    <a th:href="@{/benchmark}">Benchmark</a>
+</nav>
+<div class="container">
+    <div th:if="${sucesso}" class="flash-success" th:text="${sucesso}"></div>
+    <div th:if="${erro}" class="flash-error" th:text="${erro}"></div>
+
+    <h2>Rastreio de Bolsa</h2>
+
+    <div class="card">
+        <form method="get" th:action="@{/historico/rastreio}">
+            <label for="codigo">Código da Bolsa</label>
+            <div style="display:flex; gap:8px;">
+                <input id="codigo" type="text" name="codigo" th:value="${codigo}"
+                       placeholder="Ex: BS-00001" style="margin-bottom:0;">
+                <button class="btn" type="submit">Buscar</button>
+            </div>
+        </form>
+    </div>
+
+    <div th:if="${bolsa != null}">
+        <div class="card">
+            <h3>Informações da Bolsa <span th:text="${bolsa.codigo}"></span></h3>
+            <table>
+                <tr><th style="width:200px;">Código</th><td th:text="${bolsa.codigo}"></td></tr>
+                <tr><th>Tipo Sanguíneo</th><td th:text="${bolsa.tipoSanguineo}"></td></tr>
+                <tr><th>Componente</th><td th:text="${bolsa.componente}"></td></tr>
+                <tr><th>Volume</th><td th:text="${bolsa.volume + ' ml'}"></td></tr>
+                <tr><th>Data Coleta</th><td th:text="${#temporals.format(bolsa.dataColeta,'dd/MM/yyyy')}"></td></tr>
+                <tr><th>Data Validade</th><td th:text="${#temporals.format(bolsa.dataValidade,'dd/MM/yyyy')}"></td></tr>
+                <tr><th>Status</th><td><span th:class="'badge badge-' + ${bolsa.status}" th:text="${bolsa.status}"></span></td></tr>
+                <tr th:if="${bolsa.dataDistribuicao != null}">
+                    <th>Data Distribuição</th>
+                    <td th:text="${#temporals.format(bolsa.dataDistribuicao,'dd/MM/yyyy HH:mm')}"></td>
+                </tr>
+                <tr th:if="${bolsa.responsavelDistribuicao != null}">
+                    <th>Responsável Distribuição</th><td th:text="${bolsa.responsavelDistribuicao}"></td>
+                </tr>
+                <tr th:if="${bolsa.dataDescarte != null}">
+                    <th>Data Descarte</th>
+                    <td th:text="${#temporals.format(bolsa.dataDescarte,'dd/MM/yyyy HH:mm')}"></td>
+                </tr>
+                <tr th:if="${bolsa.responsavelDescarte != null}">
+                    <th>Responsável Descarte</th><td th:text="${bolsa.responsavelDescarte}"></td>
+                </tr>
+            </table>
+        </div>
+
+        <h3>Eventos no Histórico</h3>
+        <table>
+            <thead>
+            <tr><th>Data/Hora</th><th>Operação</th><th>Descrição</th></tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(eventos)}">
+                <td colspan="3" style="text-align:center;">Sem eventos registrados para esta bolsa.</td>
+            </tr>
+            <tr th:each="e : ${eventos}">
+                <td th:text="${#temporals.format(e.dataHora,'dd/MM/yyyy HH:mm:ss')}"></td>
+                <td>
+                    <span class="badge"
+                          th:class="${e.tipo == 'COLETA' ? 'badge badge-disponivel' :
+                                      e.tipo == 'RESERVA' ? 'badge badge-reservada' :
+                                      e.tipo == 'DISTRIBUICAO' ? 'badge badge-distribuida' :
+                                      e.tipo == 'VENCIMENTO' ? 'badge badge-vencida' : 'badge badge-descartada'}"
+                          th:text="${e.tipo}">
+                    </span>
+                </td>
+                <td th:text="${e.descricao}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:if="${codigo != null and bolsa == null}">
+        <p class="flash-error">Bolsa com código "<span th:text="${codigo}"></span>" não encontrada.</p>
+    </div>
+</div>
+</body>
+</html>

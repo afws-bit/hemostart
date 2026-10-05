@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Fila de Pedidos - RotaVital</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header><h1>🩸 RotaVital — Banco de Sangue</h1></header>
+<nav>
+    <a th:href="@{/}">Início</a>
+    <a th:href="@{/doadores}">Doadores</a>
+    <a th:href="@{/coleta}">Coleta</a>
+    <a th:href="@{/estoque}">Estoque</a>
+    <a th:href="@{/estoque/validade}">Validade/Descarte</a>
+    <a th:href="@{/requisicoes}">Fila de Pedidos</a>
+    <a th:href="@{/requisicoes/nova}">Nova Solicitação</a>
+    <a th:href="@{/hospitais}">Hospitais</a>
+    <a th:href="@{/historico}">Histórico</a>
+    <a th:href="@{/historico/rastreio}">Rastreio</a>
+    <a th:href="@{/historico/relatorio}">Relatório</a>
+    <a th:href="@{/estoque/configurar}">Config. Estoque</a>
+    <a th:href="@{/benchmark}">Benchmark</a>
+</nav>
+<div class="container">
+    <div th:if="${sucesso}" class="flash-success" th:text="${sucesso}"></div>
+    <div th:if="${erro}" class="flash-error" th:text="${erro}"></div>
+
+    <h2>Fila de Atendimento</h2>
+
+    <form method="post" th:action="@{/requisicoes/reservar}" class="form-inline">
+        <button class="btn" type="submit">Reservar Bolsas para Primeiro Pedido</button>
+    </form>
+    <a class="btn btn-gray" th:href="@{/requisicoes/nova}" style="margin-left:8px;">Nova Solicitação</a>
+    <a class="btn btn-gray" th:href="@{/requisicoes/distribuir-bolsa}" style="margin-left:8px;">Distribuir por Código</a>
+    <br><br>
+
+    <table>
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Hospital</th>
+            <th>Tipo Sanguíneo</th>
+            <th>Qtd</th>
+            <th>Urgência</th>
+            <th>Status</th>
+            <th>Solicitado em</th>
+            <th>Ação</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${#lists.isEmpty(fila)}">
+            <td colspan="8" style="text-align:center;">Fila vazia.</td>
+        </tr>
+        <tr th:each="r, stat : ${fila}">
+            <td th:text="${stat.index + 1}"></td>
+            <td>
+                <span th:each="h : ${hospitais}" th:if="${h.id == r.hospitalId}" th:text="${h.razaoSocial}"></span>
+            </td>
+            <td><strong th:text="${r.tipoSanguineo}"></strong></td>
+            <td th:text="${r.quantidade}"></td>
+            <td>
+                <span th:if="${r.urgente}" class="badge badge-urgente">URGENTE</span>
+                <span th:unless="${r.urgente}" class="badge badge-normal">Normal</span>
+            </td>
+            <td><span th:class="'badge badge-' + ${r.status}" th:text="${r.status}"></span></td>
+            <td th:text="${#temporals.format(r.dataSolicitacao,'dd/MM/yyyy HH:mm')}"></td>
+            <td>
+                <div th:if="${r.status == 'aprovada'}">
+                    <form method="post" th:action="@{/requisicoes/distribuir/{id}(id=${r.id})}" class="form-inline">
+                        <input type="text" name="responsavel" placeholder="Nome do responsável"
+                               required style="width:160px; display:inline; margin:0;">
+                        <button class="btn btn-sm btn-green" type="submit" style="margin-left:4px;">Confirmar Saída</button>
+                    </form>
+                </div>
+                <span th:if="${r.status == 'pendente'}" style="color:#777; font-size:12px;">Aguardando reserva</span>
+                <span th:if="${r.status == 'atendida'}" style="color:green; font-size:12px;">✓ Atendida</span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

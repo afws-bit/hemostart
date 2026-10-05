@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Validade e Descarte - RotaVital</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header><h1>🩸 RotaVital — Banco de Sangue</h1></header>
+<nav>
+    <a th:href="@{/}">Início</a>
+    <a th:href="@{/doadores}">Doadores</a>
+    <a th:href="@{/coleta}">Coleta</a>
+    <a th:href="@{/estoque}">Estoque</a>
+    <a th:href="@{/estoque/validade}">Validade/Descarte</a>
+    <a th:href="@{/requisicoes}">Fila de Pedidos</a>
+    <a th:href="@{/requisicoes/nova}">Nova Solicitação</a>
+    <a th:href="@{/hospitais}">Hospitais</a>
+    <a th:href="@{/historico}">Histórico</a>
+    <a th:href="@{/historico/rastreio}">Rastreio</a>
+    <a th:href="@{/historico/relatorio}">Relatório</a>
+    <a th:href="@{/estoque/configurar}">Config. Estoque</a>
+    <a th:href="@{/benchmark}">Benchmark</a>
+</nav>
+<div class="container">
+    <div th:if="${sucesso}" class="flash-success" th:text="${sucesso}"></div>
+    <div th:if="${erro}" class="flash-error" th:text="${erro}"></div>
+
+    <h2>Controle de Validade e Descarte</h2>
+
+    <a class="btn" th:href="@{/estoque/verificar}">Executar Verificação Agora</a>
+    <br><br>
+
+    <h3>⏰ Bolsas com Uso Prioritário (vencendo em até 5 dias)</h3>
+    <table>
+        <thead>
+        <tr>
+            <th>Código</th><th>Tipo</th><th>Componente</th><th>Validade</th><th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${#lists.isEmpty(usoPrioritario)}">
+            <td colspan="5" style="text-align:center;">Nenhuma bolsa com uso prioritário.</td>
+        </tr>
+        <tr th:each="b : ${usoPrioritario}" style="background:#fffbef;">
+            <td th:text="${b.codigo}"></td>
+            <td><strong th:text="${b.tipoSanguineo}"></strong></td>
+            <td th:text="${b.componente}"></td>
+            <td th:text="${#temporals.format(b.dataValidade,'dd/MM/yyyy')}"></td>
+            <td><span class="badge badge-disponivel">uso prioritário</span></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h3>🗑️ Bolsas Vencidas — Aguardando Descarte</h3>
+    <table>
+        <thead>
+        <tr>
+            <th>Código</th><th>Tipo</th><th>Componente</th><th>Validade</th><th>Responsável Descarte</th><th>Ação</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${#lists.isEmpty(vencidas)}">
+            <td colspan="6" style="text-align:center;">Nenhuma bolsa vencida.</td>
+        </tr>
+        <tr th:each="b : ${vencidas}">
+            <td th:text="${b.codigo}"></td>
+            <td><strong th:text="${b.tipoSanguineo}"></strong></td>
+            <td th:text="${b.componente}"></td>
+            <td th:text="${#temporals.format(b.dataValidade,'dd/MM/yyyy')}"></td>
+            <td>
+                <form th:if="${b.responsavelDescarte == null}" method="post" th:action="@{/estoque/descartar}" class="form-inline">
+                    <input type="hidden" name="codigo" th:value="${b.codigo}">
+                    <input type="text" name="responsavel" placeholder="Nome do responsável" required style="width:180px; display:inline; margin:0;">
+                    <button class="btn btn-sm" type="submit" style="margin-left:5px;">Descartar</button>
+                </form>
+                <span th:if="${b.responsavelDescarte != null}" th:text="${b.responsavelDescarte}"></span>
+            </td>
+            <td>
+                <span th:if="${b.responsavelDescarte != null}"><span class="badge badge-descartada">Descartada</span></span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Estoque - RotaVital</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header><h1>🩸 RotaVital — Banco de Sangue</h1></header>
+<nav>
+    <a th:href="@{/}">Início</a>
+    <a th:href="@{/doadores}">Doadores</a>
+    <a th:href="@{/coleta}">Coleta</a>
+    <a th:href="@{/estoque}">Estoque</a>
+    <a th:href="@{/estoque/validade}">Validade/Descarte</a>
+    <a th:href="@{/requisicoes}">Fila de Pedidos</a>
+    <a th:href="@{/requisicoes/nova}">Nova Solicitação</a>
+    <a th:href="@{/hospitais}">Hospitais</a>
+    <a th:href="@{/historico}">Histórico</a>
+    <a th:href="@{/historico/rastreio}">Rastreio</a>
+    <a th:href="@{/historico/relatorio}">Relatório</a>
+    <a th:href="@{/estoque/configurar}">Config. Estoque</a>
+    <a th:href="@{/benchmark}">Benchmark</a>
+</nav>
+<div class="container">
+    <div th:if="${sucesso}" class="flash-success" th:text="${sucesso}"></div>
+    <div th:if="${erro}" class="flash-error" th:text="${erro}"></div>
+
+    <h2>Painel de Estoque por Tipo Sanguíneo</h2>
+
+    <a class="btn" th:href="@{/estoque/verificar}">Executar Verificação Agora</a>
+    <a class="btn btn-gray" th:href="@{/estoque/configurar}" style="margin-left:8px;">Configurar Mínimos</a>
+    <br><br>
+
+    <!-- Alertas de estoque crítico -->
+    <div th:each="entry : ${alertas}">
+        <div th:if="${entry.value}" class="alerta-critico">
+            ⚠️ Estoque crítico: <strong th:text="${entry.key}"></strong>
+            — disponível abaixo do mínimo configurado
+        </div>
+    </div>
+
+    <!-- Alertas de uso prioritário -->
+    <div th:if="${!#lists.isEmpty(usoPrioritario)}">
+        <div class="alerta-prioritario">
+            ⏰ <strong th:text="${#lists.size(usoPrioritario)}"></strong> bolsa(s) com uso prioritário (vencendo em até 5 dias)
+            — <a th:href="@{/estoque/validade}">Ver detalhes</a>
+        </div>
+    </div>
+
+    <!-- Painel por tipo -->
+    <div class="grid-tipos">
+        <div th:each="entry : ${painel}"
+             th:class="${alertas[entry.key] ? 'panel-tipo critico' : 'panel-tipo'}">
+            <div class="tipo-nome" th:text="${entry.key}"></div>
+            <div style="font-size:12px; margin-top:5px;">
+                <span class="badge badge-disponivel" th:text="'Disp: ' + ${entry.value['disponivel']}"></span><br>
+                <span class="badge badge-reservada" th:text="'Res: ' + ${entry.value['reservada']}"></span><br>
+                <span class="badge badge-distribuida" th:text="'Dist: ' + ${entry.value['distribuida']}"></span><br>
+                <span class="badge badge-vencida" th:text="'Venc: ' + ${entry.value['vencida']}"></span><br>
+                <span class="badge badge-descartada" th:text="'Desc: ' + ${entry.value['descartada']}"></span>
+            </div>
+            <div th:if="${alertas[entry.key]}" style="color:#856404; font-size:11px; margin-top:5px;">⚠️ Crítico</div>
+        </div>
+    </div>
+
+    <!-- Lista completa do estoque -->
+    <h3>Estoque Completo (ordenado por validade)</h3>
+    <table>
+        <thead>
+        <tr>
+            <th>Código</th>
+            <th>Tipo</th>
+            <th>Componente</th>
+            <th>Volume</th>
+            <th>Coleta</th>
+            <th>Validade</th>
+            <th>Status</th>
+            <th>Uso Prioritário</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${#lists.isEmpty(bolsas)}">
+            <td colspan="8" style="text-align:center;">Nenhuma bolsa no estoque.</td>
+        </tr>
+        <tr th:each="b : ${bolsas}">
+            <td th:text="${b.codigo}"></td>
+            <td><strong th:text="${b.tipoSanguineo}"></strong></td>
+            <td th:text="${b.componente}"></td>
+            <td th:text="${b.volume + ' ml'}"></td>
+            <td th:text="${#temporals.format(b.dataColeta,'dd/MM/yyyy')}"></td>
+            <td th:text="${#temporals.format(b.dataValidade,'dd/MM/yyyy')}"></td>
+            <td><span th:class="'badge badge-' + ${b.status}" th:text="${b.status}"></span></td>
+            <td th:text="${b.usoPrioritario ? '⏰ Sim' : ''}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

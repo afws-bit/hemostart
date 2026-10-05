@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Distribuir por Código - RotaVital</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header><h1>🩸 RotaVital — Banco de Sangue</h1></header>
+<nav>
+    <a th:href="@{/}">Início</a>
+    <a th:href="@{/doadores}">Doadores</a>
+    <a th:href="@{/coleta}">Coleta</a>
+    <a th:href="@{/estoque}">Estoque</a>
+    <a th:href="@{/estoque/validade}">Validade/Descarte</a>
+    <a th:href="@{/requisicoes}">Fila de Pedidos</a>
+    <a th:href="@{/requisicoes/nova}">Nova Solicitação</a>
+    <a th:href="@{/hospitais}">Hospitais</a>
+    <a th:href="@{/historico}">Histórico</a>
+    <a th:href="@{/historico/rastreio}">Rastreio</a>
+    <a th:href="@{/historico/relatorio}">Relatório</a>
+    <a th:href="@{/estoque/configurar}">Config. Estoque</a>
+    <a th:href="@{/benchmark}">Benchmark</a>
+</nav>
+<div class="container">
+    <div th:if="${sucesso}" class="flash-success" th:text="${sucesso}"></div>
+    <div th:if="${erro}" class="flash-error" th:text="${erro}"></div>
+
+    <h2>Distribuir Bolsa por Código</h2>
+    <p style="color:#555; font-size:13px; margin-bottom:15px;">
+        Use esta tela para distribuir uma bolsa específica informando seu código.
+        Se a bolsa já foi distribuída, o sistema bloqueará e exibirá a mensagem de erro.
+    </p>
+    <div class="card">
+        <form method="post" th:action="@{/requisicoes/distribuir-bolsa}">
+            <label for="codigoBolsa">Código da Bolsa *</label>
+            <input id="codigoBolsa" type="text" name="codigoBolsa" required placeholder="Ex: BS-00001">
+
+            <label for="responsavel">Nome do Responsável *</label>
+            <input id="responsavel" type="text" name="responsavel" required>
+
+            <button class="btn" type="submit">Distribuir</button>
+            <a class="btn btn-gray" th:href="@{/requisicoes}" style="margin-left:8px;">Voltar</a>
+        </form>
+    </div>
+</div>
+</body>
+</html>

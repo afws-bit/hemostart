@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Benchmark - RotaVital</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header><h1>🩸 RotaVital — Banco de Sangue</h1></header>
+<nav>
+    <a th:href="@{/}">Início</a>
+    <a th:href="@{/doadores}">Doadores</a>
+    <a th:href="@{/coleta}">Coleta</a>
+    <a th:href="@{/estoque}">Estoque</a>
+    <a th:href="@{/estoque/validade}">Validade/Descarte</a>
+    <a th:href="@{/requisicoes}">Fila de Pedidos</a>
+    <a th:href="@{/requisicoes/nova}">Nova Solicitação</a>
+    <a th:href="@{/hospitais}">Hospitais</a>
+    <a th:href="@{/historico}">Histórico</a>
+    <a th:href="@{/historico/rastreio}">Rastreio</a>
+    <a th:href="@{/historico/relatorio}">Relatório</a>
+    <a th:href="@{/estoque/configurar}">Config. Estoque</a>
+    <a th:href="@{/benchmark}">Benchmark</a>
+</nav>
+<div class="container">
+    <div th:if="${erro}" class="flash-error" th:text="${erro}"></div>
+
+    <h2>Benchmark — Sequencial × Paralelo</h2>
+
+    <p style="color:#555; font-size:13px; margin-bottom:15px;">
+        Classifica 2.000.000 de bolsas sintéticas (disponível / uso prioritário / vencida) por tipo sanguíneo
+        usando processamento sequencial e com 2, 4 e 8 threads (com aquecimento prévio).
+        <br><strong>Atenção:</strong> o benchmark pode levar alguns segundos para concluir.
+    </p>
+
+    <form method="post" th:action="@{/benchmark/executar}">
+        <button class="btn" type="submit" id="btn-benchmark">▶ Executar Benchmark</button>
+    </form>
+    <br>
+
+    <div th:if="${resultado != null}">
+        <div class="card">
+            <p><strong>Processadores disponíveis:</strong> <span th:text="${resultado.processadores}"></span></p>
+            <p><strong>Massa de dados:</strong> <span th:text="${resultado.massa}"></span> bolsas sintéticas</p>
+        </div>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Nº de Threads</th>
+                <th>Tempo Médio (ms)</th>
+                <th>Speedup (T1/Tn)</th>
+                <th>Eficiência (speedup/n)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="linha : ${resultado.linhas}">
+                <td th:text="${linha.threads == 1 ? 'Sequencial (1)' : linha.threads}"></td>
+                <td th:text="${linha.tempoMedio}"></td>
+                <td th:text="${linha.speedup}"></td>
+                <td th:text="${linha.eficiencia}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

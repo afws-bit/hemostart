@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastrar Doador - RotaVital</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header><h1>🩸 RotaVital — Banco de Sangue</h1></header>
+<nav>
+    <a th:href="@{/}">Início</a>
+    <a th:href="@{/doadores}">Doadores</a>
+    <a th:href="@{/coleta}">Coleta</a>
+    <a th:href="@{/estoque}">Estoque</a>
+    <a th:href="@{/estoque/validade}">Validade/Descarte</a>
+    <a th:href="@{/requisicoes}">Fila de Pedidos</a>
+    <a th:href="@{/requisicoes/nova}">Nova Solicitação</a>
+    <a th:href="@{/hospitais}">Hospitais</a>
+    <a th:href="@{/historico}">Histórico</a>
+    <a th:href="@{/historico/rastreio}">Rastreio</a>
+    <a th:href="@{/historico/relatorio}">Relatório</a>
+    <a th:href="@{/estoque/configurar}">Config. Estoque</a>
+    <a th:href="@{/benchmark}">Benchmark</a>
+</nav>
+<div class="container">
+    <div th:if="${sucesso}" class="flash-success" th:text="${sucesso}"></div>
+    <div th:if="${erro}" class="flash-error" th:text="${erro}"></div>
+
+    <h2>Cadastrar Doador</h2>
+
+    <div class="card">
+        <form method="post" th:action="@{/doadores/salvar}">
+            <label for="nome">Nome completo *</label>
+            <input id="nome" type="text" name="nome" required maxlength="100">
+
+            <label for="cpf">CPF * (somente números ou com pontuação)</label>
+            <input id="cpf" type="text" name="cpf" required maxlength="14">
+
+            <label for="dataNascimento">Data de Nascimento *</label>
+            <input id="dataNascimento" type="date" name="dataNascimento" required>
+
+            <label for="sexo">Sexo *</label>
+            <select id="sexo" name="sexo" required>
+                <option value="">Selecione</option>
+                <option value="M">Masculino</option>
+                <option value="F">Feminino</option>
+            </select>
+
+            <label for="tipoSanguineo">Tipo Sanguíneo *</label>
+            <select id="tipoSanguineo" name="tipoSanguineo" required>
+                <option value="">Selecione</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+            </select>
+
+            <label for="peso">Peso (kg) *</label>
+            <input id="peso" type="number" name="peso" min="1" step="0.1" required>
+
+            <label for="contato">Contato (telefone/email) *</label>
+            <input id="contato" type="text" name="contato" required>
+
+            <label for="historicoSaude">Histórico de Saúde</label>
+            <textarea id="historicoSaude" name="historicoSaude"></textarea>
+
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" name="autorizacaoResponsavel" value="true">
+                    Autorização do responsável (obrigatório para menores de 18 anos)
+                </label>
+            </div>
+
+            <button class="btn" type="submit">Cadastrar Doador</button>
+            <a class="btn btn-gray" th:href="@{/doadores}" style="margin-left:8px;">Cancelar</a>
+        </form>
+    </div>
+</div>
+</body>
+</html>

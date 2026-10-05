@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Hospitais - RotaVital</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header><h1>🩸 RotaVital — Banco de Sangue</h1></header>
+<nav>
+    <a th:href="@{/}">Início</a>
+    <a th:href="@{/doadores}">Doadores</a>
+    <a th:href="@{/coleta}">Coleta</a>
+    <a th:href="@{/estoque}">Estoque</a>
+    <a th:href="@{/estoque/validade}">Validade/Descarte</a>
+    <a th:href="@{/requisicoes}">Fila de Pedidos</a>
+    <a th:href="@{/requisicoes/nova}">Nova Solicitação</a>
+    <a th:href="@{/hospitais}">Hospitais</a>
+    <a th:href="@{/historico}">Histórico</a>
+    <a th:href="@{/historico/rastreio}">Rastreio</a>
+    <a th:href="@{/historico/relatorio}">Relatório</a>
+    <a th:href="@{/estoque/configurar}">Config. Estoque</a>
+    <a th:href="@{/benchmark}">Benchmark</a>
+</nav>
+<div class="container">
+    <div th:if="${sucesso}" class="flash-success" th:text="${sucesso}"></div>
+    <div th:if="${erro}" class="flash-error" th:text="${erro}"></div>
+
+    <h2>Hospitais Cadastrados</h2>
+    <a class="btn" th:href="@{/hospitais/novo}">+ Novo Hospital</a>
+    <br><br>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Razão Social</th><th>CNPJ</th><th>Endereço</th><th>Contato</th><th>Status</th><th>Ação</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${#lists.isEmpty(hospitais)}">
+            <td colspan="6" style="text-align:center;">Nenhum hospital cadastrado.</td>
+        </tr>
+        <tr th:each="h : ${hospitais}">
+            <td th:text="${h.razaoSocial}"></td>
+            <td th:text="${h.cnpj}"></td>
+            <td th:text="${h.endereco}"></td>
+            <td th:text="${h.contato}"></td>
+            <td>
+                <span th:if="${h.ativo}" class="badge badge-disponivel">Ativo</span>
+                <span th:unless="${h.ativo}" class="badge badge-descartada">Inativo</span>
+            </td>
+            <td>
+                <form method="post" th:action="@{/hospitais/toggle/{id}(id=${h.id})}" class="form-inline">
+                    <button class="btn btn-sm" th:class="${h.ativo ? 'btn btn-sm btn-gray' : 'btn btn-sm btn-green'}"
+                            type="submit"
+                            th:text="${h.ativo ? 'Inativar' : 'Ativar'}">
+                    </button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

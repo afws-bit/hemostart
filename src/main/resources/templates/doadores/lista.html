@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Doadores - RotaVital</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header><h1>🩸 RotaVital — Banco de Sangue</h1></header>
+<nav>
+    <a th:href="@{/}">Início</a>
+    <a th:href="@{/doadores}">Doadores</a>
+    <a th:href="@{/coleta}">Coleta</a>
+    <a th:href="@{/estoque}">Estoque</a>
+    <a th:href="@{/estoque/validade}">Validade/Descarte</a>
+    <a th:href="@{/requisicoes}">Fila de Pedidos</a>
+    <a th:href="@{/requisicoes/nova}">Nova Solicitação</a>
+    <a th:href="@{/hospitais}">Hospitais</a>
+    <a th:href="@{/historico}">Histórico</a>
+    <a th:href="@{/historico/rastreio}">Rastreio</a>
+    <a th:href="@{/historico/relatorio}">Relatório</a>
+    <a th:href="@{/estoque/configurar}">Config. Estoque</a>
+    <a th:href="@{/benchmark}">Benchmark</a>
+</nav>
+<div class="container">
+    <div th:if="${sucesso}" class="flash-success" th:text="${sucesso}"></div>
+    <div th:if="${erro}" class="flash-error" th:text="${erro}"></div>
+
+    <h2>Lista de Doadores</h2>
+    <a class="btn" th:href="@{/doadores/novo}">+ Novo Doador</a>
+    <br><br>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Nome</th>
+            <th>CPF</th>
+            <th>Nascimento</th>
+            <th>Sexo</th>
+            <th>Tipo Sanguíneo</th>
+            <th>Peso (kg)</th>
+            <th>Contato</th>
+            <th>Última Doação</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${#lists.isEmpty(doadores)}">
+            <td colspan="8" style="text-align:center;">Nenhum doador cadastrado.</td>
+        </tr>
+        <tr th:each="d : ${doadores}">
+            <td th:text="${d.nome}"></td>
+            <td th:text="${d.cpf}"></td>
+            <td th:text="${#temporals.format(d.dataNascimento,'dd/MM/yyyy')}"></td>
+            <td th:text="${d.sexo}"></td>
+            <td><strong th:text="${d.tipoSanguineo}"></strong></td>
+            <td th:text="${d.peso}"></td>
+            <td th:text="${d.contato}"></td>
+            <td th:text="${d.ultimaDoacao != null ? #temporals.format(d.ultimaDoacao,'dd/MM/yyyy') : 'Nunca doou'}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
