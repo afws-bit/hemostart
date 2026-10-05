@@ -2,7 +2,7 @@
 
 🌎 ```hemostart```
 
-#  Entrega 1  Rota Vital 🩸
+#  Entrega 1  Rota Vital 🩸POO
 
 Sistema de gestão de banco de sangue desenvolvido como Projeto Integrador do 3º semestre de ADS (2026.2).
 
