@@ -235,28 +235,73 @@ Funcionalidade: Controle de Validade
 - O relatório deve permitir filtro por período, tipo sanguíneo e hospital.
 - Deve exibir indicadores como total coletado, total distribuído e total descartado no período.
 
+## HU09 — Cadastro de Hospital
+
+**Como** administrador do banco de sangue, **eu quero** cadastrar e gerenciar os hospitais solicitantes (razão social, CNPJ, endereço, contato e status), **para que** somente instituições autorizadas possam solicitar bolsas de sangue e a distribuição seja rastreável até o destino.
+
+**Detalhes do negócio:**
+
+- CNPJ é único no sistema (não pode haver duplicidade).
+- Todo hospital possui status "ativo" ou "inativo".
+- Hospitais inativos não podem realizar novas solicitações de sangue.
+
 **Cenários (BDD):**
 
 ```gherkin
-Funcionalidade: Relatórios de Doação e Distribuição
+Funcionalidade: Cadastro de Hospital
 
-  Cenário: Geração de relatório mensal por tipo sanguíneo
-    Dado que existem registros de coleta e distribuição no mês de agosto
-    Quando filtro o relatório pelo tipo sanguíneo "A+" e período "01/08 a 31/08"
-    Então o sistema exibe o total coletado, distribuído e descartado desse tipo no período
+  Cenário: Cadastro de hospital com dados válidos
+    Dado que estou na tela de cadastro de hospital
+    Quando informo razão social, CNPJ, endereço e contato válidos
+    E confirmo o cadastro
+    Então o hospital é salvo com status "ativo"
+    E uma mensagem de confirmação é exibida
 
-  Cenário: Relatório sem dados no período selecionado
-    Dado que não há nenhum registro no período informado
-    Quando gero o relatório
-    Então o sistema exibe a mensagem "Nenhum dado encontrado para o período selecionado"
+  Cenário: Tentativa de cadastro com CNPJ já existente
+    Dado que já existe um hospital cadastrado com o CNPJ "12.345.678/0001-90"
+    Quando tento cadastrar um novo hospital com o mesmo CNPJ
+    Então o sistema exibe a mensagem "CNPJ já cadastrado"
+    E o novo cadastro não é salvo
+
+  Cenário: Solicitação de hospital inativo
+    Dado que o hospital "Hospital São Lucas" está com status "inativo"
+    Quando ele tenta enviar uma solicitação de sangue
+    Então o sistema recusa a solicitação
+    E exibe a mensagem "Hospital não autorizado"
 ```
 
----
+## HU10 — Alerta de Estoque Crítico
+
+**Como** gestor do banco de sangue, **eu quero** definir um nível mínimo de bolsas para cada tipo sanguíneo e ser alertado quando o estoque disponível ficar abaixo dele, **para que** eu possa organizar campanhas de doação e evitar a falta de sangue em atendimentos urgentes.
+
+**Detalhes do negócio:**
+
+- O nível mínimo é configurável por tipo sanguíneo (A+, A-, B+, B-, AB+, AB-, O+, O-).
+- Apenas bolsas com status "disponível" contam para o nível; reservadas, vencidas e descartadas não entram na contagem.
+- O alerta é removido automaticamente quando o estoque volta a atingir o nível mínimo.
+
+**Cenários (BDD):**
+
+```gherkin
+Funcionalidade: Alerta de Estoque Crítico
+
+  Cenário: Estoque abaixo do nível mínimo
+    Dado que o nível mínimo do tipo "O-" é de 10 bolsas
+    E existem apenas 6 bolsas "O-" disponíveis
+    Quando o sistema executa a verificação de estoque
+    Então o tipo "O-" é marcado com alerta de "estoque crítico"
+    E o gestor é notificado
+
+  Cenário: Estoque normalizado após nova coleta
+    Dado que o tipo "O-" está com alerta de "estoque crítico"
+    Quando novas coletas elevam o estoque disponível para 10 bolsas
+    Então o alerta de "estoque crítico" é removido do tipo "O-"
+```
 
 ## Resumo das Histórias
 
 | ID | História | Ator Principal |
-|----|----------|-----------------|
+|----|----------|----------------|
 | HU01 | Cadastro de Doador | Atendente |
 | HU02 | Registro de Coleta | Enfermeiro |
 | HU03 | Controle de Estoque por Tipo Sanguíneo | Gestor |
@@ -265,3 +310,5 @@ Funcionalidade: Relatórios de Doação e Distribuição
 | HU06 | Distribuição e Rastreio de Bolsas | Operador Logístico |
 | HU07 | Controle de Validade e Descarte | Gestor de Qualidade |
 | HU08 | Histórico e Relatório | Gestor |
+| HU09 | Cadastro de Hospital | Administrador |
+| HU10 | Alerta de Estoque Crítico | Gestor |
