@@ -71,6 +71,7 @@ Aceleração de uma operação CPU-bound (Validação em Lote de Compatibilidade
 Tecnologias: Java 21 + Spring Boot 3.2 + Maven + JUnit 5.
 
 🔗 Link do Repositório: Clique aqui para acessar o projeto Threads II (Hemostart)
+https://github.com/MateusDS-dev/trhds2.git
 
 ## Status
 
