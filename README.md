@@ -83,11 +83,11 @@ https://github.com/MateusDS-dev/trhds2.git
 - 📄 [Histórias de Usuário (BDD)](docs/historias-usuario-rota-vital.md)
  
 ##-Issue/bug tracker
-
+![Projeto POO](docs/img/projetoPOO.png)
 
 ## Screencast
-https://youtu.be/wTMYO7UHukY
-https://youtu.be/0rAuU5NEjrw
+-https://youtu.be/wTMYO7UHukY
+-https://youtu.be/0rAuU5NEjrw
 
 ## Status
 
