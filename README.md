@@ -73,6 +73,22 @@ Tecnologias: Java 21 + Spring Boot 3.2 + Maven + JUnit 5.
 🔗 Link do Repositório: Clique aqui para acessar o projeto Threads II (Hemostart)
 https://github.com/MateusDS-dev/trhds2.git
 
+---
+
+
+#  Entrega 2  Rota Vital 🩸POO
+
+## historias atualizadas h09 h10
+
+- 📄 [Histórias de Usuário (BDD)](docs/historias-usuario-rota-vital.md)
+ 
+##-Issue/bug tracker
+
+
+## Screencast
+https://youtu.be/wTMYO7UHukY
+https://youtu.be/0rAuU5NEjrw
+
 ## Status
 
 🚧 Em desenvolvimento
