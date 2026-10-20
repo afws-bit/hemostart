@@ -171,7 +171,6 @@ networks:
 ```
 
 ### 3. `.env.example` (Configuração Fora do Código)
-Para manter a segurança, as credenciais não estão no código. O arquivo `.env.example` serve de modelo e deve ser copiado para `.env` (que está no `.gitignore`).
 
 ```env
 DB_USER=admin_rotavital
@@ -201,7 +200,6 @@ Para atender aos requisitos da disciplina, abaixo estão as justificativas das d
 
 ## 📸 Evidências de Execução
 
-*(Anexe os prints nos tickets do Jira ou substitua os textos abaixo pelas imagens no repositório)*
 
 - [x] **Print 1:** Terminal executando o comando `docker compose up -d --build` com sucesso.
 - [x] **Print 2:** Terminal executando `docker ps` mostrando os containers `rotavital_api` e `rotavital_db` (com status *healthy*).
