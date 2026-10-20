@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: rotavital_db
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - db_data:/var/lib/postgresql/data # Volume para não perder dados
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - rotavital_network
+
+  api:
+    build: . 
+    container_name: rotavital_api
+    ports:
+      - "8080:8080"
+    environment:
+      # A URL aponta para o nome do serviço "db" na rede interna do Docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${DB_NAME}
+      - SPRING_DATASOURCE_USERNAME=${DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+    depends_on:
+      db:
+        condition: service_healthy # Só sobe a API se o banco estiver pronto
+    networks:
+      - rotavital_network
+
+volumes:
+  db_data:
+
+networks:
+  rotavital_network:
+    driver: bridge
