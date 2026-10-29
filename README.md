@@ -205,7 +205,21 @@ Para atender aos requisitos da disciplina, abaixo estão as justificativas das d
 - [x] **Print 2:** Terminal executando `docker ps` mostrando os containers `rotavital_api` e `rotavital_db` (com status *healthy*).
 - [x] **Print 3:** Navegador acessando `http://localhost:8080` exibindo a tela do sistema (Painel Geral), provando que a API e o Banco estão se comunicando.
 
----
+### E2 . Implementação de Testes (TDD) e Pipeline CI 
+
+### Story Map (Release 1)
+1. **História: Validação de Compatibilidade Sanguínea**
+   - Tarefa 1: Criar Enum `BloodType` com os 8 tipos.
+   - Tarefa 2: Implementar método `isCompatible(donor, receiver)`.
+   - Tarefa 3: Escrever teste unitário para a regra (Red).
+2. **História: Alerta de Estoque Crítico**
+   - Tarefa 1: Query no repositório para contar bolsas por tipo.
+   - Tarefa 2: Regra de negócio para disparar alerta se quantidade < limite.
+3. **História: Priorização FEFO (Vencimento)**
+   - Tarefa 1: Lógica para ordenar bolsas por data de validade.
+
+
+
 
 
 #  Entrega 2  Rota Vital 🩸POO

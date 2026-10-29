@@ -4,3 +4,4 @@ data/
 .idea/
 *.class
 *.class
+.env

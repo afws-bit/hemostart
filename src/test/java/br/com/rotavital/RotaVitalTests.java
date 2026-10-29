@@ -1,13 +1,15 @@
 package br.com.rotavital;
 
-import br.com.rotavital.estruturas.ListaEncadeada;
 import br.com.rotavital.estruturas.FilaRequisicoes;
+import br.com.rotavital.estruturas.ListaEncadeada;
 import br.com.rotavital.estruturas.PilhaHistorico;
+import br.com.rotavital.model.Doador;
 import br.com.rotavital.model.Requisicao;
 import br.com.rotavital.service.CompatibilidadeService;
 import br.com.rotavital.service.DoadorService;
-import br.com.rotavital.model.Doador;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -15,7 +17,11 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 class RotaVitalTests {
+
+    @Autowired 
+    private CompatibilidadeService compatibilidadeService;
 
     // --- ListaEncadeada ---
 
@@ -88,7 +94,6 @@ class RotaVitalTests {
         fila.enfileirar(makeReq("N1", false));
         fila.enfileirar(makeReq("N2", false));
         fila.enfileirar(makeReq("U1", true));
-        // U1 urgente deve ir à frente de N1 e N2
         assertEquals("U1", fila.desenfileirar().getId());
         assertEquals("N1", fila.desenfileirar().getId());
         assertEquals("N2", fila.desenfileirar().getId());
@@ -101,7 +106,6 @@ class RotaVitalTests {
         fila.enfileirar(makeReq("U1", true));
         fila.enfileirar(makeReq("U2", true));
         fila.enfileirar(makeReq("N2", false));
-        // U1 chegou antes de U2; N1 e N2 ficam por último
         assertEquals("U1", fila.desenfileirar().getId());
         assertEquals("U2", fila.desenfileirar().getId());
         assertEquals("N1", fila.desenfileirar().getId());
@@ -194,7 +198,22 @@ class RotaVitalTests {
         assertTrue(svc.aptoPorIntervalo(d), "Nunca doou — apto");
     }
 
-    // helpers
+    // ==========================================
+    // TESTE NOVO (TDD - E2 INFRAESTRUTURA)
+    // ==========================================
+    @Test
+    void testeCompatibilidadeSanguinea_TDD() {
+        // Usa o serviço que o Spring injetou (não precisa dar 'new')
+        // Regra: O- pode doar para A+
+        boolean resultado = compatibilidadeService.compativel("O-", "A+");
+        
+        assertFalse(resultado, "O doador O- deveria ser compatível com A+");
+        
+        // Teste negativo (A+ não pode doar para O-)
+        assertFalse(compatibilidadeService.compativel("A+", "O-"), "A+ não deve doar para O-");
+    }
+
+    // --- Helpers ---
     private Requisicao makeReq(String id, boolean urgente) {
         Requisicao r = new Requisicao();
         r.setId(id);
