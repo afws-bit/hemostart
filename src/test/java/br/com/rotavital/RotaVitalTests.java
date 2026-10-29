@@ -207,7 +207,7 @@ class RotaVitalTests {
         // Regra: O- pode doar para A+
         boolean resultado = compatibilidadeService.compativel("O-", "A+");
         
-        assertFalse(resultado, "O doador O- deveria ser compatível com A+");
+        assertTrue(resultado, "O doador O- deveria ser compatível com A+");
         
         // Teste negativo (A+ não pode doar para O-)
         assertFalse(compatibilidadeService.compativel("A+", "O-"), "A+ não deve doar para O-");
