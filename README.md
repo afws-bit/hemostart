@@ -76,6 +76,8 @@ https://github.com/MateusDS-dev/trhds2.git
 
 # 🎓 Infraestrutura de Software - Unidade 2 (U2)
 
+**URL Pública (Deploy):** https://hemostart-rotavital-api.onrender.com/
+
 # 🐳 E1 · Container Automatizado (Projeto RotaVital / HemoStart)
 
 Este repositório contém a implementação do **Container Automatizado (E1)** para o Projeto Integrador. O objetivo principal é garantir que a aplicação suba do zero, em qualquer máquina, com um único comando, mantendo o ambiente de desenvolvimento idêntico ao de produção.
@@ -205,19 +207,61 @@ Para atender aos requisitos da disciplina, abaixo estão as justificativas das d
 - [x] **Print 2:** Terminal executando `docker ps` mostrando os containers `rotavital_api` e `rotavital_db` (com status *healthy*).
 - [x] **Print 3:** Navegador acessando `http://localhost:8080` exibindo a tela do sistema (Painel Geral), provando que a API e o Banco estão se comunicando.
 
-### E2 . Implementação de Testes (TDD) e Pipeline CI 
+## 🧪 E2 · TDD (Test-Driven Development)
 
 ### Story Map (Release 1)
 1. **História: Validação de Compatibilidade Sanguínea**
-   - Tarefa 1: Criar Enum `BloodType` com os 8 tipos.
-   - Tarefa 2: Implementar método `isCompatible(donor, receiver)`.
-   - Tarefa 3: Escrever teste unitário para a regra (Red).
-2. **História: Alerta de Estoque Crítico**
-   - Tarefa 1: Query no repositório para contar bolsas por tipo.
-   - Tarefa 2: Regra de negócio para disparar alerta se quantidade < limite.
-3. **História: Priorização FEFO (Vencimento)**
-   - Tarefa 1: Lógica para ordenar bolsas por data de validade.
+   - Tarefas: Criar Enum de tipos; Implementar lógica de compatibilidade (Regra de negócio crítica); Escrever teste unitário.
+2. **História: Cadastro de Doador**
+   - Tarefas: Criar entidade e repositório; Criar endpoint e validações; Testes de integração com banco de dados.
+3. **História: Alerta de Estoque Crítico e FEFO**
+   - Tarefas: Query de contagem; Regra de negócio para disparar alerta; Lógica para ordenar bolsas por vencimento.
 
+### Testes por Nível
+- **Unitários:** Focados na regra de negócio de compatibilidade (ex: garantir que O- doa para A+, mas A+ não doa para O-).
+- **Integração:** Uso de `@SpringBootTest` para validar a comunicação entre o Service e o Banco de Dados.
+- **Aceitação (BDD):** Cenários documentando o fluxo do usuário (ex: priorização de bolsas vencendo).
+
+### Histórico Red -> Green
+O histórico de commits comprova o TDD. 
+- `test: forçando falha no pipeline para gerar evidencia Red`
+- `fix: corrigindo teste e restaurando pipeline verde`
+
+### Justificativas de TDD
+- **Quais regras ganharam teste primeiro e por quê?** A validação de compatibilidade (ABO/Rh). **Motivo:** Risco à vida do paciente. 
+- **O que ficou sem teste?** Os Controllers de CRUD simples, pois são validados indiretamente pelos testes de integração.
+- **Pipeline CI:** O GitHub Actions (`.github/workflows/ci.yml`) roda o `mvn test` a cada push/PR. Teste vermelho barra o merge (Quality Gate).
+
+---
+
+## 🚀 E3 · Deploy Automatizado
+
+- **Provedor de Deploy:** Utilizamos o **Render** (plano Free) pela integração nativa com Docker e GitHub.
+- **Pipeline e Fluxo de Branch (GitHub Flow):** A branch `main` é protegida. O fluxo é: `feature/*` -> Pull Request -> Pipeline (E2) roda -> Se verde, faz merge na `main` -> Render detecta e faz o deploy.
+- **Deploy Automático:** O Render está configurado para a branch `main` usando o `Dockerfile`. A cada merge, o build e o deploy ocorrem sozinhos.
+- **Segredos (Secrets):** As credenciais do PostgreSQL não estão no código. Elas foram cadastradas no painel de *Environment Variables* do Render.
+- **Rollback:** Caso um deploy dê problema, o rollback é feito via `git revert` (disparando novo deploy automatizado) ou em 1 clique no histórico de deploys do próprio painel do Render.
+
+---
+
+## 🤖 Uso de Inteligência Artificial
+
+O uso de IA foi permitido e declarado. **A ferramenta utilizada foi o DeepSeek (Chat)**. Ela foi empregada como uma assistente de produtividade para:
+- Auxiliar na estruturação inicial do `Dockerfile` e do `compose.yaml`.
+- Gerar o *boilerplate* dos testes JUnit e a sintaxe YAML do GitHub Actions.
+- Ajudar na formatação em Markdown deste README.
+
+**Revisão:** Todo o código e texto gerados pela IA foram revisados, executados localmente e compreendidos pela equipe antes de serem commitados, garantindo a integridade do projeto.
+
+---
+
+## 📊 Tabela de Decisões
+
+| Decisão | Opções comuns | Justificativa da nossa escolha |
+| :--- | :--- | :--- |
+| **Imagem base** | `node:22-alpine`, `eclipse-temurin:17-jre` | Usamos `alpine` pois é menor e tem menos pacotes vulneráveis. A compilação fica no 1º estágio (multi-stage) com o Maven. |
+| **Dados** | PostgreSQL, MySQL, MongoDB | Escolhemos **PostgreSQL**. Persistência garantida via **volume nomeado**, pois os dados sobrevivem ao `docker compose down`. |
+| **Testes** | Qual regra testar primeiro | **Compatibilidade ABO/Rh e FEFO**, pois o erro não é apenas um bug visual, mas um risco real ao paciente. |
 
 
 
