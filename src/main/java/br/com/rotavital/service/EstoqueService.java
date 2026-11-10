@@ -8,7 +8,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class EstoqueService {
@@ -122,5 +125,52 @@ public class EstoqueService {
         return repo.getEstoque().paraLista().stream()
                 .filter(b -> b.isUsoPrioritario() && "disponivel".equals(b.getStatus()))
                 .toList();
+    }
+
+    public br.com.rotavital.dto.EstatisticaDesperdicioDTO calcularEstatisticasDesperdicio() {
+        // 1. Busca todas as bolsas
+        List<BolsaSangue> todasBolsas = repo.getEstoque().paraLista();
+
+        // 2. Filtra as descartadas e vencidas
+        List<BolsaSangue> descartadas = todasBolsas.stream()
+                .filter(b -> "descartada".equals(b.getStatus()) || "vencida".equals(b.getStatus()))
+                .collect(Collectors.toList());
+
+        if (descartadas.isEmpty()) {
+            return new br.com.rotavital.dto.EstatisticaDesperdicioDTO(0, 0, 0, 0, new HashMap<>());
+        }
+
+        // 3. Agrupa por tipo sanguíneo para o gráfico
+        Map<String, Long> descartePorTipo = descartadas.stream()
+                .collect(Collectors.groupingBy(BolsaSangue::getTipoSanguineo, Collectors.counting()));
+
+        // 4. Extrai a quantidade (vamos simular que cada bolsa representa 1 unidade)
+        // Se você tiver um campo de dias de estoque, pode usar ele aqui.
+        List<Double> valores = descartadas.stream()
+                .map(b -> 1.0) // Usando 1.0 por bolsa descartada para o cálculo
+                .sorted()
+                .collect(Collectors.toList());
+
+        int n = valores.size();
+        
+        // 5. Cálculo da Média
+        double soma = valores.stream().mapToDouble(Double::doubleValue).sum();
+        double media = soma / n;
+
+        // 6. Cálculo da Mediana
+        double mediana;
+        if (n % 2 == 1) {
+            mediana = valores.get(n / 2);
+        } else {
+            mediana = (valores.get((n / 2) - 1) + valores.get(n / 2)) / 2.0;
+        }
+
+        // 7. Cálculo do Desvio Padrão
+        double variancia = valores.stream()
+                .mapToDouble(v -> Math.pow(v - media, 2))
+                .sum() / n;
+        double desvioPadrao = Math.sqrt(variancia);
+
+        return new br.com.rotavital.dto.EstatisticaDesperdicioDTO(media, mediana, desvioPadrao, descartadas.size(), descartePorTipo);
     }
 }
