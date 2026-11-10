@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatórios - RotaVital</title>
+    <!-- Importando Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; background-color: #f4f6f9; color: #333; }
+        .header { margin-bottom: 30px; }
+        .header h1 { color: #b30000; margin-bottom: 5px; }
+        .grid { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
+        .card { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-top: 4px solid #b30000; }
+        .stat-item { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
+        .stat-label { font-size: 14px; color: #666; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-value { font-size: 24px; font-weight: bold; color: #333; margin-top: 5px; }
+        .btn-voltar { display: inline-block; margin-top: 20px; padding: 10px 20px; background: #b30000; color: white; text-decoration: none; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>📊 Painel de Análise de Desperdício</h1>
+        <p>Análise probabilística das bolsas descartadas por vencimento ou contaminação.</p>
+    </div>
+
+    <div class="grid">
+        <!-- Card de Resumo Estatístico -->
+        <div class="card">
+            <h2>Resumo Estatístico</h2>
+            
+            <div class="stat-item">
+                <div class="stat-label">Total Descartado</div>
+                <div class="stat-value" id="totalDescartado">Carregando...</div>
+            </div>
+            
+            <div class="stat-item">
+                <div class="stat-label">Média por Descarte</div>
+                <div class="stat-value" id="media">Carregando...</div>
+            </div>
+            
+            <div class="stat-item">
+                <div class="stat-label">Mediana</div>
+                <div class="stat-value" id="mediana">Carregando...</div>
+            </div>
+            
+            <div class="stat-item">
+                <div class="stat-label">Desvio Padrão</div>
+                <div class="stat-value" id="desvioPadrao">Carregando...</div>
+            </div>
+
+            <a href="/" class="btn-voltar">Voltar para o Início</a>
+        </div>
+
+        <!-- Card do Gráfico -->
+        <div class="card">
+            <h2>Distribuição de Descartes por Tipo Sanguíneo</h2>
+            <canvas id="graficoDesperdicio"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // Consome o endpoint REST que criamos no Controller
+        fetch('/api/estatisticas/desperdicio')
+            .then(response => response.json())
+            .then(data => {
+                // Atualiza os textos do Card
+                document.getElementById('totalDescartado').innerText = data.totalBolsasDescartadas + " bolsas";
+                document.getElementById('media').innerText = data.mediaDesperdicio.toFixed(2);
+                document.getElementById('mediana').innerText = data.medianaDesperdicio.toFixed(2);
+                document.getElementById('desvioPadrao').innerText = data.desvioPadraoDesperdicio.toFixed(2);
+
+                // Prepara os dados do gráfico (Labels e Valores)
+                const labels = Object.keys(data.descartePorTipo);
+                const valores = Object.values(data.descartePorTipo);
+
+                // Renderiza o gráfico
+                const ctx = document.getElementById('graficoDesperdicio').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels.length > 0 ? labels : ['Sem dados'],
+                        datasets: [{
+                            label: 'Quantidade Descartada',
+                            data: valores.length > 0 ? valores : [0],
+                            backgroundColor: 'rgba(179, 0, 0, 0.6)',
+                            borderColor: 'rgba(179, 0, 0, 1)',
+                            borderWidth: 1,
+                            borderRadius: 5
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Erro ao carregar estatísticas:', error);
+                document.getElementById('totalDescartado').innerText = "Erro ao carregar";
+            });
+    </script>
+</body>
+</html>
