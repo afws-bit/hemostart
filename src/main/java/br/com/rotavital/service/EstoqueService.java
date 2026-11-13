@@ -7,6 +7,7 @@ import br.com.rotavital.repository.JsonDataRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -127,6 +128,10 @@ public class EstoqueService {
                 .toList();
     }
 
+    // =====================================================================
+    // MÉTODOS DE ESTATÍSTICA (EST)
+    // =====================================================================
+
     public br.com.rotavital.dto.EstatisticaDesperdicioDTO calcularEstatisticasDesperdicio() {
         // 1. Busca todas as bolsas
         List<BolsaSangue> todasBolsas = repo.getEstoque().paraLista();
@@ -145,7 +150,6 @@ public class EstoqueService {
                 .collect(Collectors.groupingBy(BolsaSangue::getTipoSanguineo, Collectors.counting()));
 
         // 4. Extrai a quantidade (vamos simular que cada bolsa representa 1 unidade)
-        // Se você tiver um campo de dias de estoque, pode usar ele aqui.
         List<Double> valores = descartadas.stream()
                 .map(b -> 1.0) // Usando 1.0 por bolsa descartada para o cálculo
                 .sorted()
@@ -172,5 +176,37 @@ public class EstoqueService {
         double desvioPadrao = Math.sqrt(variancia);
 
         return new br.com.rotavital.dto.EstatisticaDesperdicioDTO(media, mediana, desvioPadrao, descartadas.size(), descartePorTipo);
+    }
+
+    public br.com.rotavital.dto.EstatisticasGeraisDTO calcularEstatisticasGerais() {
+        List<BolsaSangue> todas = repo.getEstoque().paraLista();
+        
+        if (todas.isEmpty()) {
+            return new br.com.rotavital.dto.EstatisticasGeraisDTO(new HashMap<>(), 0, 0);
+        }
+
+        // 1. Média de bolsas por tipo
+        Map<String, Long> contagemPorTipo = todas.stream()
+                .filter(b -> "disponivel".equals(b.getStatus()))
+                .collect(Collectors.groupingBy(BolsaSangue::getTipoSanguineo, Collectors.counting()));
+                
+        Map<String, Double> mediaBolsas = new HashMap<>();
+        contagemPorTipo.forEach((tipo, count) -> mediaBolsas.put(tipo, count.doubleValue()));
+
+        // 2. Taxa de Descarte (%)
+        long totalDescartadas = todas.stream()
+                .filter(b -> "descartada".equals(b.getStatus()) || "vencida".equals(b.getStatus()))
+                .count();
+        double taxaDesperdicio = ((double) totalDescartadas / todas.size()) * 100.0;
+
+        // 3. Tempo Médio de Estoque (em dias)
+        // Calcula a média de dias entre a data de coleta e a data de validade das bolsas
+        double tempoMedio = todas.stream()
+                .filter(b -> b.getDataColeta() != null && b.getDataValidade() != null)
+                .mapToLong(b -> ChronoUnit.DAYS.between(b.getDataColeta(), b.getDataValidade()))
+                .average()
+                .orElse(0.0);
+
+        return new br.com.rotavital.dto.EstatisticasGeraisDTO(mediaBolsas, taxaDesperdicio, tempoMedio);
     }
 }
