@@ -33,12 +33,11 @@ Objetivo: armazenar, controlar e distribuir bolsas de sangue de forma segura e r
 ## Documentação
 
 - 📄 [Histórias de Usuário (BDD)](docs/historias-usuario-rota-vital.md)
- 
 
 ## Figma
 
--https://www.figma.com/proto/CBJbIvf3z3tfEXEEG7daIm/rascunho-rota-vital?t=cgiM3bFyiB5J0S8J-1
-  
+- https://www.figma.com/proto/CBJbIvf3z3tfEXEEG7daIm/rascunho-rota-vital?t=cgiM3bFyiB5J0S8J-1
+
 ## Screencast
 
 - https://youtu.be/VbNkdUrYwnA?si=KJtaPPikWFK2a72j
@@ -65,13 +64,13 @@ Simulador de uma mesa de DJ controlada via terminal, onde cada instrumento é ex
 🔗 **Link do Repositório:** [Clique aqui para acessar o projeto Mesa DJ](https://github.com/MateusDS-dev/mesa_dj)
 
 ## 2. Módulo de Paralelismo: Threads II (Projeto Hemostart)
-Descrição:
+
+**Descrição:**  
 Aceleração de uma operação CPU-bound (Validação em Lote de Compatibilidade Sanguínea ABO+Rh) utilizando processamento paralelo com ExecutorService e Virtual Threads do Java 21 (Project Loom).
 
-Tecnologias: Java 21 + Spring Boot 3.2 + Maven + JUnit 5.
+**Tecnologias:** Java 21 + Spring Boot 3.2 + Maven + JUnit 5.
 
-🔗 Link do Repositório: Clique aqui para acessar o projeto Threads II (Hemostart)
-https://github.com/MateusDS-dev/trhds2.git
+🔗 **Link do Repositório:** [Clique aqui para acessar o projeto Threads II (Hemostart)](https://github.com/MateusDS-dev/trhds2.git)
 
 
 # 🎓 Infraestrutura de Software - Unidade 2 (U2)
@@ -308,6 +307,7 @@ br.com.rotavital
     ├── apresentacao
     ├── negocio
     └── dados
+```
 
 ## 🤖 Uso de Inteligência Artificial
 
@@ -329,8 +329,6 @@ O uso de IA foi permitido e declarado. **A ferramenta utilizada foi o DeepSeek (
 | **Testes** | Qual regra testar primeiro | **Compatibilidade ABO/Rh e FEFO**, pois o erro não é apenas um bug visual, mas um risco real ao paciente. |
 
 
-
-
 # Entrega 2 - Rota Vital 🩸 POO
 
 ## Histórias atualizadas H09 e H10
@@ -347,6 +345,5 @@ O uso de IA foi permitido e declarado. **A ferramenta utilizada foi o DeepSeek (
 - https://youtu.be/0rAuU5NEjrw
 
 ## Status
-
 
 🚧 Em desenvolvimento
