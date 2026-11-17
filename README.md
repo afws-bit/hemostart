@@ -331,19 +331,22 @@ O uso de IA foi permitido e declarado. **A ferramenta utilizada foi o DeepSeek (
 
 
 
-#  Entrega 2  Rota Vital 🩸POO
+# Entrega 2 - Rota Vital 🩸 POO
 
-## historias atualizadas h09 h10
+## Histórias atualizadas H09 e H10
 
 - 📄 [Histórias de Usuário (BDD)](docs/historias-usuario-rota-vital.md)
- 
-##-Issue/bug tracker
+
+## Issue/bug tracker
+
 ![Projeto POO](docs/img/projetoPOO.png)
 
 ## Screencast
--https://youtu.be/wTMYO7UHukY
--https://youtu.be/0rAuU5NEjrw
+
+- https://youtu.be/wTMYO7UHukY
+- https://youtu.be/0rAuU5NEjrw
 
 ## Status
+
 
 🚧 Em desenvolvimento
