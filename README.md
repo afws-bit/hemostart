@@ -30,31 +30,77 @@ Objetivo: armazenar, controlar e distribuir bolsas de sangue de forma segura e r
 | Infraestrutura de Software (SO) | Ambiente de execução e implantação |
 | Infraestrutura de Comunicação (RSD) | Comunicação entre sistema e hospitais |
 
-## Documentação
+## Índice
 
-- 📄 [Histórias de Usuário (BDD)](docs/historias-usuario-rota-vital.md)
-
-## Figma
-
-- https://www.figma.com/proto/CBJbIvf3z3tfEXEEG7daIm/rascunho-rota-vital?t=cgiM3bFyiB5J0S8J-1
-
-## Screencast
-
-- https://youtu.be/VbNkdUrYwnA?si=KJtaPPikWFK2a72j
-
-## Relatório de Algoritmos e Estrutura de Dados U1
-
-https://docs.google.com/document/d/1pvN2DdHupPwdKikVTwpOW34SZLH7y-uA_THajAqoH8A/edit?tab=t.0
-
-## Apresentação de Estatística
-
-https://www.youtube.com/watch?v=-s2cwjNmQJ8
-
-# 🎓 Infraestrutura de Software - Unidade 1 (U1)
+- [Projeto](#projeto)
+- [Programação Orientada a Objetos (POO)](#programação-orientada-a-objetos-poo)
+- [Algoritmos e Estruturas de Dados](#algoritmos-e-estruturas-de-dados)
+- [Estatística e Probabilidade](#estatística-e-probabilidade)
+- [Infraestrutura de Software (SO)](#infraestrutura-de-software-so)
+- [Infraestrutura de Comunicação (RSD)](#infraestrutura-de-comunicação-rsd)
 
 ---
 
-## 1. Atividade Prática: Mesa DJ (Concorrência e Sincronização)
+## Projeto
+
+### Documentação
+
+- 📄 [Histórias de Usuário (BDD)](docs/historias-usuario-rota-vital.md)
+
+### Figma
+
+- https://www.figma.com/proto/CBJbIvf3z3tfEXEEG7daIm/rascunho-rota-vital?t=cgiM3bFyiB5J0S8J-1
+
+### Screencast
+
+- https://youtu.be/VbNkdUrYwnA?si=KJtaPPikWFK2a72j
+
+---
+
+## Programação Orientada a Objetos (POO)
+
+### Entrega 2 - Rota Vital 🩸 POO
+
+#### Histórias atualizadas H09 e H10
+
+- 📄 [Histórias de Usuário (BDD)](docs/historias-usuario-rota-vital.md)
+
+#### Issue/bug tracker
+
+![Projeto POO](docs/img/projetoPOO.png)
+
+#### Screencast
+
+- https://youtu.be/wTMYO7UHukY
+- https://youtu.be/0rAuU5NEjrw
+
+#### Status
+
+🚧 Em desenvolvimento
+
+---
+
+## Algoritmos e Estruturas de Dados
+
+### Relatório de Algoritmos e Estrutura de Dados U1
+
+https://docs.google.com/document/d/1pvN2DdHupPwdKikVTwpOW34SZLH7y-uA_THajAqoH8A/edit?tab=t.0
+
+---
+
+## Estatística e Probabilidade
+
+### Apresentação de Estatística
+
+https://www.youtube.com/watch?v=-s2cwjNmQJ8
+
+---
+
+## Infraestrutura de Software (SO)
+
+### 🎓 Unidade 1 (U1)
+
+#### 1. Atividade Prática: Mesa DJ (Concorrência e Sincronização)
 
 **Descrição:**  
 Simulador de uma mesa de DJ controlada via terminal, onde cada instrumento é executado em uma Thread independente, permitindo a reprodução simultânea de múltiplas faixas de áudio com o Pygame.
@@ -63,7 +109,7 @@ Simulador de uma mesa de DJ controlada via terminal, onde cada instrumento é ex
 
 🔗 **Link do Repositório:** [Clique aqui para acessar o projeto Mesa DJ](https://github.com/MateusDS-dev/mesa_dj)
 
-## 2. Módulo de Paralelismo: Threads II (Projeto Hemostart)
+#### 2. Módulo de Paralelismo: Threads II (Projeto Hemostart)
 
 **Descrição:**  
 Aceleração de uma operação CPU-bound (Validação em Lote de Compatibilidade Sanguínea ABO+Rh) utilizando processamento paralelo com ExecutorService e Virtual Threads do Java 21 (Project Loom).
@@ -72,16 +118,17 @@ Aceleração de uma operação CPU-bound (Validação em Lote de Compatibilidade
 
 🔗 **Link do Repositório:** [Clique aqui para acessar o projeto Threads II (Hemostart)](https://github.com/MateusDS-dev/trhds2.git)
 
+---
 
-# 🎓 Infraestrutura de Software - Unidade 2 (U2)
+### 🎓 Unidade 2 (U2)
 
 **URL Pública (Deploy):** https://hemostart-rotavital-api.onrender.com/
 
-# 🐳 E1 · Container Automatizado (Projeto RotaVital / HemoStart)
+#### 🐳 E1 · Container Automatizado (Projeto RotaVital / HemoStart)
 
 Este repositório contém a implementação do **Container Automatizado (E1)** para o Projeto Integrador. O objetivo principal é garantir que a aplicação suba do zero, em qualquer máquina, com um único comando, mantendo o ambiente de desenvolvimento idêntico ao de produção.
 
-## ⚡ Como rodar o projeto do zero
+##### ⚡ Como rodar o projeto do zero
 
 Para subir toda a infraestrutura (API Spring Boot + Banco de Dados PostgreSQL), basta ter o Docker e o Docker Compose instalados e executar o comando abaixo na raiz do projeto:
 
@@ -91,11 +138,9 @@ docker compose up -d --build
 
 > A API estará disponível em `http://localhost:8080`.
 
----
+##### 📂 Arquivos de Configuração
 
-## 📂 Arquivos de Configuração
-
-### 1. `Dockerfile` (Multi-stage Build)
+**1. `Dockerfile` (Multi-stage Build)**
 O arquivo foi dividido em dois estágios para otimizar a imagem final e proteger o código-fonte.
 
 ```dockerfile
@@ -126,7 +171,7 @@ EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
 ```
 
-### 2. `compose.yaml` (Orquestração)
+**2. `compose.yaml` (Orquestração)**
 Define a rede, o banco de dados, a API e a persistência de dados.
 
 ```yaml
@@ -171,7 +216,7 @@ networks:
     driver: bridge
 ```
 
-### 3. `.env.example` (Configuração Fora do Código)
+**3. `.env.example` (Configuração Fora do Código)**
 
 ```env
 DB_USER=admin_rotavital
@@ -179,9 +224,7 @@ DB_PASSWORD=senha_segura_123
 DB_NAME=rotavital_db
 ```
 
----
-
-## 🧠 Justificativas Técnicas (Critérios de Avaliação)
+##### 🧠 Justificativas Técnicas (Critérios de Avaliação)
 
 Para atender aos requisitos da disciplina, abaixo estão as justificativas das decisões de infraestrutura tomadas:
 
@@ -197,18 +240,15 @@ Para atender aos requisitos da disciplina, abaixo estão as justificativas das d
 > **4. Como os serviços se encontram? (Rede do Compose)**
 > Criamos uma rede customizada *bridge* (`rotavital_network`). O Docker cria um DNS interno para essa rede. Por isso, a API encontra o banco de dados usando a URL `jdbc:postgresql://db:5432/...` (onde `db` é o nome do serviço definido no compose). Para garantir a ordem de inicialização, usamos o `depends_on` aliado a um `healthcheck` no banco, impedindo que a API suba antes do banco estar pronto para receber conexões.
 
----
-
-## 📸 Evidências de Execução
-
+##### 📸 Evidências de Execução
 
 - [x] **Print 1:** Terminal executando o comando `docker compose up -d --build` com sucesso.
 - [x] **Print 2:** Terminal executando `docker ps` mostrando os containers `rotavital_api` e `rotavital_db` (com status *healthy*).
 - [x] **Print 3:** Navegador acessando `http://localhost:8080` exibindo a tela do sistema (Painel Geral), provando que a API e o Banco estão se comunicando.
 
-## 🧪 E2 · TDD (Test-Driven Development)
+#### 🧪 E2 · TDD (Test-Driven Development)
 
-### Story Map (Release 1)
+##### Story Map (Release 1)
 1. **História: Validação de Compatibilidade Sanguínea**
    - Tarefas: Criar Enum de tipos; Implementar lógica de compatibilidade (Regra de negócio crítica); Escrever teste unitário.
 2. **História: Cadastro de Doador**
@@ -216,24 +256,22 @@ Para atender aos requisitos da disciplina, abaixo estão as justificativas das d
 3. **História: Alerta de Estoque Crítico e FEFO**
    - Tarefas: Query de contagem; Regra de negócio para disparar alerta; Lógica para ordenar bolsas por vencimento.
 
-### Testes por Nível
+##### Testes por Nível
 - **Unitários:** Focados na regra de negócio de compatibilidade (ex: garantir que O- doa para A+, mas A+ não doa para O-).
 - **Integração:** Uso de `@SpringBootTest` para validar a comunicação entre o Service e o Banco de Dados.
 - **Aceitação (BDD):** Cenários documentando o fluxo do usuário (ex: priorização de bolsas vencendo).
 
-### Histórico Red -> Green
+##### Histórico Red -> Green
 O histórico de commits comprova o TDD. 
 - `test: forçando falha no pipeline para gerar evidencia Red`
 - `fix: corrigindo teste e restaurando pipeline verde`
 
-### Justificativas de TDD
+##### Justificativas de TDD
 - **Quais regras ganharam teste primeiro e por quê?** A validação de compatibilidade (ABO/Rh). **Motivo:** Risco à vida do paciente. 
 - **O que ficou sem teste?** Os Controllers de CRUD simples, pois são validados indiretamente pelos testes de integração.
 - **Pipeline CI:** O GitHub Actions (`.github/workflows/ci.yml`) roda o `mvn test` a cada push/PR. Teste vermelho barra o merge (Quality Gate).
 
----
-
-## 🚀 E3 · Deploy Automatizado
+#### 🚀 E3 · Deploy Automatizado
 
 - **Provedor de Deploy:** Utilizamos o **Render** (plano Free) pela integração nativa com Docker e GitHub.
 - **Pipeline e Fluxo de Branch (GitHub Flow):** A branch `main` é protegida. O fluxo é: `feature/*` -> Pull Request -> Pipeline (E2) roda -> Se verde, faz merge na `main` -> Render detecta e faz o deploy.
@@ -241,36 +279,36 @@ O histórico de commits comprova o TDD.
 - **Segredos (Secrets):** As credenciais do PostgreSQL não estão no código. Elas foram cadastradas no painel de *Environment Variables* do Render.
 - **Rollback:** Caso um deploy dê problema, o rollback é feito via `git revert` (disparando novo deploy automatizado) ou em 1 clique no histórico de deploys do próprio painel do Render.
 
-# 📐 U2 · Parte 2: Planejamento da Remodelagem (DDD e Arquitetura)
+#### 📐 U2 · Parte 2: Planejamento da Remodelagem (DDD e Arquitetura)
 
 Esta seção documenta a entrega da **Parte 2** do Projeto Integrador: o planejamento da remodelagem do Rota Vital com Domain-Driven Design (DDD), Arquitetura em Três Camadas, projeção para Microsserviços e simulação de orçamento em nuvem.
 
 > 📁 **Documentação Técnica Completa:** Todos os diagramas, planilhas de orçamento e registros de decisões (ADRs) estão disponíveis na pasta [`docs/arquitetura/`](./docs/arquitetura/).
 
-## A. Remodelagem do Domínio com DDD
+##### A. Remodelagem do Domínio com DDD
 
-### 1. Classificação dos Subdomínios
+**1. Classificação dos Subdomínios**
 *   **Core (Núcleo):** Gestão de Estoque de Sangue. *Justificativa: É o coração do sistema, onde residem as regras de negócio críticas (compatibilidade ABO/Rh, validade e FEFO) que trazem vantagem competitiva e salvam vidas.*
 *   **Suporte:** Requisição Hospitalar e Expedição. *Justificativa: Apoiam diretamente o core, mas suas regras são mais padronizadas (fluxo de pedido e logística).*
 *   **Genérico:** Notificação (E-mail/SMS). *Justificativa: Pode ser resolvido com soluções de mercado (SaaS) e não contém regras de negócio específicas do hemocentro.*
 
-### 2. Bounded Contexts (Contextos Delimitados)
+**2. Bounded Contexts (Contextos Delimitados)**
 1.  **Estoque:** Responsável por armazenar, validar a compatibilidade e controlar a validade das bolsas de sangue.
 2.  **Requisição:** Gerencia os pedidos de sangue realizados pelos hospitais e a fila de prioridade.
 3.  **Expedição:** Cuida da separação física, embalagem e rastreio logístico da bolsa até o destino.
 4.  **Telemetria:** Monitora a temperatura e a integridade das bolsas durante o transporte.
 
-### 3. Linguagem Ubíqua (Glossário)
+**3. Linguagem Ubíqua (Glossário)**
 Acesse o glossário completo em [`docs/arquitetura/glossario.md`](./docs/arquitetura/glossario.md).
 *Destaque para o termo com duplo sentido:*
 *   **"Bolsa" (Contexto de Estoque):** Refere-se ao volume de hemocomponente armazenado, com tipagem sanguínea e data de validade.
 *   **"Bolsa" (Contexto de Expedição):** Refere-se ao item logístico (pacote) que deve ser embalado, etiquetado e despachado, focado no peso e acondicionamento térmico.
 
-### 4. Mapa de Contextos (Context Map)
+**4. Mapa de Contextos (Context Map)**
 *   **Expedição -> Estoque:** Relação **Cliente-Fornecedor** (Customer-Supplier). A Expedição solicita a reserva, o Estoque valida e fornece.
 *   **Requisição -> Estoque:** Relação **Camada Anticorrupção (ACL)**. O sistema do hospital envia o pedido em um formato externo, e a ACL traduz para o modelo de domínio do Estoque do Rota Vital.
 
-## B. Modelo Tático (Contexto Core: Estoque)
+##### B. Modelo Tático (Contexto Core: Estoque)
 
 *   **Agregado:** `BolsaSanguinea`.
     *   **Raiz:** `BolsaSanguinea`.
@@ -280,7 +318,7 @@ Acesse o glossário completo em [`docs/arquitetura/glossario.md`](./docs/arquite
 *   **História de Usuário Âncora:** "Como enfermeiro(a), quero registrar uma nova bolsa de sangue para que ela entre no estoque disponível e o sistema alerte antes do vencimento."
 *   **Cenário Gherkin:** O arquivo com o cenário (Dado/Quando/Então) a ser executado na Parte 3 está em [`src/test/resources/features/registrar_bolsa.feature`](./src/test/resources/features/registrar_bolsa.feature).
 
-## C. Arquitetura em Três Camadas
+##### C. Arquitetura em Três Camadas
 
 Adotamos a separação lógica baseada nos *Bounded Contexts*, respeitando a regra de dependência onde o Domínio não conhece o Banco nem o Framework Web.
 
@@ -309,7 +347,7 @@ br.com.rotavital
     └── dados
 ```
 
-## 🤖 Uso de Inteligência Artificial
+#### 🤖 Uso de Inteligência Artificial
 
 O uso de IA foi permitido e declarado. **A ferramenta utilizada foi o DeepSeek (Chat)**. Ela foi empregada como uma assistente de produtividade para:
 - Auxiliar na estruturação inicial do `Dockerfile` e do `compose.yaml`.
@@ -318,9 +356,7 @@ O uso de IA foi permitido e declarado. **A ferramenta utilizada foi o DeepSeek (
 
 **Revisão:** Todo o código e texto gerados pela IA foram revisados, executados localmente e compreendidos pela equipe antes de serem commitados, garantindo a integridade do projeto.
 
----
-
-## 📊 Tabela de Decisões
+#### 📊 Tabela de Decisões
 
 | Decisão | Opções comuns | Justificativa da nossa escolha |
 | :--- | :--- | :--- |
@@ -328,22 +364,8 @@ O uso de IA foi permitido e declarado. **A ferramenta utilizada foi o DeepSeek (
 | **Dados** | PostgreSQL, MySQL, MongoDB | Escolhemos **PostgreSQL**. Persistência garantida via **volume nomeado**, pois os dados sobrevivem ao `docker compose down`. |
 | **Testes** | Qual regra testar primeiro | **Compatibilidade ABO/Rh e FEFO**, pois o erro não é apenas um bug visual, mas um risco real ao paciente. |
 
+---
 
-# Entrega 2 - Rota Vital 🩸 POO
+## Infraestrutura de Comunicação (RSD)
 
-## Histórias atualizadas H09 e H10
-
-- 📄 [Histórias de Usuário (BDD)](docs/historias-usuario-rota-vital.md)
-
-## Issue/bug tracker
-
-![Projeto POO](docs/img/projetoPOO.png)
-
-## Screencast
-
-- https://youtu.be/wTMYO7UHukY
-- https://youtu.be/0rAuU5NEjrw
-
-## Status
-
-🚧 Em desenvolvimento
+Nenhuma entrega registrada até o momento.
