@@ -13,7 +13,7 @@ Objetivo: armazenar, controlar e distribuir bolsas de sangue de forma segura e r
 - Mateus Henrique Diniz
 - Caio Catão
 - João Lucas
-- Kelly
+- Kelly Melo
 - Elisa Martins
 - Augusto Freitas
 - Glauberson
