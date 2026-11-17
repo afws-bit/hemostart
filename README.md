@@ -242,7 +242,72 @@ O histórico de commits comprova o TDD.
 - **Segredos (Secrets):** As credenciais do PostgreSQL não estão no código. Elas foram cadastradas no painel de *Environment Variables* do Render.
 - **Rollback:** Caso um deploy dê problema, o rollback é feito via `git revert` (disparando novo deploy automatizado) ou em 1 clique no histórico de deploys do próprio painel do Render.
 
----
+# 📐 U2 · Parte 2: Planejamento da Remodelagem (DDD e Arquitetura)
+
+Esta seção documenta a entrega da **Parte 2** do Projeto Integrador: o planejamento da remodelagem do Rota Vital com Domain-Driven Design (DDD), Arquitetura em Três Camadas, projeção para Microsserviços e simulação de orçamento em nuvem.
+
+> 📁 **Documentação Técnica Completa:** Todos os diagramas, planilhas de orçamento e registros de decisões (ADRs) estão disponíveis na pasta [`docs/arquitetura/`](./docs/arquitetura/).
+
+## A. Remodelagem do Domínio com DDD
+
+### 1. Classificação dos Subdomínios
+*   **Core (Núcleo):** Gestão de Estoque de Sangue. *Justificativa: É o coração do sistema, onde residem as regras de negócio críticas (compatibilidade ABO/Rh, validade e FEFO) que trazem vantagem competitiva e salvam vidas.*
+*   **Suporte:** Requisição Hospitalar e Expedição. *Justificativa: Apoiam diretamente o core, mas suas regras são mais padronizadas (fluxo de pedido e logística).*
+*   **Genérico:** Notificação (E-mail/SMS). *Justificativa: Pode ser resolvido com soluções de mercado (SaaS) e não contém regras de negócio específicas do hemocentro.*
+
+### 2. Bounded Contexts (Contextos Delimitados)
+1.  **Estoque:** Responsável por armazenar, validar a compatibilidade e controlar a validade das bolsas de sangue.
+2.  **Requisição:** Gerencia os pedidos de sangue realizados pelos hospitais e a fila de prioridade.
+3.  **Expedição:** Cuida da separação física, embalagem e rastreio logístico da bolsa até o destino.
+4.  **Telemetria:** Monitora a temperatura e a integridade das bolsas durante o transporte.
+
+### 3. Linguagem Ubíqua (Glossário)
+Acesse o glossário completo em [`docs/arquitetura/glossario.md`](./docs/arquitetura/glossario.md).
+*Destaque para o termo com duplo sentido:*
+*   **"Bolsa" (Contexto de Estoque):** Refere-se ao volume de hemocomponente armazenado, com tipagem sanguínea e data de validade.
+*   **"Bolsa" (Contexto de Expedição):** Refere-se ao item logístico (pacote) que deve ser embalado, etiquetado e despachado, focado no peso e acondicionamento térmico.
+
+### 4. Mapa de Contextos (Context Map)
+*   **Expedição -> Estoque:** Relação **Cliente-Fornecedor** (Customer-Supplier). A Expedição solicita a reserva, o Estoque valida e fornece.
+*   **Requisição -> Estoque:** Relação **Camada Anticorrupção (ACL)**. O sistema do hospital envia o pedido em um formato externo, e a ACL traduz para o modelo de domínio do Estoque do Rota Vital.
+
+## B. Modelo Tático (Contexto Core: Estoque)
+
+*   **Agregado:** `BolsaSanguinea`.
+    *   **Raiz:** `BolsaSanguinea`.
+    *   **Entidades:** `Doador` (referenciado por ID).
+    *   **Objetos de Valor:** `TipoSanguineo` (ABO/Rh), `DataValidade`, `StatusBolsa` (Disponível, Reservada, Expirada).
+    *   **Invariante protegida:** *Uma bolsa não pode ser reservada/expedida se estiver fora do prazo de validade ou se o tipo sanguíneo não for compatível com o receptor.*
+*   **História de Usuário Âncora:** "Como enfermeiro(a), quero registrar uma nova bolsa de sangue para que ela entre no estoque disponível e o sistema alerte antes do vencimento."
+*   **Cenário Gherkin:** O arquivo com o cenário (Dado/Quando/Então) a ser executado na Parte 3 está em [`src/test/resources/features/registrar_bolsa.feature`](./src/test/resources/features/registrar_bolsa.feature).
+
+## C. Arquitetura em Três Camadas
+
+Adotamos a separação lógica baseada nos *Bounded Contexts*, respeitando a regra de dependência onde o Domínio não conhece o Banco nem o Framework Web.
+
+1.  **Apresentação:** Controllers REST e telas. (Ex: `EstoqueController`)
+2.  **Negócio:** Casos de uso da aplicação (`RegistrarBolsaUseCase`) e o modelo de domínio rico (`BolsaSanguinea`).
+3.  **Dados:** Repositórios JPA e integrações externas. (Ex: `BolsaRepositoryJpa`)
+
+**Lógico x Físico:** Nesta Parte 2, as três camadas lógicas estão no mesmo *tier* físico (Monolito Modular), rodando no mesmo container Docker via Spring Boot.
+
+**Estrutura de Pacotes Proposta (Refatoração):**
+```text
+br.com.rotavital
+├── estoque
+│   ├── apresentacao     (EstoqueController)
+│   ├── negocio
+│   │   ├── aplicacao    (RegistrarBolsaUseCase, ConsultarEstoque)
+│   │   └── dominio      (BolsaSanguinea, TipoSanguineo, DataValidade)
+│   └── dados            (BolsaRepositoryJpa)
+├── requisicao
+│   ├── apresentacao
+│   ├── negocio
+│   └── dados
+└── expedicao
+    ├── apresentacao
+    ├── negocio
+    └── dados
 
 ## 🤖 Uso de Inteligência Artificial
 
