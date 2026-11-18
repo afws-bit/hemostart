@@ -154,7 +154,7 @@ Implementa o contrato de API definido pela equipe no documento de Projetos 3 / R
 
 | Nome completo | E-mail CESAR School | Entrada | Saída |
 |---|---|---|---|
-| _Nenhuma alteração na equipe até o momento_ | — | — | — |
+| Igor Kaua | Ikss2@cesar.school | 05/10/2026 | — |
 
 ---
 
