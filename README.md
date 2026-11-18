@@ -497,57 +497,85 @@ O histórico de commits comprova o TDD.
 - **Segredos (Secrets):** As credenciais do PostgreSQL não estão no código. Elas foram cadastradas no painel de *Environment Variables* do Render.
 - **Rollback:** Caso um deploy dê problema, o rollback é feito via `git revert` (disparando novo deploy automatizado) ou em 1 clique no histórico de deploys do próprio painel do Render.
 
-## 📐 U2 · Parte 2: Planejamento da Remodelagem (DDD e Arquitetura)
+# 📐 U2 · Parte 2: Planejamento da Remodelagem (DDD e Arquitetura)
 
-Esta seção documenta a entrega da **Parte 2** do Projeto Integrador: o planejamento da remodelagem do Rota Vital com Domain-Driven Design (DDD), Arquitetura em Três Camadas, projeção para Microsserviços e simulação de orçamento em nuvem.
+Esta seção documenta a entrega da Parte 2 do Projeto Integrador: o planejamento da remodelagem do **Rota Vital** com **Domain-Driven Design (DDD)**, **Arquitetura em Três Camadas**, projeção para **Microsserviços** e simulação de orçamento em nuvem.
 
-> 📁 **Documentação Técnica Completa:** Todos os diagramas, planilhas de orçamento e registros de decisões (ADRs) estão disponíveis na pasta [`docs/arquitetura/`](./docs/arquitetura/).
+## 📁 Documentação Técnica Completa
 
-### A. Remodelagem do Domínio com DDD
+- 📄 [Relatório Completo em PDF (Parte 2)]()
 
-#### 1. Classificação dos Subdomínios
-*   **Core (Núcleo):** Gestão de Estoque de Sangue. *Justificativa: É o coração do sistema, onde residem as regras de negócio críticas (compatibilidade ABO/Rh, validade e FEFO) que trazem vantagem competitiva e salvam vidas.*
-*   **Suporte:** Requisição Hospitalar e Expedição. *Justificativa: Apoiam diretamente o core, mas suas regras são mais padronizadas (fluxo de pedido e logística).*
-*   **Genérico:** Notificação (E-mail/SMS). *Justificativa: Pode ser resolvido com soluções de mercado (SaaS) e não contém regras de negócio específicas do hemocentro.*
+> Os diagramas, planilhas de orçamento e registros de decisões (ADRs) estão disponíveis na pasta `docs/arquitetura/`.
 
-#### 2. Bounded Contexts (Contextos Delimitados)
-1.  **Estoque:** Responsável por armazenar, validar a compatibilidade e controlar a validade das bolsas de sangue.
-2.  **Requisição:** Gerencia os pedidos de sangue realizados pelos hospitais e a fila de prioridade.
-3.  **Expedição:** Cuida da separação física, embalagem e rastreio logístico da bolsa até o destino.
-4.  **Telemetria:** Monitora a temperatura e a integridade das bolsas durante o transporte.
+---
 
-#### 3. Linguagem Ubíqua (Glossário)
-Acesse o glossário completo em [`docs/arquitetura/glossario.md`](./docs/arquitetura/glossario.md).
-*Destaque para o termo com duplo sentido:*
-*   **"Bolsa" (Contexto de Estoque):** Refere-se ao volume de hemocomponente armazenado, com tipagem sanguínea e data de validade.
-*   **"Bolsa" (Contexto de Expedição):** Refere-se ao item logístico (pacote) que deve ser embalado, etiquetado e despachado, focado no peso e acondicionamento térmico.
+## A. Remodelagem do Domínio com DDD
 
-#### 4. Mapa de Contextos (Context Map)
-*   **Expedição -> Estoque:** Relação **Cliente-Fornecedor** (Customer-Supplier). A Expedição solicita a reserva, o Estoque valida e fornece.
-*   **Requisição -> Estoque:** Relação **Camada Anticorrupção (ACL)**. O sistema do hospital envia o pedido em um formato externo, e a ACL traduz para o modelo de domínio do Estoque do Rota Vital.
+### 1. Classificação dos Subdomínios
 
-### B. Modelo Tático (Contexto Core: Estoque)
+- **Core (Núcleo): Gestão de Estoque de Sangue.**
+  - **Justificativa:** É o coração do sistema, onde residem as regras de negócio críticas (compatibilidade ABO/Rh, validade e FEFO) que trazem vantagem competitiva e salvam vidas.
 
-*   **Agregado:** `BolsaSanguinea`.
-    *   **Raiz:** `BolsaSanguinea`.
-    *   **Entidades:** `Doador` (referenciado por ID).
-    *   **Objetos de Valor:** `TipoSanguineo` (ABO/Rh), `DataValidade`, `StatusBolsa` (Disponível, Reservada, Expirada).
-    *   **Invariante protegida:** *Uma bolsa não pode ser reservada/expedida se estiver fora do prazo de validade ou se o tipo sanguíneo não for compatível com o receptor.*
-*   **História de Usuário Âncora:** "Como enfermeiro(a), quero registrar uma nova bolsa de sangue para que ela entre no estoque disponível e o sistema alerte antes do vencimento."
-*   **Cenário Gherkin:** O arquivo com o cenário (Dado/Quando/Então) a ser executado na Parte 3 está em [`src/test/resources/features/registrar_bolsa.feature`](./src/test/resources/features/registrar_bolsa.feature).
+- **Suporte: Requisição Hospitalar e Expedição.**
+  - **Justificativa:** Apoiam diretamente o core, mas suas regras são mais padronizadas (fluxo de pedido e logística).
 
-### C. Arquitetura em Três Camadas
+- **Genérico: Notificação (E-mail/SMS).**
+  - **Justificativa:** Pode ser resolvido com soluções de mercado (SaaS) e não contém regras de negócio específicas do hemocentro.
 
-Adotamos a separação lógica baseada nos *Bounded Contexts*.
+### 2. Bounded Contexts (Contextos Delimitados)
 
-*   **Apresentação:** Controllers REST e telas (ex: `EstoqueController`).
-*   **Negócio (Domínio + Aplicação):** Casos de uso (ex: `RegistrarBolsaUseCase`) e o modelo rico (ex: `BolsaSanguinea`).
-*   **Dados:** Repositórios JPA e integrações externas.
-*   **Regra de Dependência:** O domínio não conhece o framework web nem o banco (Inversão de Dependência).
-*   **Lógico x Físico:** Todas as três camadas estão no mesmo *tier* físico (Monolito Modular) na Parte 2, rodando no mesmo container.
+- **Estoque:** Responsável por armazenar, validar a compatibilidade e controlar a validade das bolsas de sangue.
+- **Requisição:** Gerencia os pedidos de sangue realizados pelos hospitais e a fila de prioridade.
+- **Expedição:** Cuida da separação física, embalagem e rastreio logístico da bolsa até o destino.
+- **Telemetria:** Monitora a temperatura e a integridade das bolsas durante o transporte.
 
-### Estrutura de pacotes atual (Monolito da Parte 1):
-*(Reflete a estrutura real do código entregue até o momento)*
+### 3. Linguagem Ubíqua (Glossário)
+
+Acesse o glossário completo em `docs/arquitetura/glossario.md`.
+
+Destaque para o termo com duplo sentido:
+
+- **"Bolsa" (Contexto de Estoque):** Refere-se ao volume de hemocomponente armazenado, com tipagem sanguínea e data de validade.
+- **"Bolsa" (Contexto de Expedição):** Refere-se ao item logístico (pacote) que deve ser embalado, etiquetado e despachado, focado no peso e acondicionamento térmico.
+
+### 4. Mapa de Contextos (Context Map)
+
+- **Expedição → Estoque:** Relação **Cliente-Fornecedor** (Customer-Supplier). A Expedição solicita a reserva, o Estoque valida e fornece.
+- **Requisição → Estoque:** Relação **Camada Anticorrupção** (ACL). O sistema do hospital envia o pedido em um formato externo, e a ACL traduz para o modelo de domínio do Estoque do Rota Vital.
+
+---
+
+## B. Modelo Tático (Contexto Core: Estoque)
+
+**Agregado:** `BolsaSanguinea`.
+
+- **Raiz:** `BolsaSanguinea`.
+- **Entidades:** `Doador` (referenciado por ID).
+- **Objetos de Valor:** `TipoSanguineo` (ABO/Rh), `DataValidade`, `StatusBolsa` (Disponível, Reservada, Expirada).
+
+**Invariante protegida:** Uma bolsa não pode ser reservada/expedida se estiver fora do prazo de validade ou se o tipo sanguíneo não for compatível com o receptor.
+
+**História de Usuário Âncora:** "Como enfermeiro(a), quero registrar uma nova bolsa de sangue para que ela entre no estoque disponível e o sistema alerte antes do vencimento."
+
+**Cenário Gherkin:** O arquivo com o cenário (Dado/Quando/Então) a ser executado na Parte 3 está em `src/test/resources/features/registrar_bolsa.feature`.
+
+---
+
+## C. Arquitetura em Três Camadas
+
+Adotamos a separação lógica baseada nos Bounded Contexts.
+
+- **Apresentação:** Controllers REST e telas (ex: `EstoqueController`).
+- **Negócio (Domínio + Aplicação):** Casos de uso (ex: `RegistrarBolsaUseCase`) e o modelo rico (ex: `BolsaSanguinea`).
+- **Dados:** Repositórios JPA e integrações externas.
+
+**Regra de Dependência:** O domínio não conhece o framework web nem o banco (Inversão de Dependência).
+
+**Lógico x Físico:** Todas as três camadas estão no mesmo tier físico (**Monolito Modular**) na Parte 2, rodando no mesmo container.
+
+### Estrutura de pacotes atual (Monolito da Parte 1)
+
+> Reflete a estrutura real do código entregue até o momento.
 
 ```text
 br.com.rotavital
@@ -558,7 +586,8 @@ br.com.rotavital
 ├── model (BolsaSangue, Doador, Requisicao...)
 └── dto
 ```
-### Estrutura de pacotes proposta(parte 2):
+
+### Estrutura de pacotes proposta (Refatoração Parte 2)
 
 ```text
 br.com.rotavital
@@ -572,21 +601,68 @@ br.com.rotavital
 └── expedicao
 ```
 
-### 🤖 Uso de Inteligência Artificial
+---
 
-O uso de IA foi permitido e declarado. **A ferramenta utilizada foi o DeepSeek (Chat)**. Ela foi empregada como uma assistente de produtividade para:
-- Auxiliar na estruturação inicial do `Dockerfile` e do `compose.yaml`.
-- Gerar o *boilerplate* dos testes JUnit e a sintaxe YAML do GitHub Actions.
-- Ajudar na formatação em Markdown deste README.
+## D. Projeção com Microsserviços e ADRs
 
-**Revisão:** Todo o código e texto gerados pela IA foram revisados, executados localmente e compreendidos pela equipe antes de serem commitados, garantindo a integridade do projeto.
+- **Serviços e Comunicação:** Os contextos de Estoque e Expedição seriam extraídos para microsserviços independentes, comunicando-se de forma assíncrona via **Eventos** (ex: Kafka) para não bloquear o fluxo.
+- **Dados:** Aplicação do padrão **Database per Service** (um banco PostgreSQL exclusivo para cada serviço).
+- **Saga:** Para o fluxo de expedição, utilizaríamos uma **Saga por Coreografia**. Se a Expedição falhar (ex: transportadora indisponível), ela emite o evento `ExpedicaoFalhou`, e o Estoque escuta esse evento e executa a compensação, devolvendo a bolsa para o status "Disponível".
+
+### Tabela Comparativa
+
+| Aspecto | Monolito Modular (Atual) | Microsserviços (Projeção) |
+|---|---|---|
+| **Unidade de Deploy** | Um único container (API inteira). | Três containers (Estoque, Requisição, Expedição). |
+| **Escala** | Escala o sistema inteiro (mesmo que só o Estoque precise). | Escala apenas o serviço gargalo (ex: só a Expedição). |
+| **Consistência de Dados** | Forte (ACID no mesmo banco). | Eventual (Sagas e eventos). |
+| **Custo Inicial** | Baixo. | Alto (mais servidores e complexidade). |
+| **Complexidade** | Baixa/Média. | Alta (monitoramento, tracing, rede). |
+
+### ADRs (Architecture Decision Records)
+
+- **ADR 0001: Decomposição do Rota Vital** — Decisão de iniciar como Monolito Modular e planejar a extração para Microsserviços na Parte 3.
+- **ADR 0002: Estratégia de Compensação (Saga)** — Uso de eventos assíncronos para garantir a integridade do estoque em caso de falha na expedição.
 
 ---
 
-### 📊 Tabela de Decisões
+## E. Três Cenários com Orçamento
+
+**Premissas de Carga (Conforme planilha):**
+
+- **Baixo:** Pico de 5 req/s, 2 instâncias e pool de 1 conexão.
+- **Moderado:** Pico de 40 req/s, 2 instâncias e pool de 6 conexões.
+- **Alto:** Pico de 300 req/s, 9 instâncias e pool de 45 conexões.
+
+**Orçamento:** A planilha completa com os custos do Render (Web Services, PostgreSQL, Redis, etc.), fontes e datas de consulta (18/11/2026) está disponível em `docs/arquitetura/planilha_orcamento.pdf`.
+
+### Resumo de Custos (Render — Região Ohio / US East — On-Demand)
+
+- **Cenário Baixo:** Custo mensal de **U$ 97,00** (custo por pedido: **U$ 0,0162**).
+- **Cenário Moderado:** Custo mensal de **U$ 149,25** (custo por pedido: **U$ 0,0025**).
+- **Cenário Alto:** Custo mensal de **U$ 566,25** (custo por pedido: **U$ 0,0009**).
+
+> Nota-se o ganho de escala: à medida que a demanda cresce, o custo por pedido cai drasticamente, validando a viabilidade financeira do projeto.
+
+---
+
+## 🤖 Uso de Inteligência Artificial
+
+O uso de IA foi permitido e declarado. A ferramenta utilizada foi o **DeepSeek (Chat)**. Ela foi empregada como uma assistente de produtividade para:
+
+- Auxiliar na estruturação inicial do `Dockerfile` e do `compose.yaml`.
+- Gerar o boilerplate dos testes JUnit e a sintaxe YAML do GitHub Actions.
+- Auxiliar na formatação dos arquivos Markdown (README, ADRs, Gherkin) e revisão da sintaxe.
+
+**Validação:** Todo o código, cálculos de orçamento e textos gerados pela IA foram revisados, executados localmente e compreendidos pela equipe antes de serem commitados, garantindo a integridade e veracidade do projeto. Preços de IA não foram usados como fonte.
+
+---
+
+## 📊 Tabela de Decisões
 
 | Decisão | Opções comuns | Justificativa da nossa escolha |
-| :--- | :--- | :--- |
-| **Imagem base** | `node:22-alpine`, `eclipse-temurin:17-jre` | Usamos `alpine` pois é menor e tem menos pacotes vulneráveis. A compilação fica no 1º estágio (multi-stage) com o Maven. |
-| **Dados** | PostgreSQL, MySQL, MongoDB | Escolhemos **PostgreSQL**. Persistência garantida via **volume nomeado**, pois os dados sobrevivem ao `docker compose down`. |
-| **Testes** | Qual regra testar primeiro | **Compatibilidade ABO/Rh e FEFO**, pois o erro não é apenas um bug visual, mas um risco real ao paciente. |
+|---|---|---|
+| **Imagem base** | `node:22-alpine`, `eclipse-temurin:17-jre` | Usamos alpine pois é menor e tem menos pacotes vulneráveis. A compilação fica no 1º estágio (multi-stage) com o Maven. |
+| **Dados** | PostgreSQL, MySQL, MongoDB | Escolhemos PostgreSQL. Persistência garantida via volume nomeado, pois os dados sobrevivem ao `docker compose down`. |
+| **Testes** | Qual regra testar primeiro | Compatibilidade ABO/Rh e FEFO, pois o erro não é apenas um bug visual, mas um risco real ao paciente. |
+| **Decomposição** | Monolito vs Microsserviços | Monolito Modular (ADR 0001). Menor complexidade operacional para o prazo atual, mas organizado para extração futura. |
