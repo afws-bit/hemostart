@@ -37,6 +37,9 @@ public class JsonDataRepository {
     private FilaRequisicoes filaRequisicoes = new FilaRequisicoes();
     private PilhaHistorico<HistoricoOperacao> historicoStack = new PilhaHistorico<>();
     private Configuracao configuracao = new Configuracao();
+    private List<Agendamento> agendamentos = new ArrayList<>();
+    private List<TriagemClinica> triagens = new ArrayList<>();
+    private List<Requisicao> todasRequisicoes = new ArrayList<>();
 
     private AtomicInteger sequencialBolsa = new AtomicInteger(0);
 
@@ -61,12 +64,17 @@ public class JsonDataRepository {
         List<Requisicao> reqs = lerJson(arquivo("requests.json"), new TypeReference<List<Requisicao>>() {});
         List<HistoricoOperacao> hist = lerJson(arquivo("history.json"), new TypeReference<List<HistoricoOperacao>>() {});
         Configuracao cfg = lerJsonSingle(arquivo("config.json"), Configuracao.class);
+        List<Agendamento> agends = lerJson(arquivo("appointments.json"), new TypeReference<List<Agendamento>>() {});
+        List<TriagemClinica> triags = lerJson(arquivo("screenings.json"), new TypeReference<List<TriagemClinica>>() {});
 
         if (doadores == null) doadores = new ArrayList<>();
         if (hospitais == null) hospitais = new ArrayList<>();
         if (bolsas == null) bolsas = new ArrayList<>();
         if (reqs == null) reqs = new ArrayList<>();
         if (hist == null) hist = new ArrayList<>();
+        if (agends != null) agendamentos = agends;
+        if (triags != null) triagens = triags;
+        todasRequisicoes = new ArrayList<>(reqs);
         if (cfg != null) configuracao = cfg;
 
         estoque = new ListaEncadeada<>();
@@ -76,8 +84,8 @@ public class JsonDataRepository {
         }
 
         filaRequisicoes = new FilaRequisicoes();
-        for (Requisicao r : reqs) {
-            if ("pendente".equals(r.getStatus()) || "aprovada".equals(r.getStatus())) {
+        for (Requisicao r : todasRequisicoes) {
+            if ("pendente".equals(r.getStatus()) || "aprovada".equals(r.getStatus()) || "recusada".equals(r.getStatus())) {
                 filaRequisicoes.enfileirar(r);
             }
         }
@@ -230,8 +238,9 @@ public class JsonDataRepository {
             gravarJson(arquivo("donors.json"), doadores);
             gravarJson(arquivo("hospitals.json"), hospitais);
             gravarJson(arquivo("bags.json"), estoque.paraLista());
-            List<Requisicao> todasReqs = filaRequisicoes.paraLista();
-            gravarJson(arquivo("requests.json"), todasReqs);
+            gravarJson(arquivo("requests.json"), todasRequisicoes);
+            gravarJson(arquivo("appointments.json"), agendamentos);
+            gravarJson(arquivo("screenings.json"), triagens);
             List<HistoricoOperacao> histLista = historicoStack.paraLista();
             java.util.Collections.reverse(histLista);
             gravarJson(arquivo("history.json"), histLista);
@@ -282,5 +291,8 @@ public class JsonDataRepository {
     public FilaRequisicoes getFilaRequisicoes() { return filaRequisicoes; }
     public PilhaHistorico<HistoricoOperacao> getHistoricoStack() { return historicoStack; }
     public Configuracao getConfiguracao() { return configuracao; }
+    public List<Agendamento> getAgendamentos() { return agendamentos; }
+    public List<TriagemClinica> getTriagens() { return triagens; }
+    public List<Requisicao> getTodasRequisicoes() { return todasRequisicoes; }
     public ReentrantLock getLock() { return lock; }
 }

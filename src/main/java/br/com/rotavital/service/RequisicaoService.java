@@ -40,6 +40,7 @@ public class RequisicaoService {
         req.setDataSolicitacao(LocalDateTime.now());
 
         repo.getFilaRequisicoes().enfileirar(req);
+        repo.getTodasRequisicoes().add(req);
         repo.gravar();
         return null;
     }
@@ -48,18 +49,29 @@ public class RequisicaoService {
         return repo.getFilaRequisicoes().paraLista();
     }
 
-    public String reservarBolsasParaPrimeiro() {
+    public Requisicao buscarPorId(String id) {
+        return repo.getFilaRequisicoes().paraLista().stream()
+                .filter(r -> r.getId().equals(id))
+                .findFirst()
+                .orElseGet(() -> repo.getTodasRequisicoes().stream()
+                        .filter(r -> r.getId().equals(id))
+                        .findFirst().orElse(null));
+    }
+
+    public String aprovarRequisicao(String requisicaoId) {
         repo.getLock().lock();
         try {
-            Requisicao req = repo.getFilaRequisicoes().primeiro();
-            if (req == null) return "Fila vazia";
+            Requisicao req = buscarPorId(requisicaoId);
+            if (req == null) return "Requisição não encontrada";
+            if (!"pendente".equals(req.getStatus())) {
+                return "Apenas solicitações com status 'pendente' podem ser aprovadas ou recusadas";
+            }
 
             List<BolsaSangue> sugeridas = compatibilidadeService
                     .sugerirBolsas(req.getTipoSanguineo(), req.getQuantidade());
 
             if (sugeridas.size() < req.getQuantidade()) {
-                return "Estoque insuficiente: apenas " + sugeridas.size()
-                        + " bolsa(s) compatível(is) disponível(is)";
+                return "Estoque insuficiente para atender a solicitação";
             }
 
             for (BolsaSangue b : sugeridas) {
@@ -74,6 +86,46 @@ public class RequisicaoService {
             req.setStatus("aprovada");
             repo.gravar();
             return null;
+        } finally {
+            repo.getLock().unlock();
+        }
+    }
+
+    public String recusarRequisicao(String requisicaoId, String motivo) {
+        repo.getLock().lock();
+        try {
+            Requisicao req = buscarPorId(requisicaoId);
+            if (req == null) return "Requisição não encontrada";
+            if (!"pendente".equals(req.getStatus())) {
+                return "Apenas solicitações com status 'pendente' podem ser aprovadas ou recusadas";
+            }
+            if (motivo == null || motivo.trim().isEmpty()) {
+                return "Motivo da recusa é obrigatório";
+            }
+
+            req.setStatus("recusada");
+            req.setMotivoRecusa(motivo.trim());
+
+            HistoricoOperacao h = new HistoricoOperacao(
+                    "RECUSA", null,
+                    "Requisição " + req.getId() + " recusada. Motivo: " + motivo.trim()
+            );
+            repo.getHistoricoStack().empilhar(h);
+            repo.gravar();
+            return null;
+        } finally {
+            repo.getLock().unlock();
+        }
+    }
+
+    public String reservarBolsasParaPrimeiro() {
+        repo.getLock().lock();
+        try {
+            Requisicao req = repo.getFilaRequisicoes().paraLista().stream()
+                    .filter(r -> "pendente".equals(r.getStatus()))
+                    .findFirst().orElse(null);
+            if (req == null) return "Fila vazia";
+            return aprovarRequisicao(req.getId());
         } finally {
             repo.getLock().unlock();
         }

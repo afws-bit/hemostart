@@ -59,4 +59,9 @@ public class PilhaHistorico<T> {
         }
         return lista;
     }
+
+    public void limpar() {
+        top = null;
+        tamanho = 0;
+    }
 }

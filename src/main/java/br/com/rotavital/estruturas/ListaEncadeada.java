@@ -110,4 +110,9 @@ public class ListaEncadeada<T> {
         }
         return lista;
     }
+
+    public void limpar() {
+        head = null;
+        tamanho = 0;
+    }
 }

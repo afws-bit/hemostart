@@ -1,11 +1,14 @@
 package br.com.rotavital.service;
 
+import br.com.rotavital.model.BolsaSangue;
 import br.com.rotavital.model.Doador;
 import br.com.rotavital.repository.JsonDataRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -63,8 +66,34 @@ public class DoadorService {
     }
 
     public boolean aptoPorIntervalo(Doador doador) {
+        return aptoPorIntervaloNaData(doador, LocalDate.now());
+    }
+
+    public boolean aptoPorIntervaloNaData(Doador doador, LocalDate data) {
         if (doador.getUltimaDoacao() == null) return true;
-        int diasMinimos = "F".equals(doador.getSexo()) ? 90 : 60;
-        return !LocalDate.now().isBefore(doador.getUltimaDoacao().plusDays(diasMinimos));
+        int diasMinimos = "F".equalsIgnoreCase(doador.getSexo()) ? 90 : 60;
+        return !data.isBefore(doador.getUltimaDoacao().plusDays(diasMinimos));
+    }
+
+    public LocalDate calcularProximaDataApta(Doador doador) {
+        if (doador.getUltimaDoacao() == null) {
+            return LocalDate.now();
+        }
+        int diasMinimos = "F".equalsIgnoreCase(doador.getSexo()) ? 90 : 60;
+        return doador.getUltimaDoacao().plusDays(diasMinimos);
+    }
+
+    public boolean estaApto(Doador doador) {
+        if (doador.getUltimaDoacao() == null) return true;
+        return !LocalDate.now().isBefore(calcularProximaDataApta(doador));
+    }
+
+    public List<BolsaSangue> listarDoacoesDoador(String doadorId) {
+        if (repo == null || repo.getEstoque() == null) return Collections.emptyList();
+        return repo.getEstoque().paraLista().stream()
+                .filter(b -> doadorId.equals(b.getDoadorId()))
+                .sorted(Comparator.comparing(BolsaSangue::getDataColeta, Comparator.nullsLast(Comparator.reverseOrder())))
+                .toList();
     }
 }
+

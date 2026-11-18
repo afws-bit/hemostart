@@ -20,6 +20,7 @@ public class Requisicao {
     private LocalDateTime dataAtendimento;
 
     private String responsavelDistribuicao;
+    private String motivoRecusa;
 
     public Requisicao() {}
 
@@ -49,4 +50,7 @@ public class Requisicao {
 
     public String getResponsavelDistribuicao() { return responsavelDistribuicao; }
     public void setResponsavelDistribuicao(String responsavelDistribuicao) { this.responsavelDistribuicao = responsavelDistribuicao; }
+
+    public String getMotivoRecusa() { return motivoRecusa; }
+    public void setMotivoRecusa(String motivoRecusa) { this.motivoRecusa = motivoRecusa; }
 }

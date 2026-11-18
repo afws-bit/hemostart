@@ -122,4 +122,10 @@ public class FilaRequisicoes {
             atual = atual.next;
         }
     }
+
+    public void limpar() {
+        head = null;
+        tail = null;
+        tamanho = 0;
+    }
 }

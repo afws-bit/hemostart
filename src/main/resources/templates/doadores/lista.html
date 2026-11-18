@@ -10,6 +10,8 @@
 <nav>
     <a th:href="@{/}">Início</a>
     <a th:href="@{/doadores}">Doadores</a>
+    <a th:href="@{/agendamentos}">Agendamentos</a>
+    <a th:href="@{/triagem}">Triagem</a>
     <a th:href="@{/coleta}">Coleta</a>
     <a th:href="@{/estoque}">Estoque</a>
     <a th:href="@{/estoque/validade}">Validade/Descarte</a>
@@ -41,11 +43,12 @@
             <th>Peso (kg)</th>
             <th>Contato</th>
             <th>Última Doação</th>
+            <th>Ações</th>
         </tr>
         </thead>
         <tbody>
         <tr th:if="${#lists.isEmpty(doadores)}">
-            <td colspan="8" style="text-align:center;">Nenhum doador cadastrado.</td>
+            <td colspan="9" style="text-align:center;">Nenhum doador cadastrado.</td>
         </tr>
         <tr th:each="d : ${doadores}">
             <td th:text="${d.nome}"></td>
@@ -56,6 +59,9 @@
             <td th:text="${d.peso}"></td>
             <td th:text="${d.contato}"></td>
             <td th:text="${d.ultimaDoacao != null ? #temporals.format(d.ultimaDoacao,'dd/MM/yyyy') : 'Nunca doou'}"></td>
+            <td>
+                <a class="btn btn-sm" th:href="@{/doadores/{id}/historico(id=${d.id})}">Histórico / Aptidão</a>
+            </td>
         </tr>
         </tbody>
     </table>

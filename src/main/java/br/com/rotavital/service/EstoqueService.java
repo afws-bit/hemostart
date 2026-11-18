@@ -34,6 +34,12 @@ public class EstoqueService {
                 return "Doador ainda não apto para nova doação";
             }
 
+            TriagemService triagemService = new TriagemService(repo, doadorService);
+            br.com.rotavital.model.TriagemClinica ultimaTriagem = triagemService.buscarUltimaPorDoador(doadorId);
+            if (ultimaTriagem != null && "inapto".equalsIgnoreCase(ultimaTriagem.getResultado())) {
+                return "Doador inapto na triagem";
+            }
+
             BolsaSangue bolsa = new BolsaSangue();
             bolsa.setCodigo(repo.gerarCodigoBolsa());
             bolsa.setTipoSanguineo(doador.getTipoSanguineo());

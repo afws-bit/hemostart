@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrar Triagem - RotaVital</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header><h1>🩸 RotaVital — Banco de Sangue</h1></header>
+<nav>
+    <a th:href="@{/}">Início</a>
+    <a th:href="@{/doadores}">Doadores</a>
+    <a th:href="@{/agendamentos}">Agendamentos</a>
+    <a th:href="@{/triagem}">Triagem</a>
+    <a th:href="@{/coleta}">Coleta</a>
+    <a th:href="@{/estoque}">Estoque</a>
+    <a th:href="@{/estoque/validade}">Validade/Descarte</a>
+    <a th:href="@{/requisicoes}">Fila de Pedidos</a>
+    <a th:href="@{/requisicoes/nova}">Nova Solicitação</a>
+    <a th:href="@{/hospitais}">Hospitais</a>
+    <a th:href="@{/historico}">Histórico</a>
+    <a th:href="@{/historico/rastreio}">Rastreio</a>
+    <a th:href="@{/historico/relatorio}">Relatório</a>
+    <a th:href="@{/estoque/configurar}">Config. Estoque</a>
+    <a th:href="@{/benchmark}">Benchmark</a>
+</nav>
+<div class="container">
+    <div th:if="${sucesso}" class="flash-success" th:text="${sucesso}"></div>
+    <div th:if="${erro}" class="flash-error" th:text="${erro}"></div>
+
+    <h2>Registrar Triagem Clínica Pré-Doação</h2>
+
+    <div class="card">
+        <form method="post" th:action="@{/triagem/salvar}">
+            <label for="doadorId">Doador *</label>
+            <select id="doadorId" name="doadorId" required>
+                <option value="">Selecione o doador</option>
+                <option th:each="d : ${doadores}"
+                        th:value="${d.id}"
+                        th:selected="${d.id == doadorIdSelecionado}"
+                        th:text="${d.nome + ' (' + d.sexo + ') — ' + d.tipoSanguineo + ' (CPF: ' + d.cpf + ')'}">
+                </option>
+            </select>
+
+            <label for="peso">Peso (kg) *</label>
+            <input id="peso" type="number" step="0.1" name="peso" min="30" max="250" placeholder="Ex: 62.0" required>
+
+            <label for="pressaoArterial">Pressão Arterial *</label>
+            <input id="pressaoArterial" type="text" name="pressaoArterial" placeholder="Ex: 120/80" required>
+
+            <label for="temperatura">Temperatura Corporal (°C) *</label>
+            <input id="temperatura" type="number" step="0.1" name="temperatura" min="34" max="42" placeholder="Ex: 36.5" required>
+
+            <label for="hemoglobina">Nível de Hemoglobina (g/dL) *</label>
+            <input id="hemoglobina" type="number" step="0.1" name="hemoglobina" min="5" max="25" placeholder="Ex: 13.2" required>
+
+            <button class="btn" type="submit">Avaliar e Salvar Triagem</button>
+            <a class="btn btn-gray" th:href="@{/triagem}" style="margin-left:8px;">Voltar</a>
+        </form>
+    </div>
+</div>
+</body>
+</html>

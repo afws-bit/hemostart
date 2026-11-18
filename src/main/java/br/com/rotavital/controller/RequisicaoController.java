@@ -69,6 +69,28 @@ public class RequisicaoController {
         return "redirect:/requisicoes";
     }
 
+    @PostMapping("/aprovar/{id}")
+    public String aprovar(@PathVariable("id") String id, RedirectAttributes ra) {
+        String erro = requisicaoService.aprovarRequisicao(id);
+        if (erro != null) {
+            ra.addFlashAttribute("erro", erro);
+        } else {
+            ra.addFlashAttribute("sucesso", "Solicitação aprovada e bolsas reservadas com sucesso!");
+        }
+        return "redirect:/requisicoes";
+    }
+
+    @PostMapping("/recusar/{id}")
+    public String recusar(@PathVariable("id") String id, @RequestParam("motivo") String motivo, RedirectAttributes ra) {
+        String erro = requisicaoService.recusarRequisicao(id, motivo);
+        if (erro != null) {
+            ra.addFlashAttribute("erro", erro);
+        } else {
+            ra.addFlashAttribute("sucesso", "Solicitação recusada com sucesso!");
+        }
+        return "redirect:/requisicoes";
+    }
+
     @PostMapping("/distribuir/{id}")
     public String distribuir(
             @PathVariable String id,

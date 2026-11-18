@@ -10,6 +10,8 @@
 <nav>
     <a th:href="@{/}">Início</a>
     <a th:href="@{/doadores}">Doadores</a>
+    <a th:href="@{/agendamentos}">Agendamentos</a>
+    <a th:href="@{/triagem}">Triagem</a>
     <a th:href="@{/coleta}">Coleta</a>
     <a th:href="@{/estoque}">Estoque</a>
     <a th:href="@{/estoque/validade}">Validade/Descarte</a>
@@ -56,6 +58,8 @@
     <div class="card">
         <h3>Ações Rápidas</h3>
         <a class="btn" th:href="@{/doadores/novo}">Cadastrar Doador</a>
+        <a class="btn" th:href="@{/agendamentos/novo}" style="margin-left:8px;">Agendar Doação</a>
+        <a class="btn" th:href="@{/triagem/nova}" style="margin-left:8px;">Nova Triagem</a>
         <a class="btn" th:href="@{/coleta}" style="margin-left:8px;">Registrar Coleta</a>
         <a class="btn" th:href="@{/requisicoes/nova}" style="margin-left:8px;">Nova Solicitação</a>
         <a class="btn" th:href="@{/estoque/verificar}" style="margin-left:8px;">Verificar Validade Agora</a>

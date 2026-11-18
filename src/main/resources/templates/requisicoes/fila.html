@@ -10,6 +10,8 @@
 <nav>
     <a th:href="@{/}">Início</a>
     <a th:href="@{/doadores}">Doadores</a>
+    <a th:href="@{/agendamentos}">Agendamentos</a>
+    <a th:href="@{/triagem}">Triagem</a>
     <a th:href="@{/coleta}">Coleta</a>
     <a th:href="@{/estoque}">Estoque</a>
     <a th:href="@{/estoque/validade}">Validade/Descarte</a>
@@ -73,7 +75,19 @@
                         <button class="btn btn-sm btn-green" type="submit" style="margin-left:4px;">Confirmar Saída</button>
                     </form>
                 </div>
-                <span th:if="${r.status == 'pendente'}" style="color:#777; font-size:12px;">Aguardando reserva</span>
+                <div th:if="${r.status == 'pendente'}">
+                    <form method="post" th:action="@{/requisicoes/aprovar/{id}(id=${r.id})}" style="display:inline-block; margin-bottom:4px;">
+                        <button class="btn btn-sm btn-green" type="submit">Aprovar</button>
+                    </form>
+                    <form method="post" th:action="@{/requisicoes/recusar/{id}(id=${r.id})}" style="display:inline-block;">
+                        <input type="text" name="motivo" placeholder="Motivo da recusa" required style="width:130px; display:inline; margin:0; padding:3px 5px; font-size:12px;">
+                        <button class="btn btn-sm btn-gray" type="submit">Recusar</button>
+                    </form>
+                </div>
+                <div th:if="${r.status == 'recusada'}">
+                    <span style="color:#721c24; font-size:12px; font-weight:bold;">✕ Recusada</span>
+                    <div th:if="${r.motivoRecusa != null}" style="font-size:11px; color:#666;" th:text="${'Motivo: ' + r.motivoRecusa}"></div>
+                </div>
                 <span th:if="${r.status == 'atendida'}" style="color:green; font-size:12px;">✓ Atendida</span>
             </td>
         </tr>

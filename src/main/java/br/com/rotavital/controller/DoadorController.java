@@ -64,4 +64,18 @@ public class DoadorController {
         ra.addFlashAttribute("sucesso", "Doador cadastrado com sucesso!");
         return "redirect:/doadores";
     }
+
+    @GetMapping("/{id}/historico")
+    public String historico(@PathVariable("id") String id, Model model, RedirectAttributes ra) {
+        Doador doador = doadorService.buscarPorId(id);
+        if (doador == null) {
+            ra.addFlashAttribute("erro", "Doador não encontrado");
+            return "redirect:/doadores";
+        }
+        model.addAttribute("doador", doador);
+        model.addAttribute("doacoes", doadorService.listarDoacoesDoador(id));
+        model.addAttribute("proximaData", doadorService.calcularProximaDataApta(doador));
+        model.addAttribute("apto", doadorService.estaApto(doador));
+        return "doadores/historico";
+    }
 }
