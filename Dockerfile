@@ -21,5 +21,8 @@ WORKDIR /app
 # Copia apenas o .jar gerado no estágio 1
 COPY --from=build /app/target/*.jar app.jar
 
+# Console do H2 desligado em produção (o banco aqui é o PostgreSQL)
+ENV SPRING_H2_CONSOLE_ENABLED=false
+
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -1,50 +1,65 @@
 package br.com.rotavital.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class Agendamento {
+/** HU11 — agendamento de doação em um dia e horário. */
+@Entity
+@Table(name = "agendamento")
+public class Agendamento extends EntidadeBase {
 
-    private String id;
-    private String doadorId;
+    public static final String AGENDADO = "agendado";
+    public static final String CANCELADO = "cancelado";
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "doador_id")
+    private Doador doador;
+
     private LocalDate data;
 
+    @Column(length = 5)
     private String horario; // ex: "09:00"
-    private String status; // "agendado", "cancelado"
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @Column(length = 20)
+    private String status = AGENDADO;
+
     private LocalDateTime dataCriacao;
 
     public Agendamento() {}
 
-    public Agendamento(String id, String doadorId, LocalDate data, String horario, String status) {
-        this.id = id;
-        this.doadorId = doadorId;
-        this.data = data;
-        this.horario = horario;
-        this.status = status;
-        this.dataCriacao = LocalDateTime.now();
+    public static Agendamento novo(Doador doador, LocalDate data, String horario) {
+        Agendamento a = new Agendamento();
+        a.doador = doador;
+        a.data = data;
+        a.horario = horario;
+        a.status = AGENDADO;
+        a.dataCriacao = LocalDateTime.now();
+        return a;
     }
 
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    public void cancelar() {
+        this.status = CANCELADO;
+    }
 
-    public String getDoadorId() { return doadorId; }
-    public void setDoadorId(String doadorId) { this.doadorId = doadorId; }
+    public boolean isAgendado() {
+        return AGENDADO.equals(status);
+    }
 
+    /** Usado pelas telas para mostrar o nome do doador. */
+    public String getDoadorId() {
+        return doador != null ? doador.getId() : null;
+    }
+
+    public Doador getDoador() { return doador; }
     public LocalDate getData() { return data; }
-    public void setData(LocalDate data) { this.data = data; }
-
     public String getHorario() { return horario; }
-    public void setHorario(String horario) { this.horario = horario; }
-
     public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
-
     public LocalDateTime getDataCriacao() { return dataCriacao; }
-    public void setDataCriacao(LocalDateTime dataCriacao) { this.dataCriacao = dataCriacao; }
 }

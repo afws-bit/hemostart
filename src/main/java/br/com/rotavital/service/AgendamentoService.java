@@ -1,91 +1,60 @@
 package br.com.rotavital.service;
 
+import br.com.rotavital.exception.RegraNegocioException;
 import br.com.rotavital.model.Agendamento;
 import br.com.rotavital.model.Doador;
-import br.com.rotavital.repository.JsonDataRepository;
+import br.com.rotavital.repository.AgendamentoRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.List;
-import java.util.UUID;
 
+/** HU11 — agendamento de doação. */
 @Service
 public class AgendamentoService {
 
-    private final JsonDataRepository repo;
+    private final AgendamentoRepository repository;
     private final DoadorService doadorService;
+    private final ConfiguracaoService configuracaoService;
 
-    public AgendamentoService(JsonDataRepository repo, DoadorService doadorService) {
-        this.repo = repo;
+    public AgendamentoService(AgendamentoRepository repository, DoadorService doadorService,
+                              ConfiguracaoService configuracaoService) {
+        this.repository = repository;
         this.doadorService = doadorService;
+        this.configuracaoService = configuracaoService;
     }
 
+    @Transactional(readOnly = true)
     public List<Agendamento> listar() {
-        return repo.getAgendamentos().stream()
-                .sorted(Comparator.comparing(Agendamento::getData, Comparator.nullsLast(Comparator.naturalOrder()))
-                        .thenComparing(Agendamento::getHorario, Comparator.nullsLast(Comparator.naturalOrder())))
-                .toList();
+        return repository.findAllByOrderByDataAscHorarioAsc();
     }
 
-    public Agendamento buscarPorId(String id) {
-        return repo.getAgendamentos().stream()
-                .filter(a -> a.getId().equals(id))
-                .findFirst().orElse(null);
-    }
-
-    public String agendar(String doadorId, LocalDate data, String horario) {
-        repo.getLock().lock();
-        try {
-            Doador doador = doadorService.buscarPorId(doadorId);
-            if (doador == null) {
-                return "Doador não encontrado";
-            }
-
-            if (!doadorService.aptoPorIntervaloNaData(doador, data)) {
-                return "Doador ainda não apto para nova doação";
-            }
-
-            int limiteVagas = repo.getConfiguracao().getLimiteVagasPorHorario();
-            long ocupadas = repo.getAgendamentos().stream()
-                    .filter(a -> "agendado".equals(a.getStatus()))
-                    .filter(a -> a.getData() != null && a.getData().equals(data))
-                    .filter(a -> a.getHorario() != null && a.getHorario().equals(horario))
-                    .count();
-
-            if (ocupadas >= limiteVagas) {
-                return "Horário indisponível";
-            }
-
-            Agendamento agendamento = new Agendamento();
-            agendamento.setId(UUID.randomUUID().toString());
-            agendamento.setDoadorId(doadorId);
-            agendamento.setData(data);
-            agendamento.setHorario(horario);
-            agendamento.setStatus("agendado");
-            agendamento.setDataCriacao(LocalDateTime.now());
-
-            repo.getAgendamentos().add(agendamento);
-            repo.gravar();
-            return null;
-        } finally {
-            repo.getLock().unlock();
+    @Transactional
+    public synchronized Agendamento agendar(String doadorId, LocalDate data, String horario) {
+        Doador doador = doadorService.buscarPorId(doadorId);
+        if (data == null || horario == null || horario.isBlank()) {
+            throw new RegraNegocioException("Informe a data e o horário");
         }
+        if (data.isBefore(LocalDate.now())) {
+            throw new RegraNegocioException("Não é possível agendar em data passada");
+        }
+        if (!doador.aptoPorIntervalo(data)) {
+            throw new RegraNegocioException("Doador ainda não apto para nova doação");
+        }
+        int limite = configuracaoService.obter().getLimiteVagasPorHorario();
+        long ocupadas = repository.countByStatusAndDataAndHorario(Agendamento.AGENDADO, data, horario);
+        if (ocupadas >= limite) {
+            throw new RegraNegocioException("Horário indisponível");
+        }
+        return repository.save(Agendamento.novo(doador, data, horario));
     }
 
-    public String cancelar(String id) {
-        repo.getLock().lock();
-        try {
-            Agendamento a = buscarPorId(id);
-            if (a == null) {
-                return "Agendamento não encontrado";
-            }
-            a.setStatus("cancelado");
-            repo.gravar();
-            return null;
-        } finally {
-            repo.getLock().unlock();
-        }
+    @Transactional
+    public void cancelar(String id) {
+        Agendamento a = repository.findById(id)
+                .orElseThrow(() -> new RegraNegocioException("Agendamento não encontrado"));
+        a.cancelar();
+        repository.save(a);
     }
 }

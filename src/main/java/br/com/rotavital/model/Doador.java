@@ -1,32 +1,82 @@
 package br.com.rotavital.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 import java.time.LocalDate;
+import java.time.Period;
 
-public class Doador {
+@Entity
+@Table(name = "doador")
+public class Doador extends EntidadeBase {
 
-    private String id;
+    public static final int IDADE_MINIMA = 16;
+    public static final int IDADE_MAXIMA = 69;
+    public static final int IDADE_MAXIMA_PRIMEIRA_DOACAO = 59;
+    public static final double PESO_MINIMO = 50.0;
+    public static final int INTERVALO_DIAS_HOMEM = 60;
+    public static final int INTERVALO_DIAS_MULHER = 90;
+
+    @Column(nullable = false)
     private String nome;
+
+    @Column(nullable = false, unique = true, length = 11)
     private String cpf;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dataNascimento;
 
+    @Column(length = 1)
     private String sexo; // M ou F
+
+    @Column(length = 3)
     private String tipoSanguineo;
+
     private double peso;
     private String contato;
-    private String historicoSaude;
-    private boolean autorizacaoResponsavel;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Column(length = 1000)
+    private String historicoSaude;
+
+    private boolean autorizacaoResponsavel;
     private LocalDate ultimaDoacao;
 
     public Doador() {}
 
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    // ===================== Regras de negócio =====================
+
+    public int idadeEm(LocalDate data) {
+        return Period.between(dataNascimento, data).getYears();
+    }
+
+    public boolean isPrimeiraDoacao() {
+        return ultimaDoacao == null;
+    }
+
+    /** Intervalo mínimo entre doações: 60 dias (homens) ou 90 dias (mulheres). */
+    public int intervaloMinimoDias() {
+        return "F".equalsIgnoreCase(sexo) ? INTERVALO_DIAS_MULHER : INTERVALO_DIAS_HOMEM;
+    }
+
+    public boolean aptoPorIntervalo(LocalDate hoje) {
+        if (isPrimeiraDoacao()) return true;
+        return !hoje.isBefore(ultimaDoacao.plusDays(intervaloMinimoDias()));
+    }
+
+    /** Primeira data em que pode doar de novo (hoje, se nunca doou). */
+    public LocalDate proximaDataApta(LocalDate hoje) {
+        return isPrimeiraDoacao() ? hoje : ultimaDoacao.plusDays(intervaloMinimoDias());
+    }
+
+    public void registrarDoacao(LocalDate data) {
+        this.ultimaDoacao = data;
+    }
+
+    public TipoSanguineo getTipo() {
+        return TipoSanguineo.deRotulo(tipoSanguineo);
+    }
+
+    // ===================== Getters / Setters =====================
 
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }

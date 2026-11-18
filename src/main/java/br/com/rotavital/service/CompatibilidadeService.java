@@ -1,83 +1,74 @@
 package br.com.rotavital.service;
 
+import br.com.rotavital.aed.MatrizCompatibilidade;
 import br.com.rotavital.model.BolsaSangue;
 import br.com.rotavital.model.Configuracao;
-import br.com.rotavital.repository.JsonDataRepository;
+import br.com.rotavital.model.StatusBolsa;
+import br.com.rotavital.model.TipoSanguineo;
+import br.com.rotavital.repository.BolsaSangueRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class CompatibilidadeService {
 
-    private static final Map<String, List<String>> TABELA = new HashMap<>();
+    private final BolsaSangueRepository bolsaRepository;
+    private final ConfiguracaoService configuracaoService;
 
-    static {
-        TABELA.put("O-",  Arrays.asList("O-","O+","A-","A+","B-","B+","AB-","AB+"));
-        TABELA.put("O+",  Arrays.asList("O+","A+","B+","AB+"));
-        TABELA.put("A-",  Arrays.asList("A-","A+","AB-","AB+"));
-        TABELA.put("A+",  Arrays.asList("A+","AB+"));
-        TABELA.put("B-",  Arrays.asList("B-","B+","AB-","AB+"));
-        TABELA.put("B+",  Arrays.asList("B+","AB+"));
-        TABELA.put("AB-", Arrays.asList("AB-","AB+"));
-        TABELA.put("AB+", Arrays.asList("AB+"));
+    public CompatibilidadeService(BolsaSangueRepository bolsaRepository,
+                                  ConfiguracaoService configuracaoService) {
+        this.bolsaRepository = bolsaRepository;
+        this.configuracaoService = configuracaoService;
     }
 
-    private final JsonDataRepository repo;
-
-    public CompatibilidadeService(JsonDataRepository repo) {
-        this.repo = repo;
-    }
-
+    /** HU04 — consulta a matriz de compatibilidade ABO/Rh (AED U2). */
     public boolean compativel(String tipoBolsa, String tipoReceptor) {
-        List<String> receptores = TABELA.get(tipoBolsa);
-        return receptores != null && receptores.contains(tipoReceptor);
+        return MatrizCompatibilidade.compativel(tipoBolsa, tipoReceptor);
     }
 
+    /**
+     * HU04 — sugere bolsas compatíveis seguindo FEFO (First Expire, First Out):
+     * primeiro as do mesmo tipo, depois as de outros tipos compatíveis,
+     * sempre da validade mais próxima para a mais distante.
+     */
+    @Transactional(readOnly = true)
     public List<BolsaSangue> sugerirBolsas(String tipoReceptor, int quantidade) {
-        List<BolsaSangue> disponiveis = repo.getEstoque().paraLista().stream()
-                .filter(b -> "disponivel".equals(b.getStatus()))
+        List<BolsaSangue> disponiveis = bolsaRepository.findByStatusOrderByDataValidadeAsc(StatusBolsa.DISPONIVEL)
+                .stream()
                 .filter(b -> compativel(b.getTipoSanguineo(), tipoReceptor))
                 .toList();
 
-        // FEFO: mesmo tipo primeiro, depois outros
-        List<BolsaSangue> mesmoTipo = disponiveis.stream()
-                .filter(b -> b.getTipoSanguineo().equals(tipoReceptor))
-                .sorted(Comparator.comparing(BolsaSangue::getDataValidade))
-                .toList();
-
-        List<BolsaSangue> outrosTipos = disponiveis.stream()
-                .filter(b -> !b.getTipoSanguineo().equals(tipoReceptor))
-                .sorted(Comparator.comparing(BolsaSangue::getDataValidade))
-                .toList();
-
         List<BolsaSangue> selecionadas = new ArrayList<>();
-        selecionadas.addAll(mesmoTipo);
-        selecionadas.addAll(outrosTipos);
+        disponiveis.stream().filter(b -> b.getTipoSanguineo().equals(tipoReceptor)).forEach(selecionadas::add);
+        disponiveis.stream().filter(b -> !b.getTipoSanguineo().equals(tipoReceptor)).forEach(selecionadas::add);
 
         return selecionadas.stream().limit(quantidade).toList();
     }
 
+    /** HU03 + HU10 — contagem por tipo e status e alerta de estoque crítico. */
+    @Transactional(readOnly = true)
     public Map<String, Object> gerarPainelEstoque() {
-        List<BolsaSangue> todas = repo.getEstoque().paraLista();
-        Configuracao config = repo.getConfiguracao();
-        String[] tipos = {"A+","A-","B+","B-","AB+","AB-","O+","O-"};
+        List<BolsaSangue> todas = bolsaRepository.findAll();
+        Configuracao config = configuracaoService.obter();
 
         Map<String, Map<String, Long>> painel = new LinkedHashMap<>();
         Map<String, Boolean> alertas = new LinkedHashMap<>();
 
-        for (String tipo : tipos) {
-            Map<String, Long> counts = new LinkedHashMap<>();
-            counts.put("disponivel", todas.stream().filter(b -> b.getTipoSanguineo().equals(tipo) && "disponivel".equals(b.getStatus())).count());
-            counts.put("reservada", todas.stream().filter(b -> b.getTipoSanguineo().equals(tipo) && "reservada".equals(b.getStatus())).count());
-            counts.put("distribuida", todas.stream().filter(b -> b.getTipoSanguineo().equals(tipo) && "distribuida".equals(b.getStatus())).count());
-            counts.put("vencida", todas.stream().filter(b -> b.getTipoSanguineo().equals(tipo) && "vencida".equals(b.getStatus())).count());
-            counts.put("descartada", todas.stream().filter(b -> b.getTipoSanguineo().equals(tipo) && "descartada".equals(b.getStatus())).count());
-            painel.put(tipo, counts);
-
-            int minimo = config.getMinimoEstoque().getOrDefault(tipo, 0);
-            long disponivelCount = counts.get("disponivel");
-            alertas.put(tipo, disponivelCount < minimo);
+        for (String tipo : TipoSanguineo.rotulos()) {
+            Map<String, Long> contagem = new LinkedHashMap<>();
+            for (StatusBolsa status : StatusBolsa.values()) {
+                long qtd = todas.stream()
+                        .filter(b -> b.getTipoSanguineo().equals(tipo) && b.getStatus() == status)
+                        .count();
+                contagem.put(status.getChave(), qtd);
+            }
+            painel.put(tipo, contagem);
+            alertas.put(tipo, config.estoqueCritico(tipo, contagem.get(StatusBolsa.DISPONIVEL.getChave())));
         }
 
         Map<String, Object> resultado = new LinkedHashMap<>();

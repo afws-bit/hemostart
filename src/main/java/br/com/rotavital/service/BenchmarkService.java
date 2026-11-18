@@ -1,8 +1,7 @@
 package br.com.rotavital.service;
 
 import br.com.rotavital.model.BolsaSangue;
-import br.com.rotavital.repository.JsonDataRepository;
-import org.springframework.scheduling.annotation.Scheduled;
+import br.com.rotavital.model.StatusBolsa;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -11,12 +10,6 @@ import java.util.concurrent.atomic.*;
 
 @Service
 public class BenchmarkService {
-
-    private final JsonDataRepository repo;
-
-    public BenchmarkService(JsonDataRepository repo) {
-        this.repo = repo;
-    }
 
     public Map<String, Object> executarBenchmark() throws InterruptedException {
         int massaSize = 2_000_000;
@@ -133,7 +126,7 @@ public class BenchmarkService {
             b.setDataColeta(base);
             int offset = rng.nextInt(60) - 15;
             b.setDataValidade(base.plusDays(validades[ci] + offset));
-            b.setStatus("disponivel");
+            b.setStatus(StatusBolsa.DISPONIVEL);
             lista.add(b);
         }
         return lista;

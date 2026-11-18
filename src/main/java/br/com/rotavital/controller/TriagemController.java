@@ -1,6 +1,6 @@
 package br.com.rotavital.controller;
 
-import br.com.rotavital.model.Doador;
+import br.com.rotavital.exception.RegraNegocioException;
 import br.com.rotavital.model.TriagemClinica;
 import br.com.rotavital.service.DoadorService;
 import br.com.rotavital.service.TriagemService;
@@ -46,12 +46,12 @@ public class TriagemController {
 
         try {
             TriagemClinica triagem = triagemService.registrarTriagem(doadorId, peso, pressaoArterial, temperatura, hemoglobina);
-            if ("apto".equalsIgnoreCase(triagem.getResultado())) {
+            if (triagem.isApto()) {
                 ra.addFlashAttribute("sucesso", "Triagem registrada com sucesso: Doador apto para doação!");
             } else {
                 ra.addFlashAttribute("erro", "Doador classificado como inapto na triagem. Motivo: " + triagem.getMotivoInaptidao());
             }
-        } catch (Exception e) {
+        } catch (RegraNegocioException e) {
             ra.addFlashAttribute("erro", e.getMessage());
             return "redirect:/triagem/nova" + (doadorId != null ? "?doadorId=" + doadorId : "");
         }

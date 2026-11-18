@@ -1,5 +1,6 @@
 package br.com.rotavital.controller;
 
+import br.com.rotavital.model.TipoSanguineo;
 import br.com.rotavital.service.HistoricoService;
 import br.com.rotavital.service.HospitalService;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -56,7 +57,10 @@ public class HistoricoController {
         model.addAttribute("fim", fim);
         model.addAttribute("tipoSanguineo", tipoSanguineo);
         model.addAttribute("hospitalId", hospitalId);
-        model.addAttribute("tipos", new String[]{"TODOS","A+","A-","B+","B-","AB+","AB-","O+","O-"});
+        String[] tipos = new String[TipoSanguineo.values().length + 1];
+        tipos[0] = "TODOS";
+        System.arraycopy(TipoSanguineo.rotulos(), 0, tipos, 1, TipoSanguineo.values().length);
+        model.addAttribute("tipos", tipos);
         model.addAttribute("hospitais", hospitalService.listar());
         return "historico/relatorio";
     }

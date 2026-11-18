@@ -1,34 +1,98 @@
 package br.com.rotavital.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 import java.time.LocalDateTime;
 
-public class Requisicao {
+@Entity
+@Table(name = "requisicao")
+public class Requisicao extends EntidadeBase {
 
-    private String id;
-    private String hospitalId;
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "hospital_id")
+    private Hospital hospital;
+
+    @Column(length = 3)
     private String tipoSanguineo;
+
     private int quantidade;
     private boolean urgente;
-    private String status; // pendente, aprovada, atendida, cancelada
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private StatusRequisicao status = StatusRequisicao.PENDENTE;
+
     private LocalDateTime dataSolicitacao;
-
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime dataAtendimento;
-
     private String responsavelDistribuicao;
+
+    /** Rota calculada pela roteirização (AED U2) na hora da reserva. */
+    @Column(length = 500)
+    private String rotaEntrega;
+
+    private Integer distanciaKm;
+
+    /** HU13 — motivo informado ao recusar a solicitação. */
+    @Column(length = 500)
     private String motivoRecusa;
 
     public Requisicao() {}
 
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    public static Requisicao nova(Hospital hospital, String tipoSanguineo, int quantidade, boolean urgente) {
+        Requisicao r = new Requisicao();
+        r.hospital = hospital;
+        r.tipoSanguineo = tipoSanguineo;
+        r.quantidade = quantidade;
+        r.urgente = urgente;
+        r.status = StatusRequisicao.PENDENTE;
+        r.dataSolicitacao = LocalDateTime.now();
+        return r;
+    }
 
-    public String getHospitalId() { return hospitalId; }
-    public void setHospitalId(String hospitalId) { this.hospitalId = hospitalId; }
+    // ===================== Regras de negócio =====================
+
+    public void aprovar() {
+        this.status = StatusRequisicao.APROVADA;
+    }
+
+    /** HU13 — só pedidos pendentes podem ser recusados, e o motivo é obrigatório. */
+    public void recusar(String motivo) {
+        this.status = StatusRequisicao.RECUSADA;
+        this.motivoRecusa = motivo;
+    }
+
+    public void registrarRota(String descricao, Integer km) {
+        this.rotaEntrega = descricao;
+        this.distanciaKm = km;
+    }
+
+    public void atender(String responsavel) {
+        this.status = StatusRequisicao.ATENDIDA;
+        this.dataAtendimento = LocalDateTime.now();
+        this.responsavelDistribuicao = responsavel;
+    }
+
+    public boolean isPendente() { return status == StatusRequisicao.PENDENTE; }
+    public boolean isAprovada() { return status == StatusRequisicao.APROVADA; }
+    public boolean isAtendida() { return status == StatusRequisicao.ATENDIDA; }
+    public boolean isRecusada() { return status == StatusRequisicao.RECUSADA; }
+
+    /** Mantido para compatibilidade com as telas e com a FilaRequisicoes. */
+    public String getHospitalId() {
+        return hospital != null ? hospital.getId() : null;
+    }
+
+    // ===================== Getters / Setters =====================
+
+    public Hospital getHospital() { return hospital; }
+    public void setHospital(Hospital hospital) { this.hospital = hospital; }
 
     public String getTipoSanguineo() { return tipoSanguineo; }
     public void setTipoSanguineo(String tipoSanguineo) { this.tipoSanguineo = tipoSanguineo; }
@@ -39,8 +103,8 @@ public class Requisicao {
     public boolean isUrgente() { return urgente; }
     public void setUrgente(boolean urgente) { this.urgente = urgente; }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public StatusRequisicao getStatus() { return status; }
+    public void setStatus(StatusRequisicao status) { this.status = status; }
 
     public LocalDateTime getDataSolicitacao() { return dataSolicitacao; }
     public void setDataSolicitacao(LocalDateTime dataSolicitacao) { this.dataSolicitacao = dataSolicitacao; }
@@ -48,9 +112,10 @@ public class Requisicao {
     public LocalDateTime getDataAtendimento() { return dataAtendimento; }
     public void setDataAtendimento(LocalDateTime dataAtendimento) { this.dataAtendimento = dataAtendimento; }
 
+    public String getRotaEntrega() { return rotaEntrega; }
+    public Integer getDistanciaKm() { return distanciaKm; }
+    public String getMotivoRecusa() { return motivoRecusa; }
+
     public String getResponsavelDistribuicao() { return responsavelDistribuicao; }
     public void setResponsavelDistribuicao(String responsavelDistribuicao) { this.responsavelDistribuicao = responsavelDistribuicao; }
-
-    public String getMotivoRecusa() { return motivoRecusa; }
-    public void setMotivoRecusa(String motivoRecusa) { this.motivoRecusa = motivoRecusa; }
 }

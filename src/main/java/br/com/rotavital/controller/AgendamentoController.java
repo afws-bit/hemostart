@@ -1,6 +1,6 @@
 package br.com.rotavital.controller;
 
-import br.com.rotavital.model.Doador;
+import br.com.rotavital.exception.RegraNegocioException;
 import br.com.rotavital.service.AgendamentoService;
 import br.com.rotavital.service.DoadorService;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Controller
 @RequestMapping("/agendamentos")
@@ -50,9 +49,10 @@ public class AgendamentoController {
             @RequestParam("horario") String horario,
             RedirectAttributes ra) {
 
-        String erro = agendamentoService.agendar(doadorId, data, horario);
-        if (erro != null) {
-            ra.addFlashAttribute("erro", erro);
+        try {
+            agendamentoService.agendar(doadorId, data, horario);
+        } catch (RegraNegocioException e) {
+            ra.addFlashAttribute("erro", e.getMessage());
             return "redirect:/agendamentos/novo" + (doadorId != null ? "?doadorId=" + doadorId : "");
         }
         ra.addFlashAttribute("sucesso", "Agendamento realizado com sucesso!");
@@ -61,11 +61,11 @@ public class AgendamentoController {
 
     @PostMapping("/cancelar/{id}")
     public String cancelar(@PathVariable("id") String id, RedirectAttributes ra) {
-        String erro = agendamentoService.cancelar(id);
-        if (erro != null) {
-            ra.addFlashAttribute("erro", erro);
-        } else {
+        try {
+            agendamentoService.cancelar(id);
             ra.addFlashAttribute("sucesso", "Agendamento cancelado com sucesso!");
+        } catch (RegraNegocioException e) {
+            ra.addFlashAttribute("erro", e.getMessage());
         }
         return "redirect:/agendamentos";
     }

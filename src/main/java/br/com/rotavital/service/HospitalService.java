@@ -1,62 +1,66 @@
 package br.com.rotavital.service;
 
+import br.com.rotavital.exception.RegraNegocioException;
 import br.com.rotavital.model.Hospital;
-import br.com.rotavital.repository.JsonDataRepository;
+import br.com.rotavital.repository.HospitalRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class HospitalService {
 
-    private final JsonDataRepository repo;
+    private final HospitalRepository repository;
 
-    public HospitalService(JsonDataRepository repo) {
-        this.repo = repo;
+    public HospitalService(HospitalRepository repository) {
+        this.repository = repository;
     }
 
+    @Transactional(readOnly = true)
     public List<Hospital> listar() {
-        return repo.getHospitais();
+        return repository.findAllByOrderByRazaoSocialAsc();
     }
 
+    @Transactional(readOnly = true)
+    public List<Hospital> listarAtivos() {
+        return repository.findByAtivoTrueOrderByRazaoSocialAsc();
+    }
+
+    @Transactional(readOnly = true)
     public Hospital buscarPorId(String id) {
-        return repo.getHospitais().stream()
-                .filter(h -> h.getId().equals(id))
-                .findFirst().orElse(null);
+        return repository.findById(id).orElse(null);
     }
 
+    @Transactional(readOnly = true)
     public Hospital buscarPorCnpj(String cnpj) {
-        String cnpjLimpo = limparCnpj(cnpj);
-        return repo.getHospitais().stream()
-                .filter(h -> limparCnpj(h.getCnpj()).equals(cnpjLimpo))
-                .findFirst().orElse(null);
+        return repository.findByCnpj(somenteDigitos(cnpj)).orElse(null);
     }
 
-    public String cadastrar(Hospital hospital) {
-        String cnpjLimpo = limparCnpj(hospital.getCnpj());
-        for (Hospital h : repo.getHospitais()) {
-            if (limparCnpj(h.getCnpj()).equals(cnpjLimpo)) {
-                return "CNPJ já cadastrado";
-            }
+    /** HU09 — CNPJ único; todo hospital nasce ativo. */
+    @Transactional
+    public Hospital cadastrar(Hospital hospital) {
+        String cnpjLimpo = somenteDigitos(hospital.getCnpj());
+        if (cnpjLimpo.length() != 14) {
+            throw new RegraNegocioException("CNPJ deve conter 14 dígitos");
         }
-        hospital.setId(UUID.randomUUID().toString());
+        if (repository.existsByCnpj(cnpjLimpo)) {
+            throw new RegraNegocioException("CNPJ já cadastrado");
+        }
         hospital.setCnpj(cnpjLimpo);
         hospital.setAtivo(true);
-        repo.getHospitais().add(hospital);
-        repo.gravar();
-        return null;
+        return repository.save(hospital);
     }
 
+    @Transactional
     public void alternarStatus(String id) {
-        Hospital h = buscarPorId(id);
-        if (h != null) {
-            h.setAtivo(!h.isAtivo());
-            repo.gravar();
-        }
+        Hospital h = repository.findById(id)
+                .orElseThrow(() -> new RegraNegocioException("Hospital não encontrado"));
+        h.alternarStatus();
+        repository.save(h);
     }
 
-    private String limparCnpj(String cnpj) {
-        return cnpj == null ? "" : cnpj.replaceAll("[^0-9]", "");
+    private String somenteDigitos(String valor) {
+        return valor == null ? "" : valor.replaceAll("[^0-9]", "");
     }
 }

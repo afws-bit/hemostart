@@ -1,14 +1,24 @@
 package br.com.rotavital.service;
 
+import br.com.rotavital.dto.EstatisticaDesperdicioDTO;
+import br.com.rotavital.dto.EstatisticasGeraisDTO;
+import br.com.rotavital.estruturas.ListaEncadeada;
+import br.com.rotavital.exception.RegraNegocioException;
 import br.com.rotavital.model.BolsaSangue;
+import br.com.rotavital.model.Componente;
 import br.com.rotavital.model.Doador;
-import br.com.rotavital.model.HistoricoOperacao;
-import br.com.rotavital.repository.JsonDataRepository;
+import br.com.rotavital.model.StatusBolsa;
+import br.com.rotavital.model.TipoOperacao;
+import br.com.rotavital.repository.BolsaSangueRepository;
+import br.com.rotavital.repository.DoadorRepository;
+import br.com.rotavital.repository.TriagemClinicaRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,202 +27,173 @@ import java.util.stream.Collectors;
 @Service
 public class EstoqueService {
 
-    private final JsonDataRepository repo;
-    private final Comparator<BolsaSangue> porValidade = Comparator.comparing(BolsaSangue::getDataValidade);
+    private static final Comparator<BolsaSangue> POR_VALIDADE = Comparator.comparing(BolsaSangue::getDataValidade);
 
-    public EstoqueService(JsonDataRepository repo) {
-        this.repo = repo;
+    private final BolsaSangueRepository bolsaRepository;
+    private final DoadorRepository doadorRepository;
+    private final HistoricoService historicoService;
+    private final TriagemClinicaRepository triagemRepository;
+
+    public EstoqueService(BolsaSangueRepository bolsaRepository,
+                          DoadorRepository doadorRepository,
+                          HistoricoService historicoService,
+                          TriagemClinicaRepository triagemRepository) {
+        this.bolsaRepository = bolsaRepository;
+        this.doadorRepository = doadorRepository;
+        this.historicoService = historicoService;
+        this.triagemRepository = triagemRepository;
     }
 
-    public String registrarColeta(String doadorId, String componente, int volume) {
-        repo.getLock().lock();
-        try {
-            DoadorService doadorService = new DoadorService(repo);
-            Doador doador = doadorService.buscarPorId(doadorId);
-            if (doador == null) return "Doador não encontrado";
-            if (!doadorService.aptoPorIntervalo(doador)) {
-                return "Doador ainda não apto para nova doação";
-            }
-
-            TriagemService triagemService = new TriagemService(repo, doadorService);
-            br.com.rotavital.model.TriagemClinica ultimaTriagem = triagemService.buscarUltimaPorDoador(doadorId);
-            if (ultimaTriagem != null && "inapto".equalsIgnoreCase(ultimaTriagem.getResultado())) {
-                return "Doador inapto na triagem";
-            }
-
-            BolsaSangue bolsa = new BolsaSangue();
-            bolsa.setCodigo(repo.gerarCodigoBolsa());
-            bolsa.setTipoSanguineo(doador.getTipoSanguineo());
-            bolsa.setComponente(componente);
-            bolsa.setVolume(volume);
-            bolsa.setDoadorId(doadorId);
-            bolsa.setDataColeta(LocalDate.now());
-            bolsa.setDataValidade(LocalDate.now().plusDays(repo.validadeDias(componente)));
-            bolsa.setStatus("disponivel");
-
-            repo.getEstoque().inserirOrdenado(bolsa, porValidade);
-            doador.setUltimaDoacao(LocalDate.now());
-
-            HistoricoOperacao h = new HistoricoOperacao(
-                    "COLETA", bolsa.getCodigo(),
-                    "Coleta registrada para " + doador.getNome() + " - " + componente
-            );
-            repo.getHistoricoStack().empilhar(h);
-            repo.gravar();
-            return null;
-        } finally {
-            repo.getLock().unlock();
+    /** HU02 — registra a coleta, gera o código único e grava a bolsa no banco. */
+    @Transactional
+    public synchronized BolsaSangue registrarColeta(String doadorId, String componente, int volume) {
+        Doador doador = doadorRepository.findById(doadorId)
+                .orElseThrow(() -> new RegraNegocioException("Doador não encontrado"));
+        LocalDate hoje = LocalDate.now();
+        if (!doador.aptoPorIntervalo(hoje)) {
+            throw new RegraNegocioException("Doador ainda não apto para nova doação");
         }
+        // HU12 — a triagem mais recente bloqueia a coleta se o doador saiu inapto
+        triagemRepository.findTopByDoador_IdOrderByDataHoraDesc(doadorId).ifPresent(t -> {
+            if (!t.isApto()) throw new RegraNegocioException("Doador inapto na triagem");
+        });
+        if (volume <= 0) {
+            throw new RegraNegocioException("Volume deve ser maior que zero");
+        }
+
+        BolsaSangue bolsa = BolsaSangue.coletar(gerarCodigoBolsa(), doador,
+                Componente.deDescricao(componente), volume, hoje);
+        bolsaRepository.save(bolsa);
+
+        doador.registrarDoacao(hoje);
+        doadorRepository.save(doador);
+
+        historicoService.registrar(TipoOperacao.COLETA, bolsa.getCodigo(),
+                "Coleta registrada para " + doador.getNome() + " - " + bolsa.getComponente());
+        return bolsa;
     }
 
+    /** Próximo código sequencial BS-00001, BS-00002... a partir do maior já gravado. */
+    public String gerarCodigoBolsa() {
+        int ultimo = bolsaRepository.findTopByOrderByCodigoDesc()
+                .map(BolsaSangue::getCodigo)
+                .filter(c -> c.startsWith("BS-"))
+                .map(c -> Integer.parseInt(c.substring(3)))
+                .orElse(0);
+        return String.format("BS-%05d", ultimo + 1);
+    }
+
+    /** Lê todas as bolsas do banco e as organiza em uma ListaEncadeada ordenada por validade (FEFO). */
+    @Transactional(readOnly = true)
     public List<BolsaSangue> listarEstoque() {
-        return repo.getEstoque().paraLista();
+        ListaEncadeada<BolsaSangue> lista = new ListaEncadeada<>();
+        bolsaRepository.findAll().forEach(b -> lista.inserirOrdenado(b, POR_VALIDADE));
+        return lista.paraLista();
     }
 
+    @Transactional(readOnly = true)
     public BolsaSangue buscarPorCodigo(String codigo) {
-        return repo.getEstoque().buscar(b -> b.getCodigo().equals(codigo));
+        return bolsaRepository.findById(codigo).orElse(null);
     }
 
+    /** HU03 / HU07 — verificação periódica de validade (chamada pelo ValidadeScheduler). */
+    @Transactional
     public void verificarValidade() {
-        repo.getLock().lock();
-        try {
-            LocalDate hoje = LocalDate.now();
-            List<BolsaSangue> bolsas = repo.getEstoque().paraLista();
-            for (BolsaSangue b : bolsas) {
-                if ("disponivel".equals(b.getStatus()) || "reservada".equals(b.getStatus())) {
-                    if (!b.getDataValidade().isAfter(hoje)) {
-                        b.setStatus("vencida");
-                        b.setUsoPrioritario(false);
-                        HistoricoOperacao h = new HistoricoOperacao(
-                                "VENCIMENTO", b.getCodigo(),
-                                "Bolsa vencida em " + b.getDataValidade()
-                        );
-                        repo.getHistoricoStack().empilhar(h);
-                    } else if ("disponivel".equals(b.getStatus())) {
-                        long diasRestantes = hoje.until(b.getDataValidade()).getDays();
-                        b.setUsoPrioritario(diasRestantes <= 5);
-                    }
-                }
+        LocalDate hoje = LocalDate.now();
+        List<BolsaSangue> ativas = bolsaRepository.findByStatusInOrderByDataValidadeAsc(
+                EnumSet.of(StatusBolsa.DISPONIVEL, StatusBolsa.RESERVADA));
+        for (BolsaSangue b : ativas) {
+            if (b.atualizarValidade(hoje)) {
+                historicoService.registrar(TipoOperacao.VENCIMENTO, b.getCodigo(),
+                        "Bolsa vencida em " + b.getDataValidade());
             }
-            repo.gravar();
-        } finally {
-            repo.getLock().unlock();
         }
+        bolsaRepository.saveAll(ativas);
     }
 
-    public String descartar(String codigo, String responsavel) {
-        repo.getLock().lock();
-        try {
-            BolsaSangue b = buscarPorCodigo(codigo);
-            if (b == null) return "Bolsa não encontrada";
-            if ("descartada".equals(b.getStatus())) return "Bolsa já foi descartada";
-            b.setStatus("descartada");
-            b.setDataDescarte(java.time.LocalDateTime.now());
-            b.setResponsavelDescarte(responsavel);
-            b.setUsoPrioritario(false);
-            HistoricoOperacao h = new HistoricoOperacao(
-                    "DESCARTE", b.getCodigo(),
-                    "Descartada por " + responsavel
-            );
-            repo.getHistoricoStack().empilhar(h);
-            repo.gravar();
-            return null;
-        } finally {
-            repo.getLock().unlock();
+    /** HU07 — descarte confirmado pelo responsável técnico. */
+    @Transactional
+    public void descartar(String codigo, String responsavel) {
+        if (responsavel == null || responsavel.isBlank()) {
+            throw new RegraNegocioException("Informe o responsável pelo descarte");
         }
+        BolsaSangue b = bolsaRepository.findById(codigo)
+                .orElseThrow(() -> new RegraNegocioException("Bolsa não encontrada"));
+        b.descartar(responsavel);
+        bolsaRepository.save(b);
+        historicoService.registrar(TipoOperacao.DESCARTE, b.getCodigo(), "Descartada por " + responsavel);
     }
 
+    @Transactional(readOnly = true)
     public List<BolsaSangue> bolsasVencidas() {
-        return repo.getEstoque().paraLista().stream()
-                .filter(b -> "vencida".equals(b.getStatus()))
-                .toList();
+        return bolsaRepository.findByStatusOrderByDataValidadeAsc(StatusBolsa.VENCIDA);
     }
 
+    @Transactional(readOnly = true)
     public List<BolsaSangue> bolsasUsoPrioritario() {
-        return repo.getEstoque().paraLista().stream()
-                .filter(b -> b.isUsoPrioritario() && "disponivel".equals(b.getStatus()))
-                .toList();
+        return bolsaRepository.findByStatusAndUsoPrioritarioTrueOrderByDataValidadeAsc(StatusBolsa.DISPONIVEL);
     }
 
     // =====================================================================
     // MÉTODOS DE ESTATÍSTICA (EST)
     // =====================================================================
 
-    public br.com.rotavital.dto.EstatisticaDesperdicioDTO calcularEstatisticasDesperdicio() {
-        // 1. Busca todas as bolsas
-        List<BolsaSangue> todasBolsas = repo.getEstoque().paraLista();
+    private boolean isDesperdicio(BolsaSangue b) {
+        return b.getStatus() == StatusBolsa.DESCARTADA || b.getStatus() == StatusBolsa.VENCIDA;
+    }
 
-        // 2. Filtra as descartadas e vencidas
-        List<BolsaSangue> descartadas = todasBolsas.stream()
-                .filter(b -> "descartada".equals(b.getStatus()) || "vencida".equals(b.getStatus()))
+    @Transactional(readOnly = true)
+    public EstatisticaDesperdicioDTO calcularEstatisticasDesperdicio() {
+        List<BolsaSangue> descartadas = bolsaRepository.findAll().stream()
+                .filter(this::isDesperdicio)
                 .collect(Collectors.toList());
 
         if (descartadas.isEmpty()) {
-            return new br.com.rotavital.dto.EstatisticaDesperdicioDTO(0, 0, 0, 0, new HashMap<>());
+            return new EstatisticaDesperdicioDTO(0, 0, 0, 0, new HashMap<>());
         }
 
-        // 3. Agrupa por tipo sanguíneo para o gráfico
         Map<String, Long> descartePorTipo = descartadas.stream()
                 .collect(Collectors.groupingBy(BolsaSangue::getTipoSanguineo, Collectors.counting()));
 
-        // 4. Extrai a quantidade (vamos simular que cada bolsa representa 1 unidade)
+        // Cada bolsa descartada/vencida conta como 1 unidade (mesma lógica original de EST)
         List<Double> valores = descartadas.stream()
-                .map(b -> 1.0) // Usando 1.0 por bolsa descartada para o cálculo
+                .map(b -> 1.0)
                 .sorted()
                 .collect(Collectors.toList());
 
         int n = valores.size();
-        
-        // 5. Cálculo da Média
-        double soma = valores.stream().mapToDouble(Double::doubleValue).sum();
-        double media = soma / n;
-
-        // 6. Cálculo da Mediana
-        double mediana;
-        if (n % 2 == 1) {
-            mediana = valores.get(n / 2);
-        } else {
-            mediana = (valores.get((n / 2) - 1) + valores.get(n / 2)) / 2.0;
-        }
-
-        // 7. Cálculo do Desvio Padrão
-        double variancia = valores.stream()
-                .mapToDouble(v -> Math.pow(v - media, 2))
-                .sum() / n;
+        double media = valores.stream().mapToDouble(Double::doubleValue).sum() / n;
+        double mediana = (n % 2 == 1)
+                ? valores.get(n / 2)
+                : (valores.get(n / 2 - 1) + valores.get(n / 2)) / 2.0;
+        double variancia = valores.stream().mapToDouble(v -> Math.pow(v - media, 2)).sum() / n;
         double desvioPadrao = Math.sqrt(variancia);
 
-        return new br.com.rotavital.dto.EstatisticaDesperdicioDTO(media, mediana, desvioPadrao, descartadas.size(), descartePorTipo);
+        return new EstatisticaDesperdicioDTO(media, mediana, desvioPadrao, descartadas.size(), descartePorTipo);
     }
 
-    public br.com.rotavital.dto.EstatisticasGeraisDTO calcularEstatisticasGerais() {
-        List<BolsaSangue> todas = repo.getEstoque().paraLista();
-        
+    @Transactional(readOnly = true)
+    public EstatisticasGeraisDTO calcularEstatisticasGerais() {
+        List<BolsaSangue> todas = bolsaRepository.findAll();
         if (todas.isEmpty()) {
-            return new br.com.rotavital.dto.EstatisticasGeraisDTO(new HashMap<>(), 0, 0);
+            return new EstatisticasGeraisDTO(new HashMap<>(), 0, 0);
         }
 
-        // 1. Média de bolsas por tipo
-        Map<String, Long> contagemPorTipo = todas.stream()
-                .filter(b -> "disponivel".equals(b.getStatus()))
-                .collect(Collectors.groupingBy(BolsaSangue::getTipoSanguineo, Collectors.counting()));
-                
-        Map<String, Double> mediaBolsas = new HashMap<>();
-        contagemPorTipo.forEach((tipo, count) -> mediaBolsas.put(tipo, count.doubleValue()));
+        Map<String, Double> bolsasPorTipo = new HashMap<>();
+        todas.stream()
+                .filter(BolsaSangue::isDisponivel)
+                .collect(Collectors.groupingBy(BolsaSangue::getTipoSanguineo, Collectors.counting()))
+                .forEach((tipo, qtd) -> bolsasPorTipo.put(tipo, qtd.doubleValue()));
 
-        // 2. Taxa de Descarte (%)
-        long totalDescartadas = todas.stream()
-                .filter(b -> "descartada".equals(b.getStatus()) || "vencida".equals(b.getStatus()))
-                .count();
-        double taxaDesperdicio = ((double) totalDescartadas / todas.size()) * 100.0;
+        long totalDesperdicio = todas.stream().filter(this::isDesperdicio).count();
+        double taxaDesperdicio = (double) totalDesperdicio / todas.size() * 100.0;
 
-        // 3. Tempo Médio de Estoque (em dias)
-        // Calcula a média de dias entre a data de coleta e a data de validade das bolsas
         double tempoMedio = todas.stream()
                 .filter(b -> b.getDataColeta() != null && b.getDataValidade() != null)
                 .mapToLong(b -> ChronoUnit.DAYS.between(b.getDataColeta(), b.getDataValidade()))
                 .average()
                 .orElse(0.0);
 
-        return new br.com.rotavital.dto.EstatisticasGeraisDTO(mediaBolsas, taxaDesperdicio, tempoMedio);
+        return new EstatisticasGeraisDTO(bolsasPorTipo, taxaDesperdicio, tempoMedio);
     }
 }

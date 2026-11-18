@@ -17,3 +17,7 @@ A pilha de histórico foi implementada no arquivo `PilhaHistorico.cpp` seguindo 
 
 ## 5. Conclusão
 A Unidade 1 foi concluída com êxito. As estruturas de Lista, Fila e Pilha foram implementadas em C++ com alocação manual de memória e uso explícito de ponteiros, demonstrando o domínio dos conceitos fundamentais de gerenciamento de memória exigidos no escopo do projeto.
+
+
+## 6. Versão Java e tradução comentada
+A reimplementação em Java de cada estrutura, com o parágrafo de equivalência ligado ao código, e os algoritmos da Unidade 2 estão em [docs/aed/traducao-comentada.md](docs/aed/traducao-comentada.md).

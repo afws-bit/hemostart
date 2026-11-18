@@ -1,5 +1,6 @@
 package br.com.rotavital.controller;
 
+import br.com.rotavital.exception.RegraNegocioException;
 import br.com.rotavital.model.Doador;
 import br.com.rotavital.service.DoadorService;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -33,17 +34,16 @@ public class DoadorController {
     }
 
     @PostMapping("/salvar")
-    public String salvar(
-            @RequestParam String nome,
-            @RequestParam String cpf,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dataNascimento,
-            @RequestParam String sexo,
-            @RequestParam String tipoSanguineo,
-            @RequestParam double peso,
-            @RequestParam String contato,
-            @RequestParam(defaultValue = "") String historicoSaude,
-            @RequestParam(defaultValue = "false") boolean autorizacaoResponsavel,
-            RedirectAttributes ra) {
+    public String salvar(@RequestParam String nome,
+                         @RequestParam String cpf,
+                         @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dataNascimento,
+                         @RequestParam String sexo,
+                         @RequestParam String tipoSanguineo,
+                         @RequestParam double peso,
+                         @RequestParam String contato,
+                         @RequestParam(defaultValue = "") String historicoSaude,
+                         @RequestParam(defaultValue = "false") boolean autorizacaoResponsavel,
+                         RedirectAttributes ra) {
 
         Doador d = new Doador();
         d.setNome(nome);
@@ -56,26 +56,29 @@ public class DoadorController {
         d.setHistoricoSaude(historicoSaude);
         d.setAutorizacaoResponsavel(autorizacaoResponsavel);
 
-        String erro = doadorService.cadastrar(d);
-        if (erro != null) {
-            ra.addFlashAttribute("erro", erro);
+        try {
+            doadorService.cadastrar(d);
+        } catch (RegraNegocioException e) {
+            ra.addFlashAttribute("erro", e.getMessage());
             return "redirect:/doadores/novo";
         }
         ra.addFlashAttribute("sucesso", "Doador cadastrado com sucesso!");
         return "redirect:/doadores";
     }
 
+    /** HU14 — histórico de doações e próxima data apta. */
     @GetMapping("/{id}/historico")
     public String historico(@PathVariable("id") String id, Model model, RedirectAttributes ra) {
-        Doador doador = doadorService.buscarPorId(id);
-        if (doador == null) {
-            ra.addFlashAttribute("erro", "Doador não encontrado");
+        try {
+            Doador doador = doadorService.buscarPorId(id);
+            model.addAttribute("doador", doador);
+            model.addAttribute("doacoes", doadorService.listarDoacoesDoador(id));
+            model.addAttribute("proximaData", doadorService.calcularProximaDataApta(doador));
+            model.addAttribute("apto", doadorService.estaApto(doador));
+            return "doadores/historico";
+        } catch (RegraNegocioException e) {
+            ra.addFlashAttribute("erro", e.getMessage());
             return "redirect:/doadores";
         }
-        model.addAttribute("doador", doador);
-        model.addAttribute("doacoes", doadorService.listarDoacoesDoador(id));
-        model.addAttribute("proximaData", doadorService.calcularProximaDataApta(doador));
-        model.addAttribute("apto", doadorService.estaApto(doador));
-        return "doadores/historico";
     }
 }

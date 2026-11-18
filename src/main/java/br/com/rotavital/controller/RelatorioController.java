@@ -4,7 +4,6 @@ import br.com.rotavital.dto.EstatisticaDesperdicioDTO;
 import br.com.rotavital.dto.EstatisticasGeraisDTO;
 import br.com.rotavital.service.EstoqueService;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -12,8 +11,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class RelatorioController {
 
-    @Autowired
-    private EstoqueService estoqueService;
+    private final EstoqueService estoqueService;
+
+    public RelatorioController(EstoqueService estoqueService) {
+        this.estoqueService = estoqueService;
+    }
 
     @GetMapping("/relatorios")
     public String paginaRelatorios(HttpSession session) {

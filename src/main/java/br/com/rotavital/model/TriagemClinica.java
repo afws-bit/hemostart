@@ -1,62 +1,86 @@
 package br.com.rotavital.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 import java.time.LocalDateTime;
 
-public class TriagemClinica {
+/**
+ * HU12 — triagem clínica pré-doação. O próprio objeto avalia os sinais vitais
+ * e define se o doador está apto (regra de negócio dentro da entidade).
+ */
+@Entity
+@Table(name = "triagem_clinica")
+public class TriagemClinica extends EntidadeBase {
 
-    private String id;
-    private String doadorId;
+    public static final String APTO = "apto";
+    public static final String INAPTO = "inapto";
+
+    public static final double HEMOGLOBINA_MINIMA_MULHER = 12.5;
+    public static final double HEMOGLOBINA_MINIMA_HOMEM = 13.0;
+    public static final double TEMPERATURA_MAXIMA = 37.0;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "doador_id")
+    private Doador doador;
+
     private double peso;
+
+    @Column(length = 10)
     private String pressaoArterial;
+
     private double temperatura;
     private double hemoglobina;
-    private String resultado; // "apto", "inapto"
-    private String motivoInaptidao;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @Column(length = 10)
+    private String resultado;
+
+    private String motivoInaptidao;
     private LocalDateTime dataHora;
 
     public TriagemClinica() {}
 
-    public TriagemClinica(String id, String doadorId, double peso, String pressaoArterial,
-                          double temperatura, double hemoglobina, String resultado, String motivoInaptidao) {
-        this.id = id;
-        this.doadorId = doadorId;
-        this.peso = peso;
-        this.pressaoArterial = pressaoArterial;
-        this.temperatura = temperatura;
-        this.hemoglobina = hemoglobina;
-        this.resultado = resultado;
-        this.motivoInaptidao = motivoInaptidao;
-        this.dataHora = LocalDateTime.now();
+    /** Registra os sinais vitais e já calcula o resultado. */
+    public static TriagemClinica avaliar(Doador doador, double peso, String pressaoArterial,
+                                         double temperatura, double hemoglobina) {
+        TriagemClinica t = new TriagemClinica();
+        t.doador = doador;
+        t.peso = peso;
+        t.pressaoArterial = pressaoArterial;
+        t.temperatura = temperatura;
+        t.hemoglobina = hemoglobina;
+        t.dataHora = LocalDateTime.now();
+
+        double hbMinima = "F".equalsIgnoreCase(doador.getSexo()) ? HEMOGLOBINA_MINIMA_MULHER : HEMOGLOBINA_MINIMA_HOMEM;
+        if (hemoglobina < hbMinima) {
+            t.motivoInaptidao = "Hemoglobina abaixo do mínimo";
+        } else if (peso < Doador.PESO_MINIMO) {
+            t.motivoInaptidao = "Peso inferior ao mínimo permitido";
+        } else if (temperatura > TEMPERATURA_MAXIMA) {
+            t.motivoInaptidao = "Temperatura corporal acima do limite permitido (37°C)";
+        }
+        t.resultado = t.motivoInaptidao == null ? APTO : INAPTO;
+        return t;
     }
 
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    public boolean isApto() {
+        return APTO.equals(resultado);
+    }
 
-    public String getDoadorId() { return doadorId; }
-    public void setDoadorId(String doadorId) { this.doadorId = doadorId; }
+    public String getDoadorId() {
+        return doador != null ? doador.getId() : null;
+    }
 
+    public Doador getDoador() { return doador; }
     public double getPeso() { return peso; }
-    public void setPeso(double peso) { this.peso = peso; }
-
     public String getPressaoArterial() { return pressaoArterial; }
-    public void setPressaoArterial(String pressaoArterial) { this.pressaoArterial = pressaoArterial; }
-
     public double getTemperatura() { return temperatura; }
-    public void setTemperatura(double temperatura) { this.temperatura = temperatura; }
-
     public double getHemoglobina() { return hemoglobina; }
-    public void setHemoglobina(double hemoglobina) { this.hemoglobina = hemoglobina; }
-
     public String getResultado() { return resultado; }
-    public void setResultado(String resultado) { this.resultado = resultado; }
-
     public String getMotivoInaptidao() { return motivoInaptidao; }
-    public void setMotivoInaptidao(String motivoInaptidao) { this.motivoInaptidao = motivoInaptidao; }
-
     public LocalDateTime getDataHora() { return dataHora; }
-    public void setDataHora(LocalDateTime dataHora) { this.dataHora = dataHora; }
 }

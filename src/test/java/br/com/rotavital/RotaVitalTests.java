@@ -5,6 +5,8 @@ import br.com.rotavital.estruturas.ListaEncadeada;
 import br.com.rotavital.estruturas.PilhaHistorico;
 import br.com.rotavital.model.Doador;
 import br.com.rotavital.model.Requisicao;
+import br.com.rotavital.model.StatusRequisicao;
+import br.com.rotavital.model.TipoSanguineo;
 import br.com.rotavital.service.CompatibilidadeService;
 import br.com.rotavital.service.DoadorService;
 import org.junit.jupiter.api.Test;
@@ -137,7 +139,7 @@ class RotaVitalTests {
 
     @Test
     void compatibilidade_OMenosParaTodos() {
-        CompatibilidadeService svc = new CompatibilidadeService(null);
+        CompatibilidadeService svc = new CompatibilidadeService(null, null);
         for (String receptor : new String[]{"O-","O+","A-","A+","B-","B+","AB-","AB+"}) {
             assertTrue(svc.compativel("O-", receptor),
                     "O- deve ser compatível com " + receptor);
@@ -146,7 +148,7 @@ class RotaVitalTests {
 
     @Test
     void compatibilidade_ABMaisApenasABMais() {
-        CompatibilidadeService svc = new CompatibilidadeService(null);
+        CompatibilidadeService svc = new CompatibilidadeService(null, null);
         assertTrue(svc.compativel("AB+", "AB+"));
         assertFalse(svc.compativel("AB+", "A+"));
         assertFalse(svc.compativel("AB+", "O+"));
@@ -155,7 +157,7 @@ class RotaVitalTests {
 
     @Test
     void compatibilidade_AMenosParaAeAB() {
-        CompatibilidadeService svc = new CompatibilidadeService(null);
+        CompatibilidadeService svc = new CompatibilidadeService(null, null);
         assertTrue(svc.compativel("A-", "A-"));
         assertTrue(svc.compativel("A-", "A+"));
         assertTrue(svc.compativel("A-", "AB-"));
@@ -171,7 +173,7 @@ class RotaVitalTests {
         Doador d = new Doador();
         d.setSexo("M");
         d.setUltimaDoacao(LocalDate.now().minusDays(59));
-        DoadorService svc = new DoadorService(null);
+        DoadorService svc = new DoadorService(null, null);
         assertFalse(svc.aptoPorIntervalo(d), "59 dias < 60 — não apto");
 
         d.setUltimaDoacao(LocalDate.now().minusDays(60));
@@ -183,7 +185,7 @@ class RotaVitalTests {
         Doador d = new Doador();
         d.setSexo("F");
         d.setUltimaDoacao(LocalDate.now().minusDays(89));
-        DoadorService svc = new DoadorService(null);
+        DoadorService svc = new DoadorService(null, null);
         assertFalse(svc.aptoPorIntervalo(d), "89 dias < 90 — não apta");
 
         d.setUltimaDoacao(LocalDate.now().minusDays(90));
@@ -194,7 +196,7 @@ class RotaVitalTests {
     void intervaloDoacao_semUltimaDoacao() {
         Doador d = new Doador();
         d.setSexo("M");
-        DoadorService svc = new DoadorService(null);
+        DoadorService svc = new DoadorService(null, null);
         assertTrue(svc.aptoPorIntervalo(d), "Nunca doou — apto");
     }
 
@@ -213,12 +215,31 @@ class RotaVitalTests {
         assertFalse(compatibilidadeService.compativel("A+", "O-"), "A+ não deve doar para O-");
     }
 
+    @Test
+    void compatibilidade_tabelaCompletaABORh() {
+        java.util.Map<String, List<String>> tabelaOficial = java.util.Map.of(
+                "O-",  List.of("O-","O+","A-","A+","B-","B+","AB-","AB+"),
+                "O+",  List.of("O+","A+","B+","AB+"),
+                "A-",  List.of("A-","A+","AB-","AB+"),
+                "A+",  List.of("A+","AB+"),
+                "B-",  List.of("B-","B+","AB-","AB+"),
+                "B+",  List.of("B+","AB+"),
+                "AB-", List.of("AB-","AB+"),
+                "AB+", List.of("AB+"));
+        for (TipoSanguineo doador : TipoSanguineo.values()) {
+            for (TipoSanguineo receptor : TipoSanguineo.values()) {
+                boolean esperado = tabelaOficial.get(doador.getRotulo()).contains(receptor.getRotulo());
+                assertEquals(esperado, doador.podeDoarPara(receptor), doador + " -> " + receptor);
+            }
+        }
+    }
+
     // --- Helpers ---
     private Requisicao makeReq(String id, boolean urgente) {
         Requisicao r = new Requisicao();
         r.setId(id);
         r.setUrgente(urgente);
-        r.setStatus("pendente");
+        r.setStatus(StatusRequisicao.PENDENTE);
         r.setDataSolicitacao(java.time.LocalDateTime.now());
         return r;
     }

@@ -47,12 +47,13 @@
             <th>Urgência</th>
             <th>Status</th>
             <th>Solicitado em</th>
+            <th>Rota de entrega</th>
             <th>Ação</th>
         </tr>
         </thead>
         <tbody>
         <tr th:if="${#lists.isEmpty(fila)}">
-            <td colspan="8" style="text-align:center;">Fila vazia.</td>
+            <td colspan="9" style="text-align:center;">Fila vazia.</td>
         </tr>
         <tr th:each="r, stat : ${fila}">
             <td th:text="${stat.index + 1}"></td>
@@ -67,15 +68,20 @@
             </td>
             <td><span th:class="'badge badge-' + ${r.status}" th:text="${r.status}"></span></td>
             <td th:text="${#temporals.format(r.dataSolicitacao,'dd/MM/yyyy HH:mm')}"></td>
+            <td style="font-size:12px;">
+                <span th:if="${r.rotaEntrega == null}" style="color:#777;">—</span>
+                <span th:if="${r.rotaEntrega != null}" th:text="${r.rotaEntrega}"></span>
+                <strong th:if="${r.distanciaKm != null}" th:text="' (' + ${r.distanciaKm} + ' km)'"></strong>
+            </td>
             <td>
-                <div th:if="${r.status == 'aprovada'}">
+                <div th:if="${r.aprovada}">
                     <form method="post" th:action="@{/requisicoes/distribuir/{id}(id=${r.id})}" class="form-inline">
                         <input type="text" name="responsavel" placeholder="Nome do responsável"
                                required style="width:160px; display:inline; margin:0;">
                         <button class="btn btn-sm btn-green" type="submit" style="margin-left:4px;">Confirmar Saída</button>
                     </form>
                 </div>
-                <div th:if="${r.status == 'pendente'}">
+                <div th:if="${r.pendente}">
                     <form method="post" th:action="@{/requisicoes/aprovar/{id}(id=${r.id})}" style="display:inline-block; margin-bottom:4px;">
                         <button class="btn btn-sm btn-green" type="submit">Aprovar</button>
                     </form>
@@ -84,11 +90,11 @@
                         <button class="btn btn-sm btn-gray" type="submit">Recusar</button>
                     </form>
                 </div>
-                <div th:if="${r.status == 'recusada'}">
+                <div th:if="${r.recusada}">
                     <span style="color:#721c24; font-size:12px; font-weight:bold;">✕ Recusada</span>
                     <div th:if="${r.motivoRecusa != null}" style="font-size:11px; color:#666;" th:text="${'Motivo: ' + r.motivoRecusa}"></div>
                 </div>
-                <span th:if="${r.status == 'atendida'}" style="color:green; font-size:12px;">✓ Atendida</span>
+                <span th:if="${r.atendida}" style="color:green; font-size:12px;">✓ Atendida</span>
             </td>
         </tr>
         </tbody>

@@ -1,9 +1,10 @@
 package br.com.rotavital.controller;
 
+import br.com.rotavital.exception.RegraNegocioException;
+import br.com.rotavital.model.TipoSanguineo;
 import br.com.rotavital.service.CompatibilidadeService;
+import br.com.rotavital.service.ConfiguracaoService;
 import br.com.rotavital.service.EstoqueService;
-import br.com.rotavital.repository.JsonDataRepository;
-import br.com.rotavital.model.Configuracao;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,14 +18,14 @@ public class EstoqueController {
 
     private final CompatibilidadeService compatibilidadeService;
     private final EstoqueService estoqueService;
-    private final JsonDataRepository repo;
+    private final ConfiguracaoService configuracaoService;
 
     public EstoqueController(CompatibilidadeService compatibilidadeService,
-                               EstoqueService estoqueService,
-                               JsonDataRepository repo) {
+                             EstoqueService estoqueService,
+                             ConfiguracaoService configuracaoService) {
         this.compatibilidadeService = compatibilidadeService;
         this.estoqueService = estoqueService;
-        this.repo = repo;
+        this.configuracaoService = configuracaoService;
     }
 
     @GetMapping
@@ -32,7 +33,7 @@ public class EstoqueController {
         Map<String, Object> dados = compatibilidadeService.gerarPainelEstoque();
         model.addAttribute("painel", dados.get("painel"));
         model.addAttribute("alertas", dados.get("alertas"));
-        model.addAttribute("configuracao", repo.getConfiguracao());
+        model.addAttribute("configuracao", configuracaoService.obter());
         model.addAttribute("usoPrioritario", estoqueService.bolsasUsoPrioritario());
         model.addAttribute("bolsas", estoqueService.listarEstoque());
         return "estoque/painel";
@@ -54,39 +55,27 @@ public class EstoqueController {
 
     @PostMapping("/descartar")
     public String descartar(@RequestParam String codigo,
-                              @RequestParam String responsavel,
-                              RedirectAttributes ra) {
-        String erro = estoqueService.descartar(codigo, responsavel);
-        if (erro != null) {
-            ra.addFlashAttribute("erro", erro);
-        } else {
+                            @RequestParam String responsavel,
+                            RedirectAttributes ra) {
+        try {
+            estoqueService.descartar(codigo, responsavel);
             ra.addFlashAttribute("sucesso", "Bolsa descartada com sucesso!");
+        } catch (RegraNegocioException e) {
+            ra.addFlashAttribute("erro", e.getMessage());
         }
         return "redirect:/estoque/validade";
     }
 
     @GetMapping("/configurar")
     public String configurar(Model model) {
-        model.addAttribute("configuracao", repo.getConfiguracao());
-        model.addAttribute("tipos", new String[]{"A+","A-","B+","B-","AB+","AB-","O+","O-"});
+        model.addAttribute("configuracao", configuracaoService.obter());
+        model.addAttribute("tipos", TipoSanguineo.rotulos());
         return "estoque/configurar";
     }
 
     @PostMapping("/configurar/salvar")
-    public String salvarConfig(
-            @RequestParam Map<String, String> params,
-            RedirectAttributes ra) {
-        Configuracao config = repo.getConfiguracao();
-        String[] tipos = {"A+","A-","B+","B-","AB+","AB-","O+","O-"};
-        for (String tipo : tipos) {
-            String key = "minimo_" + tipo.replace("+", "pos").replace("-", "neg");
-            if (params.containsKey(key)) {
-                try {
-                    config.getMinimoEstoque().put(tipo, Integer.parseInt(params.get(key)));
-                } catch (NumberFormatException ignored) {}
-            }
-        }
-        repo.gravar();
+    public String salvarConfig(@RequestParam Map<String, String> params, RedirectAttributes ra) {
+        configuracaoService.salvarNiveis(params);
         ra.addFlashAttribute("sucesso", "Configuração salva com sucesso!");
         return "redirect:/estoque/configurar";
     }

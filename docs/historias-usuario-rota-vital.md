@@ -235,6 +235,30 @@ Funcionalidade: Controle de Validade
 - O relatório deve permitir filtro por período, tipo sanguíneo e hospital.
 - Deve exibir indicadores como total coletado, total distribuído e total descartado no período.
 
+**Cenários (BDD):**
+
+```gherkin
+Funcionalidade: Relatório de Doações e Distribuições
+
+  Cenário: Relatório do período com movimentações
+    Dado que no período de "01/10/2026" a "31/10/2026" foram coletadas 12 bolsas
+    E foram distribuídas 8 bolsas e descartadas 2 bolsas
+    Quando o gestor gera o relatório desse período
+    Então o sistema exibe "12" coletadas, "8" distribuídas e "2" descartadas
+
+  Cenário: Relatório filtrado por tipo sanguíneo e hospital
+    Dado que existem distribuições de bolsas "O-" e "A+" para hospitais diferentes
+    Quando o gestor filtra o relatório pelo tipo "O-" e pelo hospital "Hospital Santa Cruz"
+    Então apenas as movimentações de bolsas "O-" destinadas ao "Hospital Santa Cruz" são contabilizadas
+
+  Cenário: Período sem movimentações
+    Dado que não houve coletas, distribuições ou descartes no período selecionado
+    Quando o gestor gera o relatório
+    Então o sistema exibe a mensagem "Nenhum dado encontrado para o período selecionado."
+```
+
+---
+
 ## HU09 — Cadastro de Hospital
 
 **Como** administrador do banco de sangue, **eu quero** cadastrar e gerenciar os hospitais solicitantes (razão social, CNPJ, endereço, contato e status), **para que** somente instituições autorizadas possam solicitar bolsas de sangue e a distribuição seja rastreável até o destino.

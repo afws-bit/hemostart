@@ -1,18 +1,33 @@
 package br.com.rotavital.model;
 
-public class Hospital {
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
-    private String id;
+@Entity
+@Table(name = "hospital")
+public class Hospital extends EntidadeBase {
+
+    @Column(nullable = false)
     private String razaoSocial;
+
+    @Column(nullable = false, unique = true, length = 14)
     private String cnpj;
+
     private String endereco;
     private String contato;
-    private boolean ativo;
+    private boolean ativo = true;
 
     public Hospital() {}
 
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    /** Somente hospitais ativos podem solicitar sangue (HU05 / HU09). */
+    public boolean podeSolicitar() {
+        return ativo;
+    }
+
+    public void alternarStatus() {
+        this.ativo = !this.ativo;
+    }
 
     public String getRazaoSocial() { return razaoSocial; }
     public void setRazaoSocial(String razaoSocial) { this.razaoSocial = razaoSocial; }
