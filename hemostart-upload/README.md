@@ -449,31 +449,37 @@ Acesse o glossário completo em [`docs/arquitetura/glossario.md`](./docs/arquite
 
 ### C. Arquitetura em Três Camadas
 
-Adotamos a separação lógica baseada nos *Bounded Contexts*, respeitando a regra de dependência onde o Domínio não conhece o Banco nem o Framework Web.
+Adotamos a separação lógica baseada nos *Bounded Contexts*.
 
-1.  **Apresentação:** Controllers REST e telas. (Ex: `EstoqueController`)
-2.  **Negócio:** Casos de uso da aplicação (`RegistrarBolsaUseCase`) e o modelo de domínio rico (`BolsaSanguinea`).
-3.  **Dados:** Repositórios JPA e integrações externas. (Ex: `BolsaRepositoryJpa`)
+*   **Apresentação:** Controllers REST e telas (ex: `EstoqueController`).
+*   **Negócio (Domínio + Aplicação):** Casos de uso (ex: `RegistrarBolsaUseCase`) e o modelo rico (ex: `BolsaSanguinea`).
+*   **Dados:** Repositórios JPA e integrações externas.
+*   **Regra de Dependência:** O domínio não conhece o framework web nem o banco (Inversão de Dependência).
+*   **Lógico x Físico:** Todas as três camadas estão no mesmo *tier* físico (Monolito Modular) na Parte 2, rodando no mesmo container.
 
-**Lógico x Físico:** Nesta Parte 2, as três camadas lógicas estão no mesmo *tier* físico (Monolito Modular), rodando no mesmo container Docker via Spring Boot.
+### Estrutura de pacotes atual (Monolito da Parte 1):
+*(Reflete a estrutura real do código entregue até o momento)*
 
-**Estrutura de Pacotes Proposta (Refatoração):**
+```text
+br.com.rotavital
+├── controller (EstoqueController, RequisicaoController...)
+├── service (EstoqueService, CompatibilidadeService...)
+├── repository (JsonDataRepository...)
+├── model (BolsaSangue, Doador, Requisicao...)
+└── dto
+```
+### Estrutura de pacotes proposta(parte 2):
+
 ```text
 br.com.rotavital
 ├── estoque
-│   ├── apresentacao     (EstoqueController)
+│   ├── apresentacao (EstoqueController)
 │   ├── negocio
-│   │   ├── aplicacao    (RegistrarBolsaUseCase, ConsultarEstoque)
-│   │   └── dominio      (BolsaSanguinea, TipoSanguineo, DataValidade)
-│   └── dados            (BolsaRepositoryJpa)
+│   │   ├── aplicacao (RegistrarBolsaUseCase)
+│   │   └── dominio (BolsaSanguinea, TipoSanguineo)
+│   └── dados (BolsaRepositoryJpa)
 ├── requisicao
-│   ├── apresentacao
-│   ├── negocio
-│   └── dados
 └── expedicao
-    ├── apresentacao
-    ├── negocio
-    └── dados
 ```
 
 ### 🤖 Uso de Inteligência Artificial
