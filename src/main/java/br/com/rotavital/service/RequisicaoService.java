@@ -4,8 +4,11 @@ import br.com.rotavital.aed.AlocadorBolsas;
 import br.com.rotavital.aed.GrafoRotas;
 import br.com.rotavital.aed.ResultadoAlocacao;
 import br.com.rotavital.aed.TabelaHashEstoque;
+import br.com.rotavital.concorrencia.SecaoCritica;
 import br.com.rotavital.config.MapaRotasConfig;
 import br.com.rotavital.estruturas.FilaRequisicoes;
+import br.com.rotavital.exception.AcessoNegadoException;
+import br.com.rotavital.exception.RecursoNaoEncontradoException;
 import br.com.rotavital.exception.RegraNegocioException;
 import br.com.rotavital.model.BolsaSangue;
 import br.com.rotavital.model.Hospital;
@@ -31,19 +34,22 @@ public class RequisicaoService {
     private final CompatibilidadeService compatibilidadeService;
     private final HistoricoService historicoService;
     private final GrafoRotas mapaRotas;
+    private final SecaoCritica secaoCritica;
 
     public RequisicaoService(RequisicaoRepository requisicaoRepository,
                              BolsaSangueRepository bolsaRepository,
                              HospitalService hospitalService,
                              CompatibilidadeService compatibilidadeService,
                              HistoricoService historicoService,
-                             GrafoRotas mapaRotas) {
+                             GrafoRotas mapaRotas,
+                             SecaoCritica secaoCritica) {
         this.requisicaoRepository = requisicaoRepository;
         this.bolsaRepository = bolsaRepository;
         this.hospitalService = hospitalService;
         this.compatibilidadeService = compatibilidadeService;
         this.historicoService = historicoService;
         this.mapaRotas = mapaRotas;
+        this.secaoCritica = secaoCritica;
     }
 
     /** HU05 — só hospitais cadastrados e ativos podem solicitar. */
@@ -52,7 +58,7 @@ public class RequisicaoService {
                                       int quantidade, boolean urgente) {
         Hospital hospital = hospitalService.buscarPorCnpj(cnpjHospital);
         if (hospital == null || !hospital.podeSolicitar()) {
-            throw new RegraNegocioException("Hospital não autorizado");
+            throw new AcessoNegadoException("Hospital não autorizado");
         }
         if (quantidade <= 0) {
             throw new RegraNegocioException("Quantidade deve ser maior que zero");
@@ -84,24 +90,31 @@ public class RequisicaoService {
      * com sua fila FEFO), aloca as compatíveis pela matriz ABO/Rh priorizando a validade
      * e calcula a rota hemocentro → hospital pelo vizinho mais próximo.
      */
-    @Transactional
     public Requisicao reservarBolsasParaPrimeiro() {
-        Requisicao req = listarFila().stream()
-                .filter(Requisicao::isPendente)
-                .findFirst()
-                .orElseThrow(() -> new RegraNegocioException("Fila vazia"));
-        return aprovarRequisicao(req.getId());
+        return secaoCritica.executar(() -> {
+            Requisicao req = listarFila().stream()
+                    .filter(Requisicao::isPendente)
+                    .findFirst()
+                    .orElseThrow(() -> new RegraNegocioException("Fila vazia"));
+            return aprovarExclusivo(req.getId());
+        });
     }
 
     @Transactional(readOnly = true)
     public Requisicao buscarPorId(String id) {
         return requisicaoRepository.findById(id)
-                .orElseThrow(() -> new RegraNegocioException("Requisição não encontrada"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Requisição não encontrada"));
     }
 
-    /** HU13 — aprova uma solicitação específica da fila (reserva via algoritmos da AED). */
-    @Transactional
+    /**
+     * HU13 — aprova uma solicitação específica da fila (reserva via algoritmos da AED).
+     * Roda na SecaoCritica: duas aprovações simultâneas nunca reservam a mesma bolsa.
+     */
     public Requisicao aprovarRequisicao(String requisicaoId) {
+        return secaoCritica.executar(() -> aprovarExclusivo(requisicaoId));
+    }
+
+    private Requisicao aprovarExclusivo(String requisicaoId) {
         Requisicao req = buscarPorId(requisicaoId);
         if (!req.isPendente()) {
             throw new RegraNegocioException("Apenas solicitações com status 'pendente' podem ser aprovadas ou recusadas");
@@ -133,19 +146,20 @@ public class RequisicaoService {
     }
 
     /** HU13 — recusa uma solicitação pendente, com motivo obrigatório. */
-    @Transactional
     public Requisicao recusarRequisicao(String requisicaoId, String motivo) {
-        Requisicao req = buscarPorId(requisicaoId);
-        if (!req.isPendente()) {
-            throw new RegraNegocioException("Apenas solicitações com status 'pendente' podem ser aprovadas ou recusadas");
-        }
         if (motivo == null || motivo.isBlank()) {
             throw new RegraNegocioException("Motivo da recusa é obrigatório");
         }
-        req.recusar(motivo.trim());
-        historicoService.registrar(TipoOperacao.RECUSA, null,
-                "Requisição " + req.getId() + " recusada. Motivo: " + motivo.trim());
-        return requisicaoRepository.save(req);
+        return secaoCritica.executar(() -> {
+            Requisicao req = buscarPorId(requisicaoId);
+            if (!req.isPendente()) {
+                throw new RegraNegocioException("Apenas solicitações com status 'pendente' podem ser aprovadas ou recusadas");
+            }
+            req.recusar(motivo.trim());
+            historicoService.registrar(TipoOperacao.RECUSA, null,
+                    "Requisição " + req.getId() + " recusada. Motivo: " + motivo.trim());
+            return requisicaoRepository.save(req);
+        });
     }
 
     /** Validação explícita usada pela tela/teste: reserva de bolsa específica para um tipo de paciente. */
@@ -156,11 +170,14 @@ public class RequisicaoService {
     }
 
     /** HU06 — confirma a saída das bolsas reservadas para o hospital da requisição. */
-    @Transactional
-    public void confirmarDistribuicao(String requisicaoId, String responsavel) {
+    public List<BolsaSangue> confirmarDistribuicao(String requisicaoId, String responsavel) {
         exigirResponsavel(responsavel);
+        return secaoCritica.executar(() -> confirmarDistribuicaoExclusivo(requisicaoId, responsavel));
+    }
+
+    private List<BolsaSangue> confirmarDistribuicaoExclusivo(String requisicaoId, String responsavel) {
         Requisicao req = requisicaoRepository.findById(requisicaoId)
-                .orElseThrow(() -> new RegraNegocioException("Requisição não encontrada na fila"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Requisição não encontrada na fila"));
         if (!req.isAprovada()) {
             throw new RegraNegocioException("A requisição precisa estar aprovada (com bolsas reservadas)");
         }
@@ -175,19 +192,21 @@ public class RequisicaoService {
 
         req.atender(responsavel);
         requisicaoRepository.save(req);
+        return reservadas;
     }
 
     /** HU06 — saída direta de uma bolsa pelo código (bloqueia distribuição duplicada). */
-    @Transactional
     public void distribuirPorCodigo(String codigoBolsa, String responsavel) {
         exigirResponsavel(responsavel);
-        BolsaSangue b = bolsaRepository.findById(codigoBolsa.trim())
-                .orElseThrow(() -> new RegraNegocioException("Bolsa não encontrada"));
-        Hospital destino = b.getRequisicao() != null ? b.getRequisicao().getHospital() : null;
-        b.distribuir(responsavel, destino);
-        bolsaRepository.save(b);
-        historicoService.registrar(TipoOperacao.DISTRIBUICAO, b.getCodigo(),
-                "Distribuída diretamente por " + responsavel);
+        secaoCritica.executar(() -> {
+            BolsaSangue b = bolsaRepository.findById(codigoBolsa.trim())
+                    .orElseThrow(() -> new RecursoNaoEncontradoException("Bolsa não encontrada"));
+            Hospital destino = b.getRequisicao() != null ? b.getRequisicao().getHospital() : null;
+            b.distribuir(responsavel, destino);
+            bolsaRepository.save(b);
+            historicoService.registrar(TipoOperacao.DISTRIBUICAO, b.getCodigo(),
+                    "Distribuída diretamente por " + responsavel);
+        });
     }
 
     private void exigirResponsavel(String responsavel) {

@@ -1,5 +1,6 @@
 package br.com.rotavital.service;
 
+import br.com.rotavital.exception.RecursoNaoEncontradoException;
 import br.com.rotavital.exception.RegraNegocioException;
 import br.com.rotavital.model.BolsaSangue;
 import br.com.rotavital.model.Doador;
@@ -30,7 +31,7 @@ public class DoadorService {
     @Transactional(readOnly = true)
     public Doador buscarPorId(String id) {
         return repository.findById(id)
-                .orElseThrow(() -> new RegraNegocioException("Doador não encontrado"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Doador não encontrado"));
     }
 
     /** HU01 — valida as regras de elegibilidade e grava o doador no banco. */

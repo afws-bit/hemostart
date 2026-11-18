@@ -1,5 +1,6 @@
 package br.com.rotavital.service;
 
+import br.com.rotavital.exception.RecursoNaoEncontradoException;
 import br.com.rotavital.exception.RegraNegocioException;
 import br.com.rotavital.model.Hospital;
 import br.com.rotavital.repository.HospitalRepository;
@@ -55,7 +56,7 @@ public class HospitalService {
     @Transactional
     public void alternarStatus(String id) {
         Hospital h = repository.findById(id)
-                .orElseThrow(() -> new RegraNegocioException("Hospital não encontrado"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Hospital não encontrado"));
         h.alternarStatus();
         repository.save(h);
     }

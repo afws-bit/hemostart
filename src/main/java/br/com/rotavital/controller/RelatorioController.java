@@ -2,19 +2,26 @@ package br.com.rotavital.controller;
 
 import br.com.rotavital.dto.EstatisticaDesperdicioDTO;
 import br.com.rotavital.dto.EstatisticasGeraisDTO;
+import br.com.rotavital.dto.RiscoDesabastecimentoDTO;
+import br.com.rotavital.service.EstatisticaService;
 import br.com.rotavital.service.EstoqueService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
 
 @Controller
 public class RelatorioController {
 
     private final EstoqueService estoqueService;
+    private final EstatisticaService estatisticaService;
 
-    public RelatorioController(EstoqueService estoqueService) {
+    public RelatorioController(EstoqueService estoqueService, EstatisticaService estatisticaService) {
         this.estoqueService = estoqueService;
+        this.estatisticaService = estatisticaService;
     }
 
     @GetMapping("/relatorios")
@@ -39,5 +46,14 @@ public class RelatorioController {
     @ResponseBody
     public EstatisticaDesperdicioDTO getEstatisticasDesperdicio() {
         return estoqueService.calcularEstatisticasDesperdicio();
+    }
+
+    // Endpoint do PI3-84 (EST U2: probabilidade de desabastecimento)
+    @GetMapping("/api/estatisticas/desabastecimento")
+    @ResponseBody
+    public List<RiscoDesabastecimentoDTO> getRiscoDesabastecimento(
+            @RequestParam(value = "horizonteDias", defaultValue = "7") int horizonteDias,
+            @RequestParam(value = "janelaDias", defaultValue = "30") int janelaDias) {
+        return estatisticaService.riscoDesabastecimento(horizonteDias, janelaDias);
     }
 }

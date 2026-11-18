@@ -42,6 +42,14 @@ public class ConfiguracaoService {
         return repository.save(config);
     }
 
+    /** HU11 — limite de agendamentos por dia e horário. */
+    @Transactional
+    public void definirLimiteVagas(int limite) {
+        Configuracao config = obter();
+        config.setLimiteVagasPorHorario(limite);
+        repository.save(config);
+    }
+
     @Transactional
     public void definirMinimo(String tipo, int minimo) {
         Configuracao config = obter();

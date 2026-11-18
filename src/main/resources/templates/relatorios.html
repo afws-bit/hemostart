@@ -32,15 +32,15 @@
                 <div class="stat-value" id="totalDescartado">Carregando...</div>
             </div>
             <div class="stat-item">
-                <div class="stat-label">Média de Descartes</div>
+                <div class="stat-label">Média de Descartes por Semana (últimas 8)</div>
                 <div class="stat-value" id="mediaDesperdicio">Carregando...</div>
             </div>
             <div class="stat-item">
-                <div class="stat-label">Mediana</div>
+                <div class="stat-label">Mediana Semanal</div>
                 <div class="stat-value" id="medianaDesperdicio">Carregando...</div>
             </div>
             <div class="stat-item">
-                <div class="stat-label">Desvio Padrão</div>
+                <div class="stat-label">Desvio Padrão Semanal</div>
                 <div class="stat-value" id="desvioPadraoDesperdicio">Carregando...</div>
             </div>
         </div>
@@ -74,6 +74,31 @@
                     </tr>
                 </thead>
                 <tbody id="tabelaMedias">
+                    <!-- Preenchido via JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- CARD 4: Probabilidade de Desabastecimento (PI3-84) -->
+        <div class="card" style="grid-column: span 2;">
+            <h2>Risco de Desabastecimento — próximos 7 dias</h2>
+            <p style="color:#666; font-size:14px;">
+                Probabilidade de o estoque disponível de cada tipo ficar abaixo do nível mínimo configurado,
+                considerando a demanda média dos últimos 30 dias (modelo de Poisson) e as bolsas que vencem no período.
+            </p>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 10px; background: white;">
+                <thead>
+                    <tr style="background: #f4f6f9; text-align: left;">
+                        <th style="padding: 12px; border: 1px solid #ddd;">Tipo</th>
+                        <th style="padding: 12px; border: 1px solid #ddd;">Disponíveis</th>
+                        <th style="padding: 12px; border: 1px solid #ddd;">Vencem em 7 dias</th>
+                        <th style="padding: 12px; border: 1px solid #ddd;">Mínimo</th>
+                        <th style="padding: 12px; border: 1px solid #ddd;">Demanda/dia</th>
+                        <th style="padding: 12px; border: 1px solid #ddd;">Probabilidade</th>
+                        <th style="padding: 12px; border: 1px solid #ddd;">Risco</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaRisco">
                     <!-- Preenchido via JS -->
                 </tbody>
             </table>
@@ -127,6 +152,26 @@
                         <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${media}</td>
                     </tr>`;
                 }
+            }).catch(err => console.error(err));
+
+        // 3. FETCH PARA O PI3-84 (Probabilidade de desabastecimento)
+        fetch('/api/estatisticas/desabastecimento?horizonteDias=7&janelaDias=30')
+            .then(response => response.json())
+            .then(dados => {
+                const cores = { BAIXO: '#1e7e34', MODERADO: '#b8860b', ALTO: '#b30000' };
+                const tabela = document.getElementById('tabelaRisco');
+                tabela.innerHTML = "";
+                dados.forEach(r => {
+                    tabela.innerHTML += `<tr>
+                        <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">${r.tipoSanguineo}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${r.disponiveis}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${r.vencendoNoHorizonte}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${r.nivelMinimo}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${r.demandaMediaDiaria.toFixed(2)}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${(r.probabilidade * 100).toFixed(1)}%</td>
+                        <td style="padding: 8px; border: 1px solid #ddd; text-align: center; color: ${cores[r.nivel]}; font-weight: bold;">${r.nivel}</td>
+                    </tr>`;
+                });
             }).catch(err => console.error(err));
     </script>
 </body>

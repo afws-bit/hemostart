@@ -65,7 +65,16 @@ A API sobe em http://localhost:8080 já conectada ao PostgreSQL (variáveis `SPR
 mvn test
 ```
 
-Os testes de integração usam H2 em memória e sempre leem/gravam no banco: `HistoriasIntegracaoTest` (HU01–HU10 + rota da AED), `HistoriasNovasTests` (HU11–HU14, incluindo as telas via MockMvc) e `AedAlgoritmosTest` (algoritmos da AED).
+Os testes de integração usam H2 em memória e sempre leem e gravam no banco:
+
+| Classe de teste | O que cobre |
+|---|---|
+| `HistoriasIntegracaoTest` | HU01–HU10 + rota da AED |
+| `HistoriasNovasTests` | HU11–HU14, incluindo as telas via MockMvc |
+| `ApiRestTest` | API REST `/api/v1`: DTOs e erros 400/403/404/409 |
+| `ConcorrenciaEstoqueTest` | ausência de condição de corrida (SO) |
+| `EstatisticaDesabastecimentoTest` | probabilidade de desabastecimento (EST) |
+| `AedAlgoritmosTest` | algoritmos da AED |
 
 ## 🧱 Arquitetura e Orientação a Objetos
 
@@ -76,12 +85,15 @@ br.com.rotavital
 │                + enums de domínio (TipoSanguineo, Componente, StatusBolsa, StatusRequisicao, TipoOperacao)
 ├── repository   Interfaces Spring Data JPA (uma por entidade)
 ├── service      Regras de negócio / casos de uso (@Transactional)
-├── controller   Controllers MVC (Thymeleaf) e endpoints REST de estatística
+├── controller   Controllers MVC (Thymeleaf) e endpoints de estatística
+│   └── api      API REST /api/v1 (contrato do MVP) + tratamento global de erros
 ├── estruturas   Lista encadeada, fila com prioridade e pilha (AED U1)
 ├── aed          Matriz ABO/Rh, FEFO, hash, rota por vizinho mais próximo e alocador (AED U2)
 ├── scheduler    Verificação periódica de validade
 ├── config       Carga de dados iniciais e mapa de rotas
-└── exception    RegraNegocioException
+├── concorrencia SecaoCritica (exclusão mútua com commit dentro da trava)
+├── dto          DTOs de estatística; dto/api: entrada e saída da API REST (records)
+└── exception    RegraNegocioException, RecursoNaoEncontradoException (404), AcessoNegadoException (403)
 ```
 
 **Entidades persistidas (8):** `Doador`, `Hospital`, `BolsaSangue`, `Requisicao`, `Agendamento`, `TriagemClinica`, `HistoricoOperacao`, `Configuracao`.
@@ -93,7 +105,37 @@ Princípios de POO aplicados:
 - **Herança:** `Doador`, `Hospital`, `Requisicao`, `Agendamento`, `TriagemClinica` e `HistoricoOperacao` herdam de `EntidadeBase` (`@MappedSuperclass`), que gera o UUID e implementa `equals`/`hashCode`.
 - **Polimorfismo / enums com comportamento:** `TipoSanguineo.podeDoarPara(receptor)` implementa a regra ABO/Rh; `Componente` sabe sua validade (42, 5 ou 365 dias).
 - **Responsabilidade única e injeção de dependências por construtor:** controllers só tratam HTTP, services contêm regras, repositories acessam o banco.
-- **Tratamento de erros com exceções** de domínio em vez de códigos de retorno.
+- **Tratamento de erros com exceções** de domínio em vez de códigos de retorno, e um `@RestControllerAdvice` que converte cada exceção num JSON padronizado com o status HTTP correto.
+- **DTOs (records imutáveis)** na API: a API REST nunca expõe as entidades JPA. O CPF sai mascarado e o histórico de saúde não sai.
+
+## 🔌 API REST (`/api/v1`)
+
+Implementa o contrato de API definido pela equipe no documento de Projetos 3 / RSD (15 endpoints do MVP), mais aprovação e recusa de solicitações (HU13). Todas as respostas são JSON; os erros seguem um formato único:
+
+```json
+{ "timestamp": "2026-11-18T17:00:00", "status": 409, "erro": "Conflict",
+  "mensagem": "CPF já cadastrado", "caminho": "/api/v1/doadores", "detalhes": [] }
+```
+
+| Método | Endpoint | Status |
+|---|---|---|
+| POST | `/api/v1/doadores` | 201, 400, 409 |
+| GET | `/api/v1/doadores/{id}` | 200, 404 |
+| POST | `/api/v1/coletas` | 201, 400, 404, 409 |
+| GET | `/api/v1/estoque` | 200 |
+| GET | `/api/v1/bolsas/{id}` | 200, 404 |
+| GET | `/api/v1/bolsas/{id}/historico` | 200, 404 |
+| GET | `/api/v1/bolsas/alertas-validade` | 200 |
+| POST | `/api/v1/bolsas/{id}/descarte` | 200, 400, 404, 409 |
+| GET | `/api/v1/compatibilidade?tipo=O-&quantidade=2` | 200, 400 |
+| POST | `/api/v1/solicitacoes` | 201, 400, 403 |
+| GET | `/api/v1/solicitacoes` | 200 |
+| GET | `/api/v1/solicitacoes/{id}` | 200, 404 |
+| POST | `/api/v1/solicitacoes/{id}/aprovacao` | 200, 404, 409 |
+| POST | `/api/v1/solicitacoes/{id}/recusa` | 200, 400, 404, 409 |
+| POST | `/api/v1/distribuicoes` | 201, 400, 404, 409 |
+| GET | `/api/v1/relatorios/doacoes?inicio=&fim=&tipoSanguineo=&hospitalId=` | 200, 400 |
+| GET | `/api/v1/relatorios/distribuicoes?inicio=&fim=&tipoSanguineo=&hospitalId=` | 200, 400 |
 
 ## 👥 Equipe
 
@@ -236,6 +278,17 @@ Princípios de POO aplicados:
   ```
 - **Java** (`src/main/java/br/com/rotavital/aed` e `estruturas`): mesma lógica, integrada à aplicação. Em **Requisições → Reservar**, o pedido recebe a bolsa compatível que vence primeiro e a rota calculada. Testes em `AedAlgoritmosTest`.
 
+### 🌐 RSD — Infraestrutura de Comunicação
+
+- 🗺️ Diagrama de arquitetura (VPC, sub-redes, portas e protocolos), revisado em 18/11 com a camada de dados em PostgreSQL: [PDF](docs/arquitetura/rsd/arquitetura-hemostart-martins-melo.pdf) · [fonte draw.io](docs/arquitetura/rsd/arquitetura-hemostart-martins-melo.drawio)
+- Contrato da API REST implementado: seção [🔌 API REST](#-api-rest-apiv1).
+
+### 📈 EST — Probabilidade de desabastecimento (U2)
+
+- 📄 [Relatório de achados: método (Poisson), premissas, resultados e recomendações](docs/est/relatorio-desabastecimento.md)
+- No sistema: **Relatórios → Risco de Desabastecimento** · API: `GET /api/estatisticas/desabastecimento?horizonteDias=7&janelaDias=30`
+- Desperdício agora medido **por semana** (últimas 8 semanas), o que dá média, mediana e desvio padrão com significado.
+
 ### Relatório de Algoritmos e Estrutura de Dados U1
 
 https://docs.google.com/document/d/1pvN2DdHupPwdKikVTwpOW34SZLH7y-uA_THajAqoH8A/edit?tab=t.0
@@ -243,10 +296,6 @@ https://docs.google.com/document/d/1pvN2DdHupPwdKikVTwpOW34SZLH7y-uA_THajAqoH8A/
 ### Apresentação de Estatística
 
 https://www.youtube.com/watch?v=-s2cwjNmQJ8
-
-### 🌐 RSD — Infraestrutura de Comunicação
-
-- 🗺️ Diagrama de arquitetura (VPC, sub-redes e fluxos): [PDF](docs/arquitetura/rsd/arquitetura-hemostart-martins-melo.pdf) · [fonte draw.io](docs/arquitetura/rsd/arquitetura-hemostart-martins-melo.drawio)
 
 ## 🎓 Infraestrutura de Software - Unidade 1 (U1)
 
@@ -272,6 +321,15 @@ Aceleração de uma operação CPU-bound (Validação em Lote de Compatibilidade
 
 
 ## 🎓 Infraestrutura de Software - Unidade 2 (U2)
+
+### 🔒 Teste de ausência de condição de corrida
+
+As operações que disputam o mesmo estoque passam pela classe `SecaoCritica` (pacote `concorrencia`): registrar coleta, aprovar ou recusar solicitação, distribuir, descartar, verificar validade e agendar. A ordem é **trava → abre transação → executa → commit → solta a trava**. Com `synchronized` + `@Transactional`, o commit acontecia *depois* de soltar a trava, e outra thread podia ler o banco desatualizado.
+
+O `ConcorrenciaEstoqueTest` dispara várias threads ao mesmo tempo, todas liberadas juntas por um `CountDownLatch`, e prova que:
+- **16 coletas simultâneas** geram 16 códigos de bolsa diferentes;
+- **8 aprovações simultâneas** disputando **1 bolsa**: só uma é aprovada, e a bolsa nunca é reservada duas vezes (issue #6);
+- **8 agendamentos simultâneos** no mesmo horário respeitam o limite de 2 vagas.
 
 **URL Pública (Deploy):** https://hemostart-rotavital-api.onrender.com/
 

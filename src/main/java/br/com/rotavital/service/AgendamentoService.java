@@ -1,5 +1,7 @@
 package br.com.rotavital.service;
 
+import br.com.rotavital.concorrencia.SecaoCritica;
+import br.com.rotavital.exception.RecursoNaoEncontradoException;
 import br.com.rotavital.exception.RegraNegocioException;
 import br.com.rotavital.model.Agendamento;
 import br.com.rotavital.model.Doador;
@@ -17,12 +19,14 @@ public class AgendamentoService {
     private final AgendamentoRepository repository;
     private final DoadorService doadorService;
     private final ConfiguracaoService configuracaoService;
+    private final SecaoCritica secaoCritica;
 
     public AgendamentoService(AgendamentoRepository repository, DoadorService doadorService,
-                              ConfiguracaoService configuracaoService) {
+                              ConfiguracaoService configuracaoService, SecaoCritica secaoCritica) {
         this.repository = repository;
         this.doadorService = doadorService;
         this.configuracaoService = configuracaoService;
+        this.secaoCritica = secaoCritica;
     }
 
     @Transactional(readOnly = true)
@@ -30,8 +34,12 @@ public class AgendamentoService {
         return repository.findAllByOrderByDataAscHorarioAsc();
     }
 
-    @Transactional
-    public synchronized Agendamento agendar(String doadorId, LocalDate data, String horario) {
+    /** Roda na SecaoCritica: o limite de vagas por horário nunca é ultrapassado. */
+    public Agendamento agendar(String doadorId, LocalDate data, String horario) {
+        return secaoCritica.executar(() -> agendarExclusivo(doadorId, data, horario));
+    }
+
+    private Agendamento agendarExclusivo(String doadorId, LocalDate data, String horario) {
         Doador doador = doadorService.buscarPorId(doadorId);
         if (data == null || horario == null || horario.isBlank()) {
             throw new RegraNegocioException("Informe a data e o horário");
@@ -53,7 +61,7 @@ public class AgendamentoService {
     @Transactional
     public void cancelar(String id) {
         Agendamento a = repository.findById(id)
-                .orElseThrow(() -> new RegraNegocioException("Agendamento não encontrado"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Agendamento não encontrado"));
         a.cancelar();
         repository.save(a);
     }

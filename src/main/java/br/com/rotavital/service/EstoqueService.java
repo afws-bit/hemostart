@@ -1,8 +1,10 @@
 package br.com.rotavital.service;
 
+import br.com.rotavital.concorrencia.SecaoCritica;
 import br.com.rotavital.dto.EstatisticaDesperdicioDTO;
 import br.com.rotavital.dto.EstatisticasGeraisDTO;
 import br.com.rotavital.estruturas.ListaEncadeada;
+import br.com.rotavital.exception.RecursoNaoEncontradoException;
 import br.com.rotavital.exception.RegraNegocioException;
 import br.com.rotavital.model.BolsaSangue;
 import br.com.rotavital.model.Componente;
@@ -33,22 +35,32 @@ public class EstoqueService {
     private final DoadorRepository doadorRepository;
     private final HistoricoService historicoService;
     private final TriagemClinicaRepository triagemRepository;
+    private final SecaoCritica secaoCritica;
 
     public EstoqueService(BolsaSangueRepository bolsaRepository,
                           DoadorRepository doadorRepository,
                           HistoricoService historicoService,
-                          TriagemClinicaRepository triagemRepository) {
+                          TriagemClinicaRepository triagemRepository,
+                          SecaoCritica secaoCritica) {
         this.bolsaRepository = bolsaRepository;
         this.doadorRepository = doadorRepository;
         this.historicoService = historicoService;
         this.triagemRepository = triagemRepository;
+        this.secaoCritica = secaoCritica;
     }
 
-    /** HU02 — registra a coleta, gera o código único e grava a bolsa no banco. */
-    @Transactional
-    public synchronized BolsaSangue registrarColeta(String doadorId, String componente, int volume) {
+    /**
+     * HU02 — registra a coleta, gera o código único e grava a bolsa no banco.
+     * Roda na SecaoCritica: o código BS-xxxxx só é liberado para a próxima
+     * coleta depois que esta foi gravada (sem códigos duplicados).
+     */
+    public BolsaSangue registrarColeta(String doadorId, String componente, int volume) {
+        return secaoCritica.executar(() -> registrarColetaExclusivo(doadorId, componente, volume));
+    }
+
+    private BolsaSangue registrarColetaExclusivo(String doadorId, String componente, int volume) {
         Doador doador = doadorRepository.findById(doadorId)
-                .orElseThrow(() -> new RegraNegocioException("Doador não encontrado"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Doador não encontrado"));
         LocalDate hoje = LocalDate.now();
         if (!doador.aptoPorIntervalo(hoje)) {
             throw new RegraNegocioException("Doador ainda não apto para nova doação");
@@ -97,8 +109,11 @@ public class EstoqueService {
     }
 
     /** HU03 / HU07 — verificação periódica de validade (chamada pelo ValidadeScheduler). */
-    @Transactional
     public void verificarValidade() {
+        secaoCritica.executar(this::verificarValidadeExclusivo);
+    }
+
+    private void verificarValidadeExclusivo() {
         LocalDate hoje = LocalDate.now();
         List<BolsaSangue> ativas = bolsaRepository.findByStatusInOrderByDataValidadeAsc(
                 EnumSet.of(StatusBolsa.DISPONIVEL, StatusBolsa.RESERVADA));
@@ -112,16 +127,17 @@ public class EstoqueService {
     }
 
     /** HU07 — descarte confirmado pelo responsável técnico. */
-    @Transactional
-    public void descartar(String codigo, String responsavel) {
+    public BolsaSangue descartar(String codigo, String responsavel) {
         if (responsavel == null || responsavel.isBlank()) {
             throw new RegraNegocioException("Informe o responsável pelo descarte");
         }
-        BolsaSangue b = bolsaRepository.findById(codigo)
-                .orElseThrow(() -> new RegraNegocioException("Bolsa não encontrada"));
-        b.descartar(responsavel);
-        bolsaRepository.save(b);
-        historicoService.registrar(TipoOperacao.DESCARTE, b.getCodigo(), "Descartada por " + responsavel);
+        return secaoCritica.executar(() -> {
+            BolsaSangue b = bolsaRepository.findById(codigo)
+                    .orElseThrow(() -> new RecursoNaoEncontradoException("Bolsa não encontrada"));
+            b.descartar(responsavel);
+            historicoService.registrar(TipoOperacao.DESCARTE, b.getCodigo(), "Descartada por " + responsavel);
+            return bolsaRepository.save(b);
+        });
     }
 
     @Transactional(readOnly = true)
@@ -142,34 +158,47 @@ public class EstoqueService {
         return b.getStatus() == StatusBolsa.DESCARTADA || b.getStatus() == StatusBolsa.VENCIDA;
     }
 
+    /** Semanas analisadas na estatística de desperdício. */
+    public static final int SEMANAS_DESPERDICIO = 8;
+
+    /**
+     * EST — desperdício por semana nas últimas 8 semanas (bolsas descartadas ou vencidas).
+     * A amostra é a quantidade desperdiçada em cada semana, o que dá média, mediana
+     * e desvio padrão com significado (antes cada bolsa valia 1, e o desvio era sempre 0).
+     * A data usada é a do descarte ou, para bolsas vencidas, a da validade.
+     */
     @Transactional(readOnly = true)
     public EstatisticaDesperdicioDTO calcularEstatisticasDesperdicio() {
         List<BolsaSangue> descartadas = bolsaRepository.findAll().stream()
                 .filter(this::isDesperdicio)
                 .collect(Collectors.toList());
 
-        if (descartadas.isEmpty()) {
-            return new EstatisticaDesperdicioDTO(0, 0, 0, 0, new HashMap<>());
-        }
-
         Map<String, Long> descartePorTipo = descartadas.stream()
                 .collect(Collectors.groupingBy(BolsaSangue::getTipoSanguineo, Collectors.counting()));
 
-        // Cada bolsa descartada/vencida conta como 1 unidade (mesma lógica original de EST)
-        List<Double> valores = descartadas.stream()
-                .map(b -> 1.0)
-                .sorted()
-                .collect(Collectors.toList());
+        LocalDate hoje = LocalDate.now();
+        double[] porSemana = new double[SEMANAS_DESPERDICIO];
+        for (BolsaSangue b : descartadas) {
+            LocalDate data = b.getDataDescarte() != null ? b.getDataDescarte().toLocalDate() : b.getDataValidade();
+            if (data == null || data.isAfter(hoje)) continue;
+            long semana = ChronoUnit.DAYS.between(data, hoje) / 7;
+            if (semana < SEMANAS_DESPERDICIO) porSemana[(int) semana]++;
+        }
+
+        List<Double> valores = new java.util.ArrayList<>();
+        for (double v : porSemana) valores.add(v);
+        valores.sort(Comparator.naturalOrder());
 
         int n = valores.size();
         double media = valores.stream().mapToDouble(Double::doubleValue).sum() / n;
         double mediana = (n % 2 == 1)
                 ? valores.get(n / 2)
                 : (valores.get(n / 2 - 1) + valores.get(n / 2)) / 2.0;
-        double variancia = valores.stream().mapToDouble(v -> Math.pow(v - media, 2)).sum() / n;
+        double variancia = valores.stream().mapToDouble(v -> Math.pow(v - media, 2)).sum() / (n - 1); // amostral
         double desvioPadrao = Math.sqrt(variancia);
 
-        return new EstatisticaDesperdicioDTO(media, mediana, desvioPadrao, descartadas.size(), descartePorTipo);
+        return new EstatisticaDesperdicioDTO(media, mediana, desvioPadrao, descartadas.size(),
+                descartePorTipo.isEmpty() ? new HashMap<>() : descartePorTipo);
     }
 
     @Transactional(readOnly = true)
