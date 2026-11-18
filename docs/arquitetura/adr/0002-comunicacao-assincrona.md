@@ -1,14 +1,14 @@
-# ADR 0002: Uso de Mensageria para Comunicação entre Serviços
+# ADR 0002: Escolha do squad para a Parte 3
 
 **Status:** Proposto
 
 ## Contexto
-Com a separação dos serviços, a comunicação síncrona (REST) para o processo de reserva de sangue estava tornando o sistema lento e propenso a falhas em cascata. Se o serviço de Estoque caísse, as requisições travariam.
+Prazo curto, 8 integrantes, necessidade de entregar a história âncora com Gherkin executável. O deploy atual é um único container no Render.
 
 ## Decisão
-Decidimos adotar o RabbitMQ para comunicação assíncrona orientada a eventos entre os serviços de Requisição e Estoque, implementando o padrão Saga por Orquestração.
+Implementar a Parte 3 como **monolito modular**, com pacotes por contexto e por camada. O Estoque só será extraído como serviço se [condição mensurável, ex.: pico acima de X req/s].
 
 ## Consequências
-*   **Melhora:** Desacoplamento temporal. O serviço de requisição não precisa esperar o estoque responder para continuar funcionando.
-*   **Piora:** A consistência dos dados passa a ser "eventual" (Eventual Consistency). Exige monitoramento mais complexo do broker de mensagens.
-*   **Alternativa descartada:** Comunicação via REST síncrono. Descartada por gerar um alto acoplamento e falhas em cascata.
+- **Melhora:** menos infraestrutura, transações locais, deploy simples.
+- **Piora:** escala conjunta dos contextos até a extração.
+- **Alternativa descartada:** adotar microsserviços já agora, pelo custo operacional e pelo prazo.

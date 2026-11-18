@@ -1,11 +1,24 @@
 # language: pt
+Funcionalidade: Reservar bolsa de sangue
+  Como enfermeiro do estoque central
+  Quero reservar uma bolsa compatível com o receptor
+  Para garantir o sangue correto e evitar desperdício
 
-Funcionalidade: Reserva de Bolsa com regra FEFO
+  Cenário: Reservar bolsa compatível e válida
+    Dado uma bolsa "BS-00001" do tipo "O-" com status "Disponível" e validade futura
+    E um receptor do tipo "A+"
+    Quando eu reservo a bolsa "BS-00001" para a requisição "REQ-001"
+    Então o status da bolsa deve ser "Reservada"
+    E a bolsa deve estar vinculada à requisição "REQ-001"
 
-  Cenário: Reservar a bolsa com a validade mais próxima
-    Dado que eu tenho a bolsa "B01" do tipo "O-" que vence em 10 dias
-    E eu tenho a bolsa "B02" do tipo "O-" que vence em 2 dias
-    Quando o hospital solicitar 1 bolsa do tipo "O-"
-    Então o sistema deve reservar a bolsa "B02"
-    E o status da bolsa "B02" deve ser "Reservada"
-    E o status da bolsa "B01" deve permanecer "Disponível"
+  Cenário: Bolsa incompatível é recusada
+    Dado uma bolsa "BS-00002" do tipo "A+" com status "Disponível" e validade futura
+    E um receptor do tipo "O-"
+    Quando eu tento reservar a bolsa "BS-00002"
+    Então a reserva deve ser recusada por incompatibilidade
+    E o status da bolsa deve continuar "Disponível"
+
+  Cenário: Bolsa vencida é recusada
+    Dado uma bolsa "BS-00003" do tipo "O-" com validade anterior a hoje
+    Quando eu tento reservar a bolsa "BS-00003"
+    Então a reserva deve ser recusada por vencimento
