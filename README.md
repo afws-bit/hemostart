@@ -145,7 +145,7 @@ Implementa o contrato de API definido pela equipe no documento de Projetos 3 / R
 | Caio Catão | cczc@cesar.school |
 | Daniel Luiz | ddlmsf@cesar.school |
 | Elisa Martins | emgs2@cesar.school |
-| Glauberson | _preencher_@cesar.school |
+| Glauberson | grs4@cesar.school |
 | João Lucas | jlms@cesar.school |
 | Kelly Melo | kpsm@cesar.school |
 | Mateus Henrique Diniz | _preencher_@cesar.school |
