@@ -148,7 +148,7 @@ Implementa o contrato de API definido pela equipe no documento de Projetos 3 / R
 | Glauberson | grs4@cesar.school |
 | João Lucas | jlms@cesar.school |
 | Kelly Melo | kpsm@cesar.school |
-| Mateus Henrique Diniz | _preencher_@cesar.school |
+| Mateus Henrique Diniz | mhds@cesar.school |
 
 ### Membros anteriores / novos
 
