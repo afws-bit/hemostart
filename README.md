@@ -102,10 +102,10 @@ Princípios de POO aplicados:
 | Augusto Freitas | afws@cesar.school |
 | Caio Catão | cczc@cesar.school |
 | Daniel Luiz | ddlmsf@cesar.school |
-| Elisa Martins | _preencher_@cesar.school |
+| Elisa Martins | emgs2@cesar.school |
 | Glauberson | _preencher_@cesar.school |
 | João Lucas | jlms@cesar.school |
-| Kelly Melo | _preencher_@cesar.school |
+| Kelly Melo | kpsm@cesar.school |
 | Mateus Henrique Diniz | _preencher_@cesar.school |
 
 ### Membros anteriores / novos
