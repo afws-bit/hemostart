@@ -297,6 +297,150 @@ Funcionalidade: Alerta de Estoque Crítico
     Quando novas coletas elevam o estoque disponível para 10 bolsas
     Então o alerta de "estoque crítico" é removido do tipo "O-"
 ```
+## HU11 — Agendamento de Doação
+
+**Como** atendente do banco de sangue, **eu quero** agendar uma doação para um doador cadastrado, escolhendo data e horário, **para que** o fluxo de coletas seja organizado e o doador só compareça quando estiver apto.
+
+**Detalhes do negócio:**
+
+- O agendamento só pode ser feito para doador cadastrado e apto na data escolhida (respeitando o intervalo mínimo de 60 dias para homens e 90 para mulheres).
+- Cada horário possui um limite de vagas; ao atingi-lo, o horário não aceita novos agendamentos.
+- O agendamento pode ser cancelado, e a vaga volta a ficar disponível.
+
+**Cenários (BDD):**
+
+```gherkin
+Funcionalidade: Agendamento de Doação
+
+  Cenário: Agendamento com doador apto e horário disponível
+    Dado que o doador "Maria Silva" está apto para doação na data desejada
+    E existem vagas no horário "09:00" do dia escolhido
+    Quando registro o agendamento
+    Então o agendamento é salvo com status "agendado"
+    E uma mensagem de confirmação é exibida
+
+  Cenário: Tentativa de agendamento em horário sem vagas
+    Dado que o horário "09:00" já atingiu o limite de vagas
+    Quando tento agendar uma nova doação nesse horário
+    Então o sistema exibe a mensagem "Horário indisponível"
+    E o agendamento não é salvo
+
+  Cenário: Tentativa de agendamento antes do intervalo mínimo
+    Dado que o doador "João Souza" doou sangue há 30 dias
+    Quando tento agendar uma nova doação para ele
+    Então o sistema exibe a mensagem "Doador ainda não apto para nova doação"
+    E o agendamento não é salvo
+
+  Cenário: Cancelamento de agendamento
+    Dado que existe um agendamento com status "agendado"
+    Quando o atendente cancela o agendamento
+    Então o status muda para "cancelado"
+    E a vaga do horário volta a ficar disponível
+```
+
+## HU12 — Triagem Clínica Pré-Doação
+
+**Como** enfermeiro responsável pela triagem, **eu quero** registrar os dados clínicos do doador antes da coleta (peso, pressão arterial, temperatura e hemoglobina) e o sistema definir se ele está apto ou inapto, **para que** só doadores em condições seguras avancem para a coleta, protegendo doador e receptor.
+
+**Detalhes do negócio:**
+
+- A triagem deve ser registrada antes do registro de coleta (HU02).
+- Hemoglobina mínima: 12,5 g/dL para mulheres e 13,0 g/dL para homens.
+- Peso mínimo de 50kg e temperatura de até 37°C.
+- Doador classificado como "inapto" não pode ter coleta registrada naquela visita.
+- O motivo da inaptidão deve ser registrado.
+
+**Cenários (BDD):**
+
+```gherkin
+Funcionalidade: Triagem Clínica Pré-Doação
+
+  Cenário: Triagem com todos os parâmetros dentro do padrão
+    Dado que o doador "Maria Silva" está na triagem
+    Quando registro peso "62kg", temperatura "36.5" e hemoglobina "13.2"
+    Então o resultado da triagem é "apto"
+    E o doador fica liberado para o registro de coleta
+
+  Cenário: Triagem com hemoglobina abaixo do mínimo
+    Dado que a doadora "Ana Lima" está na triagem
+    Quando registro hemoglobina "11.8"
+    Então o resultado da triagem é "inapto"
+    E o motivo "Hemoglobina abaixo do mínimo" é registrado
+
+  Cenário: Tentativa de coleta com doador inapto
+    Dado que o doador "João Souza" foi classificado como "inapto" na triagem
+    Quando tento registrar uma coleta para ele
+    Então o sistema exibe a mensagem "Doador inapto na triagem"
+    E a coleta não é registrada
+```
+
+## HU13 — Aprovação e Recusa de Solicitações de Sangue
+
+**Como** gestor do banco de sangue, **eu quero** analisar as solicitações pendentes dos hospitais e aprovar ou recusar cada uma, **para que** a distribuição só aconteça para pedidos avaliados e com bolsas compatíveis reservadas.
+
+**Detalhes do negócio:**
+
+- Apenas solicitações com status "pendente" podem ser aprovadas ou recusadas.
+- Ao aprovar, o sistema reserva as bolsas compatíveis (seguindo HU04 e a política FEFO), e o status delas passa a "reservada".
+- Se não houver bolsas suficientes, a aprovação é bloqueada.
+- Toda recusa exige um motivo.
+
+**Cenários (BDD):**
+
+```gherkin
+Funcionalidade: Aprovação de Solicitações
+
+  Cenário: Aprovação de solicitação com estoque suficiente
+    Dado que existe uma solicitação "pendente" de 3 bolsas "O-"
+    E existem 5 bolsas "O-" disponíveis
+    Quando o gestor aprova a solicitação
+    Então o status da solicitação muda para "aprovada"
+    E 3 bolsas passam para o status "reservada"
+
+  Cenário: Aprovação com estoque insuficiente
+    Dado que existe uma solicitação "pendente" de 3 bolsas "O-"
+    E existem apenas 2 bolsas "O-" disponíveis
+    Quando o gestor tenta aprovar a solicitação
+    Então o sistema exibe a mensagem "Estoque insuficiente para atender a solicitação"
+    E a solicitação continua "pendente"
+
+  Cenário: Recusa de solicitação com motivo
+    Dado que existe uma solicitação com status "pendente"
+    Quando o gestor recusa a solicitação informando o motivo
+    Então o status da solicitação muda para "recusada"
+    E o motivo é registrado no histórico
+```
+
+## HU14 — Consulta de Histórico e Próxima Data Apta do Doador
+
+**Como** atendente do banco de sangue, **eu quero** consultar o histórico de doações de um doador e ver a data em que ele poderá doar novamente, **para que** eu possa orientar o doador no balcão e evitar agendamentos ou coletas fora do intervalo mínimo.
+
+**Detalhes do negócio:**
+
+- O histórico lista as doações com data, tipo sanguíneo e volume.
+- A próxima data apta é calculada a partir da última doação (60 dias para homens, 90 para mulheres).
+- Doador sem doações anteriores aparece como "apto" imediatamente.
+
+**Cenários (BDD):**
+
+```gherkin
+Funcionalidade: Histórico do Doador
+
+  Cenário: Consulta de doador com doações anteriores
+    Dado que o doador "João Souza" doou sangue há 30 dias
+    Quando consulto o histórico dele
+    Então vejo a lista de doações com data, tipo sanguíneo e volume
+    E vejo a próxima data apta calculada em 60 dias após a última doação
+
+  Cenário: Consulta de doador sem doações anteriores
+    Dado que o doador "Carlos Pereira" nunca doou sangue
+    Quando consulto o histórico dele
+    Então o sistema informa que não há doações registradas
+    E o doador aparece como "apto"
+```
+
+
+
 
 ## Resumo das Histórias
 
@@ -312,3 +456,7 @@ Funcionalidade: Alerta de Estoque Crítico
 | HU08 | Histórico e Relatório | Gestor |
 | HU09 | Cadastro de Hospital | Administrador |
 | HU10 | Alerta de Estoque Crítico | Gestor |
+| HU11 | Agendamento de Doação | Atendente |
+| HU12 | Triagem Clínica Pré-Doação | Enfermeiro |
+| HU13 | Aprovação e Recusa de Solicitações | Gestor |
+| HU14 | Histórico e Próxima Data Apta do Doador | Atendente |
