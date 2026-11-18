@@ -244,6 +244,10 @@ https://docs.google.com/document/d/1pvN2DdHupPwdKikVTwpOW34SZLH7y-uA_THajAqoH8A/
 
 https://www.youtube.com/watch?v=-s2cwjNmQJ8
 
+### 🌐 RSD — Infraestrutura de Comunicação
+
+- 🗺️ Diagrama de arquitetura (VPC, sub-redes e fluxos): [PDF](docs/arquitetura/rsd/arquitetura-hemostart-martins-melo.pdf) · [fonte draw.io](docs/arquitetura/rsd/arquitetura-hemostart-martins-melo.drawio)
+
 ## 🎓 Infraestrutura de Software - Unidade 1 (U1)
 
 ---
