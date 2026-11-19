@@ -234,3 +234,22 @@ form .form-group {
 .form-inline {
     display: inline;
 }
+
+/* RSD — alertas de estoque em tempo real (WebSocket /ws/estoque) */
+.ws-status { font-size: 11px; font-weight: normal; margin-left: 8px; }
+.ws-ao-vivo { color: #28a745; }
+.ws-conectando { color: #fd7e14; }
+.ws-offline { color: #999; }
+.ws-vazio { color: #555; font-size: 13px; }
+#ws-avisos { position: fixed; right: 16px; bottom: 16px; z-index: 1000; max-width: 360px; }
+.ws-aviso {
+    background: white;
+    border-left: 4px solid #ffc107;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    padding: 10px 14px;
+    margin-top: 8px;
+    font-size: 13px;
+    border-radius: 4px;
+}
+.ws-aviso-critico { border-left-color: #dc3545; }
+.ws-aviso-normal { border-left-color: #28a745; }

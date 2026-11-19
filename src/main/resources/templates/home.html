@@ -47,14 +47,16 @@
     </div>
 
     <div class="card">
-        <h3>Alertas de Estoque Crítico</h3>
-        <div th:each="entry : ${alertas}">
-            <div th:if="${entry.value}" class="alerta-critico">
-                ⚠️ Estoque crítico para <strong th:text="${entry.key}"></strong>
+        <h3>Alertas de Estoque Crítico <span id="ws-status" class="ws-status ws-offline" title="Atualizado em tempo real por WebSocket (/ws/estoque)">● carregando…</span></h3>
+        <div id="alertas-estoque">
+            <div th:each="entry : ${alertas}">
+                <div th:if="${entry.value}" class="alerta-critico">
+                    ⚠️ Estoque crítico para <strong th:text="${entry.key}"></strong>
+                </div>
             </div>
+            <p th:if="${#maps.isEmpty(alertas) or !alertas.values().contains(true)}"
+               class="ws-vazio">Nenhum alerta de estoque crítico no momento.</p>
         </div>
-        <p th:if="${#maps.isEmpty(alertas) or !alertas.values().contains(true)}"
-           style="color:#555; font-size:13px;">Nenhum alerta de estoque crítico no momento.</p>
     </div>
 
     <div class="card">
@@ -67,5 +69,6 @@
         <a class="btn" th:href="@{/estoque/verificar}" style="margin-left:8px;">Verificar Validade Agora</a>
     </div>
 </div>
+<script th:src="@{/js/estoque-ao-vivo.js}"></script>
 </body>
 </html>

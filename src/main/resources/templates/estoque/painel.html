@@ -10,6 +10,8 @@
 <nav>
     <a th:href="@{/}">Início</a>
     <a th:href="@{/doadores}">Doadores</a>
+    <a th:href="@{/agendamentos}">Agendamentos</a>
+    <a th:href="@{/triagem}">Triagem</a>
     <a th:href="@{/coleta}">Coleta</a>
     <a th:href="@{/estoque}">Estoque</a>
     <a th:href="@{/estoque/validade}">Validade/Descarte</a>
@@ -20,6 +22,8 @@
     <a th:href="@{/historico/rastreio}">Rastreio</a>
     <a th:href="@{/historico/relatorio}">Relatório</a>
     <a th:href="@{/estoque/configurar}">Config. Estoque</a>
+    <a th:href="@{/relatorios}">Estatísticas</a>
+    <a th:href="@{/rede}">Rede</a>
     <a th:href="@{/benchmark}">Benchmark</a>
 </nav>
 <div class="container">
@@ -32,11 +36,15 @@
     <a class="btn btn-gray" th:href="@{/estoque/configurar}" style="margin-left:8px;">Configurar Mínimos</a>
     <br><br>
 
-    <!-- Alertas de estoque crítico -->
-    <div th:each="entry : ${alertas}">
-        <div th:if="${entry.value}" class="alerta-critico">
-            ⚠️ Estoque crítico: <strong th:text="${entry.key}"></strong>
-            — disponível abaixo do mínimo configurado
+    <!-- Alertas de estoque crítico (atualizados em tempo real por WebSocket) -->
+    <p style="font-size:12px; color:#555;">Alertas de estoque crítico
+        <span id="ws-status" class="ws-status ws-offline" title="Atualizado em tempo real por WebSocket (/ws/estoque)">● carregando…</span></p>
+    <div id="alertas-estoque">
+        <div th:each="entry : ${alertas}">
+            <div th:if="${entry.value}" class="alerta-critico">
+                ⚠️ Estoque crítico: <strong th:text="${entry.key}"></strong>
+                — disponível abaixo do mínimo configurado
+            </div>
         </div>
     </div>
 
@@ -50,17 +58,17 @@
 
     <!-- Painel por tipo -->
     <div class="grid-tipos">
-        <div th:each="entry : ${painel}"
+        <div th:each="entry : ${painel}" th:attr="data-tipo=${entry.key}"
              th:class="${alertas[entry.key] ? 'panel-tipo critico' : 'panel-tipo'}">
             <div class="tipo-nome" th:text="${entry.key}"></div>
             <div style="font-size:12px; margin-top:5px;">
-                <span class="badge badge-disponivel" th:text="'Disp: ' + ${entry.value['disponivel']}"></span><br>
+                <span class="badge badge-disponivel" data-campo="disponivel" th:text="'Disp: ' + ${entry.value['disponivel']}"></span><br>
                 <span class="badge badge-reservada" th:text="'Res: ' + ${entry.value['reservada']}"></span><br>
                 <span class="badge badge-distribuida" th:text="'Dist: ' + ${entry.value['distribuida']}"></span><br>
                 <span class="badge badge-vencida" th:text="'Venc: ' + ${entry.value['vencida']}"></span><br>
                 <span class="badge badge-descartada" th:text="'Desc: ' + ${entry.value['descartada']}"></span>
             </div>
-            <div th:if="${alertas[entry.key]}" style="color:#856404; font-size:11px; margin-top:5px;">⚠️ Crítico</div>
+            <div data-campo="aviso" th:style="${alertas[entry.key] ? 'color:#856404; font-size:11px; margin-top:5px;' : 'display:none; color:#856404; font-size:11px; margin-top:5px;'}">⚠️ Crítico</div>
         </div>
     </div>
 
@@ -96,5 +104,6 @@
         </tbody>
     </table>
 </div>
+<script th:src="@{/js/estoque-ao-vivo.js}"></script>
 </body>
 </html>

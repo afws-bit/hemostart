@@ -295,6 +295,13 @@ Implementa o contrato de API definido pela equipe no documento de Projetos 3 / R
 - 🗺️ Diagrama de arquitetura (VPC, sub-redes, portas e protocolos), revisado em 18/11 com a camada de dados em PostgreSQL: [PDF](docs/arquitetura/rsd/arquitetura-hemostart-martins-melo.pdf) · [fonte draw.io](docs/arquitetura/rsd/arquitetura-hemostart-martins-melo.drawio)
 - Contrato da API REST implementado: seção [🔌 API REST](#-api-rest-apiv1).
 
+**Unidade 2 — Notificações de estoque crítico em tempo real (WebSocket)**
+
+- Endpoint `wss://<host>/ws/estoque` (no Render: `wss://hemostart-rotavital-api.onrender.com/ws/estoque`), na mesma porta HTTPS da aplicação: o navegador faz o *handshake* HTTP (`Upgrade: websocket` → `101 Switching Protocols`) e o servidor passa a **empurrar** as mensagens, sem o cliente perguntar.
+- Ao conectar, o cliente recebe a situação dos 8 tipos (disponível × mínimo configurado). Depois de cada coleta, reserva, distribuição, descarte, vencimento ou mudança de mínimo, o servidor recalcula e avisa todos os clientes; quando um tipo **entra em crítico** ou **volta ao normal**, a tela mostra um aviso.
+- Telas **Início** e **Estoque** com indicador "● ao vivo", lista de alertas e cards por tipo atualizados sem recarregar; reconexão automática (1 s → 30 s).
+- Código: [`notificacao/`](src/main/java/br/com/rotavital/notificacao) · front-end [`estoque-ao-vivo.js`](src/main/resources/static/js/estoque-ao-vivo.js) · teste ponta a ponta [`NotificacaoEstoqueWebSocketTest`](src/test/java/br/com/rotavital/notificacao/NotificacaoEstoqueWebSocketTest.java) (servidor em porta real + cliente WebSocket).
+
 **Unidade 2 — Projeto de observabilidade (Actuator, Prometheus, Grafana, Loki e Tempo)** → [`observabilidade/`](observabilidade/README.md)
 
 - Um comando sobe tudo: `cd observabilidade && cp .env.example .env && docker compose up -d --build`

@@ -32,6 +32,7 @@ public class MetricasHttpFilter extends OncePerRequestFilter {
                 || caminho.startsWith("/js/")
                 || caminho.startsWith("/rede/")
                 || caminho.startsWith("/h2-console")
+                || caminho.startsWith("/ws/")
                 || caminho.startsWith("/api/monitoramento")
                 || caminho.equals("/favicon.ico");
     }
