@@ -149,7 +149,7 @@ Implementa o contrato de API definido pela equipe no documento de Projetos 3 / R
 | Daniel Luiz Massud de Sousa Filho | ddlmsf@cesar.school |
 | Elisa Martins Galindo Santos | emgs2@cesar.school |
 | Glauberson Ribeiro de Siqueira | grs4@cesar.school |
-| João Lucas Santos Lira | jlms@cesar.school |
+| João Lucas Mendes dos Santos | jlms@cesar.school |
 | Kelly Priscilla de Siqueira Melo | kpsm@cesar.school |
 | Mateus Henrique Diniz Silva | mhds@cesar.school |
 
