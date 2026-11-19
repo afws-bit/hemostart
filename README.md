@@ -213,27 +213,6 @@ Implementa o contrato de API definido pela equipe no documento de Projetos 3 / R
 
 ### Histórias implementadas
 
-> **HU06 — Distribuição e Rastreio de Bolsas**
-> Como **operador logístico**, quero **registrar a saída da bolsa vinculada ao pedido**, para **rastrear cada bolsa da coleta até a entrega**.
-> ✔ data, hora, responsável e hospital destino · ✔ bloqueio de distribuição duplicada
-
-> **HU07 — Controle de Validade e Descarte**
-> Como **gestor de qualidade**, quero **ser alertado sobre bolsas perto de vencer e descartar as vencidas**, para **evitar desperdício e uso indevido**.
-> ✔ alerta “uso prioritário” (≤ 5 dias) · ✔ descarte com responsável
-
-> **HU08 — Histórico e Relatório**
-> Como **gestor**, quero **relatórios de coletas, distribuições e descartes por período**, para **acompanhar indicadores operacionais**.
-> ✔ filtro por período, tipo sanguíneo e hospital
-
-> **HU09 — Cadastro de Hospital**
-> Como **administrador**, quero **cadastrar e ativar/inativar hospitais**, para **que apenas instituições autorizadas solicitem sangue**.
-> ✔ CNPJ único · ✔ inativos não solicitam
-
-> **HU10 — Alerta de Estoque Crítico**
-> Como **gestor**, quero **definir um nível mínimo por tipo e ser alertado abaixo dele**, para **organizar campanhas de doação a tempo**.
-> ✔ mínimo configurável e salvo no banco · ✔ alerta some quando o estoque normaliza
-
-
 
 > **HU13 — Aprovação e Recusa de Solicitações**
 > Como **gestor**, quero **aprovar ou recusar cada solicitação**, para **controlar a saída de bolsas**.
@@ -245,11 +224,13 @@ Implementa o contrato de API definido pela equipe no documento de Projetos 3 / R
 
 **Persistência:** todas as histórias leem e gravam no banco de dados relacional (PostgreSQL em produção / H2 local) via Spring Data JPA.
 
+- 📄 [Histórias atualizadas (HU13 e HU14 adicionadas)](docs/historias-usuario-rota-vital.md)
+
 - 🐞 Issue tracker:
 
   ![Issue tracker — Entrega 04](docs/img/issues-entrega04.png)
-- 🎥 Screencast do sistema (ênfase nas novas histórias): **_adicionar link do YouTube_**
-- 🎥 Screencast do código: **_adicionar link do YouTube_**
+- 🎥 Screencast do sistema (ênfase nas novas histórias): https://youtu.be/aRv-U-uCGIc
+- 🎥 Screencast do código: https://youtu.be/E-zOMA_yxRE
 
 ## Apresentação final (09/11 a 13/11)
 
