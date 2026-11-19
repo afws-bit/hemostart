@@ -205,7 +205,9 @@ Implementa o contrato de API definido pela equipe no documento de Projetos 3 / R
 > Como **hospital cadastrado**, quero **solicitar bolsas informando tipo, quantidade e urgência**, para **ser atendido conforme a necessidade clínica**.
 > ✔ só hospitais ativos · ✔ urgentes no topo da fila
 
-- 🐞 Issue tracker: **_adicionar print_** → salvar como `docs/img/issues-entrega03.png` e trocar esta linha por `![Issue tracker — Entrega 03](docs/img/issues-entrega03.png)`
+- 🐞 Issue tracker:
+
+  ![Issue tracker — Entrega 03](docs/img/issues-entrega03.png)
 - 🎥 Screencast do sistema (novas histórias): **_adicionar link do YouTube_**
 - 🎥 Screencast do código: **_adicionar link do YouTube_**
 
@@ -251,7 +253,9 @@ Implementa o contrato de API definido pela equipe no documento de Projetos 3 / R
 
 **Persistência:** todas as histórias leem e gravam no banco de dados relacional (PostgreSQL em produção / H2 local) via Spring Data JPA.
 
-- 🐞 Issue tracker: **_adicionar print_** → salvar como `docs/img/issues-entrega04.png` e trocar esta linha por `![Issue tracker — Entrega 04](docs/img/issues-entrega04.png)`
+- 🐞 Issue tracker:
+
+  ![Issue tracker — Entrega 04](docs/img/issues-entrega04.png)
 - 🎥 Screencast do sistema (ênfase nas novas histórias): **_adicionar link do YouTube_**
 - 🎥 Screencast do código: **_adicionar link do YouTube_**
 
