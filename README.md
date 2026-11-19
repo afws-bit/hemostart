@@ -75,6 +75,8 @@ Os testes de integração usam H2 em memória e sempre leem e gravam no banco:
 | `ConcorrenciaEstoqueTest` | ausência de condição de corrida (SO) |
 | `EstatisticaDesabastecimentoTest` | probabilidade de desabastecimento (EST) |
 | `AedAlgoritmosTest` | algoritmos da AED |
+| `MonitoramentoRedeTest`, `monitoramento.MonitorRedeTest`, `PainelRedeTest` | painel de monitoramento de rede (RSD) |
+| `ObservabilidadeTest` | Actuator/Prometheus com tag `application`, métricas de negócio, spans de serviço e repositório |
 
 ## 🧱 Arquitetura e Orientação a Objetos
 
@@ -92,6 +94,8 @@ br.com.rotavital
 ├── scheduler    Verificação periódica de validade
 ├── config       Carga de dados iniciais e mapa de rotas
 ├── concorrencia SecaoCritica (exclusão mútua com commit dentro da trava)
+├── monitoramento Painel de rede (RSD): filtro HTTP, sonda do banco, métricas de latência/jitter/perda/vazão
+├── observabilidade Spans por camada (Tempo), métricas de negócio Micrometer (Prometheus)
 ├── dto          DTOs de estatística; dto/api: entrada e saída da API REST (records)
 └── exception    RegraNegocioException, RecursoNaoEncontradoException (404), AcessoNegadoException (403)
 ```
@@ -282,6 +286,23 @@ Implementa o contrato de API definido pela equipe no documento de Projetos 3 / R
 
 - 🗺️ Diagrama de arquitetura (VPC, sub-redes, portas e protocolos), revisado em 18/11 com a camada de dados em PostgreSQL: [PDF](docs/arquitetura/rsd/arquitetura-hemostart-martins-melo.pdf) · [fonte draw.io](docs/arquitetura/rsd/arquitetura-hemostart-martins-melo.drawio)
 - Contrato da API REST implementado: seção [🔌 API REST](#-api-rest-apiv1).
+
+**Unidade 2 — Projeto de observabilidade (Actuator, Prometheus, Grafana, Loki e Tempo)** → [`observabilidade/`](observabilidade/README.md)
+
+- Um comando sobe tudo: `cd observabilidade && cp .env.example .env && docker compose up -d --build`
+- Aplicação instrumentada com Actuator (`/actuator/prometheus` na porta interna 8081, tag `application=hemostart`), traces no Tempo com spans controller → serviço → banco, logs no Loki com `traceId`
+- Prometheus com 8 alvos (app, Node Exporter, cAdvisor, postgres_exporter, Loki, Tempo, Alloy, Prometheus), 2 dashboards versionados, 8 métricas de negócio
+- Acesso remoto do professor: túnel Cloudflare só para o Grafana, com usuário Viewer criado automaticamente
+
+**Unidade 2 — implantação, benchmarking e painel de rede**
+
+| Critério (peso) | Entregável |
+|---|---|
+| Benchmarking: latência, vazão, perda e jitter (40%) | [Relatório de benchmarking](docs/rsd/benchmarking.md) · script [`benchmark_rede.py`](docs/rsd/benchmark/benchmark_rede.py) (DNS, ping, TCP, TLS, HTTPS por endpoint e carga com 1/5/10 clientes) |
+| Painel de monitoramento (35%) | Tela **Rede** (`/rede`) no sistema · JSON em `GET /api/monitoramento/rede` · [documentação do painel](docs/rsd/painel-monitoramento.md) |
+| Plano de implantação/migração (25%) | [Plano de implantação e migração](docs/rsd/plano-implantacao-migracao.md): JSON → PostgreSQL (realizada) e Render → VPC (planejada), metas, rollback e riscos |
+
+Para medir: `cd docs/rsd/benchmark` e `python benchmark_rede.py --origem "sua rede, cidade"`.
 
 ### 📈 EST — Probabilidade de desabastecimento (U2)
 

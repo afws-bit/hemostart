@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Monitoramento de Rede - RotaVital</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .rede-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 18px; margin-bottom: 18px; }
+        .rede-card { background: #fff; border-radius: 10px; padding: 18px 20px; box-shadow: 0 2px 6px rgba(0,0,0,.06); border-top: 4px solid #b30000; }
+        .rede-card h2 { margin: 0 0 4px 0; font-size: 1.15em; }
+        .rede-sub { color: #666; font-size: .85em; margin-bottom: 12px; }
+        .metricas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .metrica { background: #f7f7f9; border-radius: 6px; padding: 8px 10px; }
+        .metrica .rot { font-size: .72em; color: #666; text-transform: uppercase; letter-spacing: .5px; }
+        .metrica .val { font-size: 1.35em; font-weight: bold; }
+        .selo { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: .78em; font-weight: bold; color: #fff; vertical-align: middle; margin-left: 6px; }
+        .OK { background: #2e7d32; } .ATENCAO { background: #ef6c00; } .CRITICO { background: #c62828; } .SEM_DADOS { background: #9e9e9e; }
+        .barra { display: flex; gap: 12px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+        .barra select { padding: 5px 8px; }
+        .nota-rede { font-size: .82em; color: #555; margin-top: 8px; }
+        table.rede-tab { width: 100%; border-collapse: collapse; font-size: .88em; }
+        table.rede-tab th { background: #333; color: #fff; text-align: left; padding: 6px 8px; }
+        table.rede-tab td { border-bottom: 1px solid #e3e3e3; padding: 5px 8px; }
+        .mono { font-family: Consolas, "Courier New", monospace; font-size: .92em; }
+        .larga { grid-column: 1 / -1; }
+    </style>
+</head>
+<body>
+<header><h1>🩸 RotaVital — Banco de Sangue</h1></header>
+<nav>
+    <a th:href="@{/}">Início</a>
+    <a th:href="@{/doadores}">Doadores</a>
+    <a th:href="@{/agendamentos}">Agendamentos</a>
+    <a th:href="@{/triagem}">Triagem</a>
+    <a th:href="@{/coleta}">Coleta</a>
+    <a th:href="@{/estoque}">Estoque</a>
+    <a th:href="@{/requisicoes}">Fila de Pedidos</a>
+    <a th:href="@{/hospitais}">Hospitais</a>
+    <a th:href="@{/historico}">Histórico</a>
+    <a th:href="@{/relatorios}">Estatísticas</a>
+    <a th:href="@{/rede}">Rede</a>
+    <a th:href="@{/benchmark}">Benchmark</a>
+</nav>
+<div class="container">
+    <h2>📡 Painel de Monitoramento de Rede</h2>
+    <p>Latência, jitter, perda e vazão das ligações do diagrama de arquitetura. Atualiza sozinho a cada 5 segundos.</p>
+
+    <div class="barra">
+        <label>Janela:
+            <select id="janela">
+                <option value="60">último minuto</option>
+                <option value="300" selected>últimos 5 minutos</option>
+                <option value="900">últimos 15 minutos</option>
+                <option value="3600">última hora</option>
+            </select>
+        </label>
+        <span id="atualizado" class="nota-rede">carregando…</span>
+    </div>
+
+    <div class="rede-grid" id="ligacoes"></div>
+
+    <div class="rede-grid">
+        <div class="rede-card">
+            <h2>Tempo de resposta HTTP (ms)</h2>
+            <div class="rede-sub">Cada ponto é uma requisição recebida pela aplicação. Vermelho = falha (HTTP 5xx).</div>
+            <canvas id="graficoHttp" height="170"></canvas>
+        </div>
+        <div class="rede-card">
+            <h2>Ida e volta Aplicação → Banco (ms)</h2>
+            <div class="rede-sub">Sonda <span class="mono">SELECT 1</span> a cada 5 s. Vermelho = timeout ou erro de conexão.</div>
+            <canvas id="graficoBanco" height="170"></canvas>
+        </div>
+    </div>
+
+    <div class="rede-grid">
+        <div class="rede-card larga">
+            <h2>Tráfego por rota</h2>
+            <div class="rede-sub">Rotas mais acessadas na janela. Identificadores viram <span class="mono">{id}</span>.</div>
+            <table class="rede-tab">
+                <thead><tr><th>Rota</th><th>Requisições</th><th>Média (ms)</th><th>p95 (ms)</th><th>Falhas</th></tr></thead>
+                <tbody id="rotas"><tr><td colspan="5">Sem tráfego ainda.</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="rede-grid">
+        <div class="rede-card larga">
+            <h2>Benchmark externo — Internet → borda HTTPS/443</h2>
+            <div class="rede-sub">Medido de fora pelo script <span class="mono">docs/rsd/benchmark/benchmark_rede.py</span>, porque essa ligação acontece antes de a requisição chegar à aplicação.</div>
+            <div id="benchmark">Carregando…</div>
+        </div>
+    </div>
+
+    <p class="nota-rede">
+        <b>Metas</b> (plano de implantação, seção 5): HTTP p95 ≤ 300 ms · banco p95 ≤ 20 ms · perda ≤ 1%.
+        <b>Atenção</b> acima da meta; <b>crítico</b> com HTTP p95 &gt; 800 ms, banco p95 &gt; 100 ms ou perda &gt; 5%.
+        Jitter = média de |Lᵢ − Lᵢ₋₁| entre medições consecutivas. Os dados ficam em memória e recomeçam quando a aplicação reinicia.
+    </p>
+</div>
+
+<script th:inline="javascript">
+    const URL_DADOS = /*[[@{/api/monitoramento/rede}]]*/ '/api/monitoramento/rede';
+    const URL_BENCH = /*[[@{/rede/benchmark-externo.json}]]*/ '/rede/benchmark-externo.json';
+    const ROTULO = { OK: 'OK', ATENCAO: 'Atenção', CRITICO: 'Crítico', SEM_DADOS: 'Sem dados' };
+    let graficoHttp = null, graficoBanco = null;
+
+    function esc(t) {
+        return String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+    function num(v, casas = 1) { return (v ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: casas, maximumFractionDigits: casas }); }
+
+    function cardLigacao(l) {
+        return `<div class="rede-card">
+            <h2>${esc(l.nome)} <span class="selo ${l.situacao}">${ROTULO[l.situacao] || l.situacao}</span></h2>
+            <div class="rede-sub">${esc(l.origem)} → ${esc(l.destino)}<br><span class="mono">${esc(l.protocolo)}</span></div>
+            <div class="metricas">
+                <div class="metrica"><div class="rot">Latência média</div><div class="val">${num(l.latenciaMedia)} ms</div></div>
+                <div class="metrica"><div class="rot">p95</div><div class="val">${num(l.latenciaP95)} ms</div></div>
+                <div class="metrica"><div class="rot">p99</div><div class="val">${num(l.latenciaP99)} ms</div></div>
+                <div class="metrica"><div class="rot">Jitter</div><div class="val">${num(l.jitter)} ms</div></div>
+                <div class="metrica"><div class="rot">Perda</div><div class="val">${num(l.perdaPercentual, 2)}%</div></div>
+                <div class="metrica"><div class="rot">Vazão</div><div class="val">${num(l.vazaoPorSegundo, 2)}/s</div></div>
+            </div>
+            <div class="nota-rede">${l.amostras} medições na janela · mediana ${num(l.latenciaP50)} ms</div>
+        </div>`;
+    }
+
+    function desenhar(grafico, canvasId, serie, cor) {
+        const rotulos = serie.map(p => new Date(p.instanteMs).toLocaleTimeString('pt-BR'));
+        const valores = serie.map(p => p.latenciaMs);
+        const cores = serie.map(p => p.sucesso ? cor : '#c62828');
+        if (typeof Chart === 'undefined') { return null; }
+        if (!grafico) {
+            return new Chart(document.getElementById(canvasId), {
+                type: 'line',
+                data: { labels: rotulos, datasets: [{ data: valores, borderColor: cor, pointBackgroundColor: cores,
+                        pointRadius: 3, tension: .25, fill: false }] },
+                options: { animation: false, plugins: { legend: { display: false } },
+                           scales: { y: { beginAtZero: true, title: { display: true, text: 'ms' } } } }
+            });
+        }
+        grafico.data.labels = rotulos;
+        grafico.data.datasets[0].data = valores;
+        grafico.data.datasets[0].pointBackgroundColor = cores;
+        grafico.update();
+        return grafico;
+    }
+
+    async function atualizar() {
+        const janela = document.getElementById('janela').value;
+        try {
+            const r = await fetch(`${URL_DADOS}?janela=${janela}`);
+            const d = await r.json();
+            document.getElementById('ligacoes').innerHTML = d.ligacoes.map(cardLigacao).join('');
+            document.getElementById('rotas').innerHTML = d.rotas.length
+                ? d.rotas.map(x => `<tr><td class="mono">${esc(x.rota)}</td><td>${x.requisicoes}</td><td>${num(x.latenciaMedia)}</td><td>${num(x.latenciaP95)}</td><td>${x.falhas}</td></tr>`).join('')
+                : '<tr><td colspan="5">Sem tráfego na janela. Navegue pelo sistema ou rode o benchmark.</td></tr>';
+            graficoHttp = desenhar(graficoHttp, 'graficoHttp', d.serieHttp, '#1565c0');
+            graficoBanco = desenhar(graficoBanco, 'graficoBanco', d.serieBanco, '#2e7d32');
+            document.getElementById('atualizado').textContent = 'Atualizado às ' + new Date().toLocaleTimeString('pt-BR');
+        } catch (e) {
+            document.getElementById('atualizado').textContent = 'Falha ao consultar o painel: ' + e.message;
+        }
+    }
+
+    function linhaMetrica(nome, m) {
+        if (!m) { return `<tr><td>${esc(nome)}</td><td colspan="5">não medido</td></tr>`; }
+        return `<tr><td>${esc(nome)}</td><td>${num(m.media_ms)}</td><td>${num(m.p95_ms)}</td><td>${num(m.jitter_ms)}</td><td>${num(m.perda_pct, 2)}%</td><td>${m.sucessos}/${m.amostras}</td></tr>`;
+    }
+
+    async function carregarBenchmark() {
+        const alvo = document.getElementById('benchmark');
+        try {
+            const r = await fetch(URL_BENCH, { cache: 'no-store' });
+            if (!r.ok) { throw new Error('sem arquivo'); }
+            const b = await r.json();
+            let html = `<p class="nota-rede">Alvo <span class="mono">${esc(b.alvo)}</span> · medido em ${esc(b.gerado_em)} · origem: ${esc(b.origem)}</p>`;
+            html += '<table class="rede-tab"><thead><tr><th>Medição</th><th>Média (ms)</th><th>p95 (ms)</th><th>Jitter (ms)</th><th>Perda</th><th>Sucessos</th></tr></thead><tbody>';
+            html += linhaMetrica('Resolução DNS', b.dns);
+            html += linhaMetrica('ICMP ping', b.icmp);
+            html += linhaMetrica('Conexão TCP :443', b.tcp);
+            html += linhaMetrica('Handshake TLS', b.tls);
+            (b.http || []).forEach(h => { html += linhaMetrica('HTTPS GET ' + h.endpoint, h); });
+            html += '</tbody></table>';
+            if (b.vazao && b.vazao.length) {
+                html += '<h3 style="margin:14px 0 6px">Vazão sob carga</h3><table class="rede-tab"><thead><tr><th>Clientes simultâneos</th><th>Requisições</th><th>Req/s</th><th>KB/s</th><th>p95 (ms)</th><th>Perda</th></tr></thead><tbody>';
+                b.vazao.forEach(v => { html += `<tr><td>${v.concorrencia}</td><td>${v.requisicoes}</td><td>${num(v.req_por_s, 2)}</td><td>${num(v.kb_por_s)}</td><td>${num(v.p95_ms)}</td><td>${num(v.perda_pct, 2)}%</td></tr>`; });
+                html += '</tbody></table>';
+            }
+            alvo.innerHTML = html;
+        } catch (e) {
+            alvo.innerHTML = '<p>Nenhum resultado importado ainda. Rode <span class="mono">python benchmark_rede.py</span> e copie o arquivo '
+                + '<span class="mono">benchmark-externo.json</span> gerado para <span class="mono">src/main/resources/static/rede/</span>.</p>';
+        }
+    }
+
+    document.getElementById('janela').addEventListener('change', atualizar);
+    atualizar();
+    carregarBenchmark();
+    setInterval(atualizar, 5000);
+</script>
+</body>
+</html>

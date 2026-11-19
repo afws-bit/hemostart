@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="860" viewBox="0 0 1400 860" font-family="Liberation Sans, Arial, Helvetica, sans-serif">
+<defs><marker id="s" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#333"/></marker><marker id="sa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f5fbf"/></marker><marker id="sv" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#b0001e"/></marker><marker id="sg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2e7d32"/></marker><marker id="sl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8e24aa"/></marker></defs>
+<rect width="1400" height="860" fill="#fff"/>
+<text x="30" y="40" font-size="22" font-weight="bold" fill="#b0001e">HemoStart — Arquitetura de observabilidade (docker compose: hemostart-observabilidade)</text>
+<text x="30" y="64" font-size="13" fill="#444">Métricas: o Prometheus puxa (scrape) a cada 15 s · Logs: Alloy lê os contêineres e envia ao Loki · Traces: a aplicação envia ao Tempo por OTLP · Só o Grafana é exposto ao professor</text>
+<rect x="20" y="90" width="200" height="740" rx="12" fill="#f3f3f3" stroke="#777" stroke-width="2" />
+<text x="34" y="112" font-size="13.5" font-weight="bold" fill="#777">INTERNET</text>
+<rect x="40" y="150" width="160" height="70" rx="9" fill="#ffffff" stroke="#555" stroke-width="1.6"/>
+<text x="120.0" y="172" font-size="14" text-anchor="middle" font-weight="bold" fill="#111">Professor</text>
+<text x="120.0" y="191" font-size="11.5" text-anchor="middle" fill="#333">navegador</text>
+<text x="120.0" y="207" font-size="11.5" text-anchor="middle" fill="#333">usuário Viewer</text>
+<rect x="40" y="610" width="160" height="70" rx="9" fill="#ffffff" stroke="#555" stroke-width="1.6"/>
+<text x="120.0" y="632" font-size="14" text-anchor="middle" font-weight="bold" fill="#111">Equipe / usuários</text>
+<text x="120.0" y="651" font-size="11.5" text-anchor="middle" fill="#333">navegador da aplicação</text>
+<rect x="240" y="90" width="1140" height="740" rx="12" fill="#fbfbfd" stroke="#333" stroke-width="2" />
+<text x="254" y="112" font-size="13.5" font-weight="bold" fill="#333">HOST (Linux ou Docker Desktop) — rede interna do Docker</text>
+<rect x="260" y="120" width="1100" height="560" rx="12" fill="#eef4fb" stroke="#1f5fbf" stroke-width="2" />
+<text x="274" y="142" font-size="13.5" font-weight="bold" fill="#1f5fbf">rede: observabilidade</text>
+<rect x="860" y="700" width="500" height="115" rx="12" fill="#fff4e6" stroke="#e65100" stroke-width="2" />
+<text x="874" y="722" font-size="13.5" font-weight="bold" fill="#e65100">rede: dados</text>
+<rect x="280" y="150" width="170" height="74" rx="9" fill="#ffffff" stroke="#555" stroke-width="1.6"/>
+<text x="365.0" y="172" font-size="14" text-anchor="middle" font-weight="bold" fill="#111">cloudflared</text>
+<text x="365.0" y="191" font-size="11.5" text-anchor="middle" fill="#333">túnel HTTPS</text>
+<text x="365.0" y="207" font-size="11.5" text-anchor="middle" fill="#333">(perfil remoto)</text>
+<rect x="520" y="150" width="190" height="74" rx="9" fill="#fff8e1" stroke="#f9a825" stroke-width="1.6"/>
+<text x="615.0" y="172" font-size="14" text-anchor="middle" font-weight="bold" fill="#111">Grafana :3000</text>
+<text x="615.0" y="191" font-size="11.5" text-anchor="middle" fill="#333">dashboards, Explore</text>
+<text x="615.0" y="207" font-size="11.5" text-anchor="middle" fill="#333">único serviço exposto</text>
+<rect x="280" y="560" width="190" height="90" rx="9" fill="#ffebee" stroke="#b0001e" stroke-width="1.6"/>
+<text x="375.0" y="582" font-size="14" text-anchor="middle" font-weight="bold" fill="#111">hemostart :8080</text>
+<text x="375.0" y="601" font-size="11.5" text-anchor="middle" fill="#333">Spring Boot (app do PI)</text>
+<text x="375.0" y="617" font-size="11.5" text-anchor="middle" fill="#333">Actuator :8081 (interno)</text>
+<text x="375.0" y="633" font-size="11.5" text-anchor="middle" fill="#333">label application=hemostart</text>
+<rect x="520" y="560" width="170" height="74" rx="9" fill="#ffffff" stroke="#555" stroke-width="1.6"/>
+<text x="605.0" y="582" font-size="14" text-anchor="middle" font-weight="bold" fill="#111">carga</text>
+<text x="605.0" y="601" font-size="11.5" text-anchor="middle" fill="#333">gerador de tráfego</text>
+<text x="605.0" y="617" font-size="11.5" text-anchor="middle" fill="#333">(inclui casos de erro)</text>
+<rect x="760" y="300" width="190" height="74" rx="9" fill="#fff3e0" stroke="#e65100" stroke-width="1.6"/>
+<text x="855.0" y="322" font-size="14" text-anchor="middle" font-weight="bold" fill="#111">Prometheus :9090</text>
+<text x="855.0" y="341" font-size="11.5" text-anchor="middle" fill="#333">scrape a cada 15 s</text>
+<text x="855.0" y="357" font-size="11.5" text-anchor="middle" fill="#333">127.0.0.1 apenas</text>
+<rect x="760" y="150" width="170" height="74" rx="9" fill="#f3e5f5" stroke="#8e24aa" stroke-width="1.6"/>
+<text x="845.0" y="172" font-size="14" text-anchor="middle" font-weight="bold" fill="#111">Loki :3100</text>
+<text x="845.0" y="191" font-size="11.5" text-anchor="middle" fill="#333">logs (LogQL)</text>
+<rect x="990" y="150" width="170" height="74" rx="9" fill="#e8f5e9" stroke="#2e7d32" stroke-width="1.6"/>
+<text x="1075.0" y="172" font-size="14" text-anchor="middle" font-weight="bold" fill="#111">Tempo :3200</text>
+<text x="1075.0" y="191" font-size="11.5" text-anchor="middle" fill="#333">traces</text>
+<text x="1075.0" y="207" font-size="11.5" text-anchor="middle" fill="#333">OTLP :4318</text>
+<rect x="1180" y="150" width="160" height="74" rx="9" fill="#f3e5f5" stroke="#8e24aa" stroke-width="1.6"/>
+<text x="1260.0" y="172" font-size="14" text-anchor="middle" font-weight="bold" fill="#111">Alloy :12345</text>
+<text x="1260.0" y="191" font-size="11.5" text-anchor="middle" fill="#333">lê o stdout dos</text>
+<text x="1260.0" y="207" font-size="11.5" text-anchor="middle" fill="#333">contêineres (docker.sock)</text>
+<rect x="1030" y="300" width="150" height="60" rx="9" fill="#ffffff" stroke="#555" stroke-width="1.6"/>
+<text x="1105.0" y="322" font-size="12.5" text-anchor="middle" font-weight="bold" fill="#111">node-exporter :9100</text>
+<text x="1105.0" y="341" font-size="11.5" text-anchor="middle" fill="#333">CPU, memória, disco, rede</text>
+<rect x="1200" y="300" width="150" height="60" rx="9" fill="#ffffff" stroke="#555" stroke-width="1.6"/>
+<text x="1275.0" y="322" font-size="12.5" text-anchor="middle" font-weight="bold" fill="#111">cadvisor :8080</text>
+<text x="1275.0" y="341" font-size="11.5" text-anchor="middle" fill="#333">CPU e memória/contêiner</text>
+<rect x="1030" y="400" width="150" height="60" rx="9" fill="#ffffff" stroke="#555" stroke-width="1.6"/>
+<text x="1105.0" y="422" font-size="12.5" text-anchor="middle" font-weight="bold" fill="#111">postgres-exporter</text>
+<text x="1105.0" y="441" font-size="11.5" text-anchor="middle" fill="#333">:9187 · métricas do banco</text>
+<rect x="880" y="725" width="190" height="74" rx="9" fill="#fff" stroke="#e65100" stroke-width="1.6"/>
+<text x="975.0" y="747" font-size="14" text-anchor="middle" font-weight="bold" fill="#111">hemostart-db :5432</text>
+<text x="975.0" y="766" font-size="11.5" text-anchor="middle" fill="#333">PostgreSQL 15</text>
+<rect x="720" y="560" width="150" height="74" rx="9" fill="#ffffff" stroke="#555" stroke-width="1.6"/>
+<text x="795.0" y="582" font-size="14" text-anchor="middle" font-weight="bold" fill="#111">grafana-usuarios</text>
+<text x="795.0" y="601" font-size="11.5" text-anchor="middle" fill="#333">cria o usuário Viewer</text>
+<text x="795.0" y="617" font-size="11.5" text-anchor="middle" fill="#333">(roda uma vez)</text>
+<text x="1110" y="770" font-size="11.5" fill="#e65100">hemostart e postgres-exporter</text>
+<text x="1110" y="786" font-size="11.5" fill="#e65100">estão nas duas redes</text>
+<path d="M200,185 L280,185" fill="none" stroke="#1f5fbf" stroke-width="1.8"  marker-end="url(#sa)"/>
+<rect x="206.2" y="167.0" width="67.6" height="17" rx="3" fill="#fff" opacity="0.93"/>
+<text x="240.0" y="179.0" font-size="11.5" text-anchor="middle" fill="#1f5fbf" font-weight="bold">HTTPS/443</text>
+<path d="M450,187 L520,187" fill="none" stroke="#1f5fbf" stroke-width="1.8"  marker-end="url(#sa)"/>
+<rect x="451.2" y="169.0" width="67.6" height="17" rx="3" fill="#fff" opacity="0.93"/>
+<text x="485.0" y="181.0" font-size="11.5" text-anchor="middle" fill="#1f5fbf" font-weight="bold">HTTP/3000</text>
+<path d="M200,645 L280,625" fill="none" stroke="#1f5fbf" stroke-width="1.8"  marker-end="url(#sa)"/>
+<rect x="206.2" y="610" width="67.6" height="17" rx="3" fill="#fff" opacity="0.93"/>
+<text x="240" y="622" font-size="11.5" text-anchor="middle" fill="#1f5fbf" font-weight="bold">HTTP/8080</text>
+<path d="M615,224 L615,260 L800,260 L800,300" fill="none" stroke="#333" stroke-width="1.8"  marker-end="url(#s)"/>
+<rect x="675.8" y="243" width="48.400000000000006" height="17" rx="3" fill="#fff" opacity="0.93"/>
+<text x="700" y="255" font-size="11.5" text-anchor="middle" fill="#333" font-weight="bold">PromQL</text>
+<path d="M650,150 L650,128 L845,128 L845,150" fill="none" stroke="#8e24aa" stroke-width="1.8"  marker-end="url(#sl)"/>
+<rect x="729.0" y="112" width="42.0" height="17" rx="3" fill="#fff" opacity="0.93"/>
+<text x="750" y="124" font-size="11.5" text-anchor="middle" fill="#8e24aa" font-weight="bold">LogQL</text>
+<path d="M695,150 L695,102 L1075,102 L1075,150" fill="none" stroke="#2e7d32" stroke-width="1.8"  marker-end="url(#sg)"/>
+<rect x="932.6" y="86" width="54.800000000000004" height="17" rx="3" fill="#fff" opacity="0.93"/>
+<text x="960" y="98" font-size="11.5" text-anchor="middle" fill="#2e7d32" font-weight="bold">TraceQL</text>
+<path d="M800,374 L800,520 L375,520 L375,560" fill="none" stroke="#e65100" stroke-width="1.8"  marker-end="url(#sv)"/>
+<rect x="445.6" y="503" width="278.8" height="17" rx="3" fill="#fff" opacity="0.93"/>
+<text x="585" y="515" font-size="11.5" text-anchor="middle" fill="#e65100" font-weight="bold">GET /actuator/prometheus  (hemostart:8081)</text>
+<path d="M950,330 L1030,330" fill="none" stroke="#e65100" stroke-width="1.8"  marker-end="url(#sv)"/>
+<path d="M950,345 L990,345 L990,280 L1275,280 L1275,300" fill="none" stroke="#e65100" stroke-width="1.8"  marker-end="url(#sv)"/>
+<rect x="1077.0" y="264" width="106.0" height="17" rx="3" fill="#fff" opacity="0.93"/>
+<text x="1130" y="276" font-size="11.5" text-anchor="middle" fill="#e65100" font-weight="bold">scrape /metrics</text>
+<path d="M950,360 L980,360 L980,430 L1030,430" fill="none" stroke="#e65100" stroke-width="1.8"  marker-end="url(#sv)"/>
+<path d="M845,300 L845,224" fill="none" stroke="#e65100" stroke-width="1.8" stroke-dasharray="3,3" marker-end="url(#sv)"/>
+<path d="M440,560 L440,480 L1010,480 L1010,240 L1040,240 L1040,224" fill="none" stroke="#2e7d32" stroke-width="1.8" stroke-dasharray="7,4" marker-end="url(#sg)"/>
+<rect x="681.4" y="463" width="157.20000000000002" height="17" rx="3" fill="#fff" opacity="0.93"/>
+<text x="760" y="475" font-size="11.5" text-anchor="middle" fill="#2e7d32" font-weight="bold">OTLP/HTTP :4318 (spans)</text>
+<path d="M1260,224 L1260,258 L900,258 L900,224" fill="none" stroke="#8e24aa" stroke-width="1.8" stroke-dasharray="7,4" marker-end="url(#sl)"/>
+<rect x="1143.0" y="242" width="74.0" height="17" rx="3" fill="#fff" opacity="0.93"/>
+<text x="1180" y="254" font-size="11.5" text-anchor="middle" fill="#8e24aa" font-weight="bold">push :3100</text>
+<path d="M520,597 L470,597" fill="none" stroke="#555" stroke-width="1.8"  marker-end="url(#s)"/>
+<rect x="477.2" y="579.0" width="35.6" height="17" rx="3" fill="#fff" opacity="0.93"/>
+<text x="495.0" y="591.0" font-size="11.5" text-anchor="middle" fill="#555" font-weight="bold">HTTP</text>
+<path d="M375,650 L375,762 L880,762" fill="none" stroke="#e65100" stroke-width="1.8"  marker-end="url(#sv)"/>
+<rect x="573.4" y="745" width="93.2" height="17" rx="3" fill="#fff" opacity="0.93"/>
+<text x="620" y="757" font-size="11.5" text-anchor="middle" fill="#e65100" font-weight="bold">JDBC TCP/5432</text>
+<path d="M1105,460 L1105,690 L1000,690 L1000,725" fill="none" stroke="#e65100" stroke-width="1.8"  marker-end="url(#sv)"/>
+<rect x="1019.4" y="674" width="61.2" height="17" rx="3" fill="#fff" opacity="0.93"/>
+<text x="1050" y="686" font-size="11.5" text-anchor="middle" fill="#e65100" font-weight="bold">TCP/5432</text>
+<text x="30" y="735" font-size="12" font-weight="bold">Legenda</text>
+<line x1="30" y1="751" x2="64" y2="751" stroke="#1f5fbf" stroke-width="2.2" />
+<text x="70" y="755" font-size="11" fill="#222">acesso de usuário</text>
+<line x1="30" y1="768" x2="64" y2="768" stroke="#e65100" stroke-width="2.2" />
+<text x="70" y="772" font-size="11" fill="#222">métricas (scrape) / banco</text>
+<line x1="30" y1="785" x2="64" y2="785" stroke="#2e7d32" stroke-width="2.2" stroke-dasharray="7,4"/>
+<text x="70" y="789" font-size="11" fill="#222">traces (push)</text>
+<line x1="30" y1="802" x2="64" y2="802" stroke="#8e24aa" stroke-width="2.2" stroke-dasharray="7,4"/>
+<text x="70" y="806" font-size="11" fill="#222">logs (push)</text>
+</svg>

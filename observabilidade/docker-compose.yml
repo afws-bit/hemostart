@@ -1,0 +1,239 @@
+# Ambiente de observabilidade do HemoStart / Rota Vital (RSD · U2)
+#
+#   cp .env.example .env      # e troque as senhas
+#   docker compose up -d --build
+#   docker compose --profile remoto up -d     # também abre o túnel público para o Grafana (acesso do professor)
+#
+# Só o Grafana (3000) e a aplicação (8080) ficam abertos. Prometheus fica preso ao localhost da máquina;
+# /actuator, Loki, Tempo e os exporters só existem dentro da rede interna do Docker.
+
+name: hemostart-observabilidade
+
+services:
+
+  # ---------------------------------------------------------------- aplicação do Projeto Integrador
+  hemostart-db:
+    image: postgres:15-alpine
+    container_name: hemostart-db
+    environment:
+      POSTGRES_USER: ${DB_USER:?defina DB_USER no .env}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?defina DB_PASSWORD no .env}
+      POSTGRES_DB: ${DB_NAME:-hemostart}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME:-hemostart}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks: [dados]
+
+  hemostart:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    image: hemostart-app:observabilidade
+    container_name: hemostart
+    labels:
+      application: hemostart          # o Alloy transforma em label do Loki: {application="hemostart"}
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://hemostart-db:5432/${DB_NAME:-hemostart}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      # Actuator numa porta separada (8081), que NÃO é publicada: só o Prometheus alcança (R5)
+      MANAGEMENT_SERVER_PORT: "8081"
+      ACTUATOR_EXPOSICAO: health,info,metrics,prometheus
+      ACTUATOR_HEALTH_DETALHES: always
+      # Traces para o Tempo via OTLP/HTTP
+      TRACING_HABILITADO: "true"
+      OTLP_TRACING_ENDPOINT: http://tempo:4318/v1/traces
+      # Libera GET /api/teste/erro (HTTP 500 de propósito) para a demonstração
+      ENDPOINTS_TESTE_HABILITADOS: "true"
+    ports:
+      - "8080:8080"
+    depends_on:
+      hemostart-db:
+        condition: service_healthy
+      tempo:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8081/actuator/health | grep -q UP"]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+      start_period: 40s
+    networks: [observabilidade, dados]
+
+  # Gera tráfego contínuo (consultas, coletas, pedidos, aprovações e erros) para os gráficos terem dados
+  carga:
+    image: python:3.12-alpine
+    container_name: hemostart-carga
+    command: ["python", "-u", "/carga/gerador_carga.py"]
+    environment:
+      ALVO: http://hemostart:8080
+      INTERVALO_S: ${CARGA_INTERVALO_S:-2}
+    volumes:
+      - ./carga:/carga:ro
+    depends_on:
+      hemostart:
+        condition: service_healthy
+    networks: [observabilidade]
+
+  # ---------------------------------------------------------------- coleta de métricas
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    container_name: prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=7d
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "127.0.0.1:9090:9090"          # só nesta máquina; não vai para a internet
+    networks: [observabilidade]
+
+  node-exporter:
+    image: prom/node-exporter:v1.8.2
+    container_name: node-exporter
+    command:
+      - --path.rootfs=/host
+    pid: host
+    volumes:
+      - /:/host:ro
+    networks: [observabilidade]
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    container_name: cadvisor
+    privileged: true
+    devices:
+      - /dev/kmsg
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks: [observabilidade]
+
+  postgres-exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter:v0.15.0
+    container_name: postgres-exporter
+    environment:
+      DATA_SOURCE_NAME: postgresql://${DB_USER}:${DB_PASSWORD}@hemostart-db:5432/${DB_NAME:-hemostart}?sslmode=disable
+    depends_on:
+      hemostart-db:
+        condition: service_healthy
+    networks: [observabilidade, dados]
+
+  # ---------------------------------------------------------------- logs e traces
+  loki:
+    image: grafana/loki:3.2.1
+    container_name: loki
+    command: ["-config.file=/etc/loki/loki-config.yaml"]
+    volumes:
+      - ./loki/loki-config.yaml:/etc/loki/loki-config.yaml:ro
+      - loki-data:/loki
+    networks: [observabilidade]
+
+  # Lê os logs de todos os contêineres deste projeto pelo socket do Docker e envia ao Loki
+  alloy:
+    image: grafana/alloy:v1.4.3
+    container_name: alloy
+    command:
+      - run
+      - --server.http.listen-addr=0.0.0.0:12345
+      - --storage.path=/var/lib/alloy/data
+      - /etc/alloy/config.alloy
+    volumes:
+      - ./alloy/config.alloy:/etc/alloy/config.alloy:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on: [loki]
+    networks: [observabilidade]
+
+  tempo:
+    image: grafana/tempo:2.6.1
+    container_name: tempo
+    user: "0"                          # grava em volume nomeado (evita erro de permissão do usuário 10001)
+    command: ["-config.file=/etc/tempo/tempo.yaml"]
+    volumes:
+      - ./tempo/tempo.yaml:/etc/tempo/tempo.yaml:ro
+      - tempo-data:/var/tempo
+    networks: [observabilidade]
+
+  # ---------------------------------------------------------------- visualização
+  grafana:
+    image: grafana/grafana:11.2.0
+    container_name: grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?defina GRAFANA_ADMIN_PASSWORD no .env}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_AUTH_ANONYMOUS_ENABLED: "false"
+      GF_USERS_DEFAULT_THEME: light
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /var/lib/grafana/dashboards/hemostart-aplicacao.json
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    depends_on: [prometheus, loki, tempo]
+    networks: [observabilidade]
+
+  # Cria o usuário Viewer do professor pela API do Grafana (roda uma vez e termina)
+  grafana-usuarios:
+    image: curlimages/curl:8.10.1
+    container_name: grafana-usuarios
+    entrypoint: ["sh", "/scripts/criar-usuario-viewer.sh"]
+    environment:
+      GRAFANA_URL: http://grafana:3000
+      GRAFANA_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GRAFANA_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
+      GRAFANA_VIEWER_USER: ${GRAFANA_VIEWER_USER:-professor}
+      GRAFANA_VIEWER_PASSWORD: ${GRAFANA_VIEWER_PASSWORD:?defina GRAFANA_VIEWER_PASSWORD no .env}
+    volumes:
+      - ./grafana/criar-usuario-viewer.sh:/scripts/criar-usuario-viewer.sh:ro
+    depends_on: [grafana]
+    restart: "no"
+    networks: [observabilidade]
+
+  # Acesso remoto (E7): túnel HTTPS da Cloudflare até o Grafana, sem abrir porta no roteador.
+  # A URL pública (https://<algo>.trycloudflare.com) aparece em: docker compose logs cloudflared
+  cloudflared:
+    image: cloudflare/cloudflared:2024.10.1
+    container_name: cloudflared
+    command: ["tunnel", "--no-autoupdate", "--url", "http://grafana:3000"]
+    depends_on: [grafana]
+    profiles: [remoto]
+    networks: [observabilidade]
+
+  # Confere o checklist do projeto e grava evidências + links para os prints em docs/evidencias/
+  #   docker compose run --rm verificador
+  verificador:
+    image: python:3.12-alpine
+    container_name: verificador
+    command: ["python", "-u", "/verificador/verificar.py"]
+    environment:
+      GRAFANA_PUBLICO: http://localhost:3000
+      GRAFANA_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GRAFANA_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
+      GRAFANA_VIEWER_USER: ${GRAFANA_VIEWER_USER:-professor}
+      GRAFANA_VIEWER_PASSWORD: ${GRAFANA_VIEWER_PASSWORD}
+    volumes:
+      - ./verificador:/verificador:ro
+      - ./docs/evidencias:/evidencias
+    profiles: [verificar]
+    networks: [observabilidade]
+
+networks:
+  observabilidade:
+  dados:
+
+volumes:
+  db-data:
+  prometheus-data:
+  grafana-data:
+  loki-data:
+  tempo-data:

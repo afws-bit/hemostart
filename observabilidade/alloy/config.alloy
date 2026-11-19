@@ -1,0 +1,73 @@
+// Grafana Alloy: coleta os logs dos contêineres deste projeto (pelo socket do Docker) e envia ao Loki.
+//
+// Labels no Loki:
+//   container    nome do contêiner (hemostart, prometheus, grafana...)
+//   service      nome do serviço no docker-compose
+//   application  label "application" do contêiner (só a aplicação tem: application="hemostart")
+//   level        nível do log extraído da linha do Spring (INFO, WARN, ERROR...)
+//
+// Consulta de exemplo no Grafana Explore:  {application="hemostart"} |= "ERROR"
+
+discovery.docker "conteineres" {
+  host = "unix:///var/run/docker.sock"
+}
+
+discovery.relabel "conteineres" {
+  targets = []
+
+  // só os contêineres deste docker-compose
+  rule {
+    source_labels = ["__meta_docker_container_label_com_docker_compose_project"]
+    regex         = "hemostart-observabilidade"
+    action        = "keep"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "container"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_label_com_docker_compose_service"]
+    target_label  = "service"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_label_application"]
+    target_label  = "application"
+  }
+}
+
+loki.source.docker "conteineres" {
+  host          = "unix:///var/run/docker.sock"
+  targets       = discovery.docker.conteineres.targets
+  relabel_rules = discovery.relabel.conteineres.rules
+  forward_to    = [loki.process.java.receiver]
+}
+
+loki.process "java" {
+  // só para a aplicação Java (os outros contêineres têm formatos de log próprios)
+  stage.match {
+    selector = "{application=\"hemostart\"}"
+
+    // linha do Spring Boot: 2026-11-18T19:00:00.123-03:00  INFO [hemostart,<traceId>,<spanId>] ...
+    stage.regex {
+      expression = `^\S+\s+(?P<level>TRACE|DEBUG|INFO|WARN|ERROR)\s`
+    }
+
+    stage.labels {
+      values = {
+        level = "",
+      }
+    }
+  }
+
+  forward_to = [loki.write.loki.receiver]
+}
+
+loki.write "loki" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}

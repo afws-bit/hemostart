@@ -1,0 +1,51 @@
+# Datasources provisionados automaticamente (nenhum passo manual no Grafana).
+# Correlação: log (Loki) -> trace (Tempo) pelo traceId da linha; trace (Tempo) -> logs (Loki) pelo traceId.
+# Atenção: "$$" é o escape de "$" nos arquivos de provisionamento do Grafana.
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    uid: prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    jsonData:
+      timeInterval: 15s
+
+  - name: Loki
+    uid: loki
+    type: loki
+    access: proxy
+    url: http://loki:3100
+    jsonData:
+      maxLines: 1000
+      derivedFields:
+        # linha do Spring: " INFO [hemostart,<traceId de 32 hex>,<spanId>] ..."
+        - name: TraceID
+          matcherRegex: '\[hemostart,([0-9a-f]{32}),'
+          datasourceUid: tempo
+          url: '$${__value.raw}'
+          urlDisplayLabel: Abrir trace no Tempo
+
+  - name: Tempo
+    uid: tempo
+    type: tempo
+    access: proxy
+    url: http://tempo:3200
+    jsonData:
+      tracesToLogsV2:
+        datasourceUid: loki
+        spanStartTimeShift: '-5m'
+        spanEndTimeShift: '5m'
+        filterByTraceID: true
+        filterBySpanID: false
+        tags:
+          - key: service.name
+            value: application
+      lokiSearch:
+        datasourceUid: loki
+      nodeGraph:
+        enabled: true
+      search:
+        hide: false
