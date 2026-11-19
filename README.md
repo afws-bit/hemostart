@@ -142,23 +142,22 @@ Implementa o contrato de API definido pela equipe no documento de Projetos 3 / R
 | GET | `/api/v1/relatorios/distribuicoes?inicio=&fim=&tipoSanguineo=&hospitalId=` | 200, 400 |
 
 ## 👥 Equipe
-
 | Nome completo | E-mail CESAR School |
 |---|---|
-| Augusto Freitas | afws@cesar.school |
-| Caio Catão | cczc@cesar.school |
-| Daniel Luiz | ddlmsf@cesar.school |
-| Elisa Martins | emgs2@cesar.school |
-| Glauberson | grs4@cesar.school |
-| João Lucas | jlms@cesar.school |
-| Kelly Melo | kpsm@cesar.school |
-| Mateus Henrique Diniz | mhds@cesar.school |
+| Augusto Freitas Wanderley de Siqueira | afws@cesar.school |
+| Caio Catão Zenaide Costa | cczc@cesar.school |
+| Daniel Luiz Massud de Sousa Filho | ddlmsf@cesar.school |
+| Elisa Martins Galindo Santos | emgs2@cesar.school |
+| Glauberson Ribeiro de Siqueira | grs4@cesar.school |
+| João Lucas Santos Lira | jlms@cesar.school |
+| Kelly Priscilla de Siqueira Melo | kpsm@cesar.school |
+| Mateus Henrique Diniz Silva | mhds@cesar.school |
 
 ### Membros anteriores / novos
 
 | Nome completo | E-mail CESAR School | Entrada | Saída |
 |---|---|---|---|
-| Igor Kaua | Ikss2@cesar.school | 05/10/2026 | — |
+| Igor Kaua de Souza Siqueira | Ikss2@cesar.school | 05/10/2026 | — |
 
 ---
 
