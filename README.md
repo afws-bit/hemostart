@@ -193,6 +193,18 @@ Implementa o contrato de API definido pela equipe no documento de Projetos 3 / R
 
 ### Histórias implementadas
 
+> **HU03 — Controle de Estoque por Tipo Sanguíneo**
+> Como **gestor**, quero **ver as bolsas por tipo e status**, para **decidir rapidamente sobre reposição e distribuição**.
+> ✔ painel com os 8 tipos · ✔ vencidas mudam de status automaticamente
+
+> **HU04 — Validação de Compatibilidade Sanguínea**
+> Como **sistema**, quero **validar a compatibilidade ABO/Rh entre bolsa e paciente**, para **liberar apenas bolsas seguras**.
+> ✔ tabela oficial de compatibilidade · ✔ sugestão FEFO · ✔ bloqueio de tipo incompatível
+
+> **HU05 — Solicitação de Sangue por Hospital**
+> Como **hospital cadastrado**, quero **solicitar bolsas informando tipo, quantidade e urgência**, para **ser atendido conforme a necessidade clínica**.
+> ✔ só hospitais ativos · ✔ urgentes no topo da fila
+
 > **HU11 — Agendamento de Doação**
 > Como **doador**, quero **agendar dia e horário para doar**, para **evitar filas e garantir atendimento**.
 > ✔ limite de vagas por horário · ✔ respeita o intervalo mínimo · ✔ cancelamento libera a vaga
@@ -213,6 +225,26 @@ Implementa o contrato de API definido pela equipe no documento de Projetos 3 / R
 
 ### Histórias implementadas
 
+
+> **HU06 — Distribuição e Rastreio de Bolsas**
+> Como **operador logístico**, quero **registrar a saída da bolsa vinculada ao pedido**, para **rastrear cada bolsa da coleta até a entrega**.
+> ✔ data, hora, responsável e hospital destino · ✔ bloqueio de distribuição duplicada
+
+> **HU07 — Controle de Validade e Descarte**
+> Como **gestor de qualidade**, quero **ser alertado sobre bolsas perto de vencer e descartar as vencidas**, para **evitar desperdício e uso indevido**.
+> ✔ alerta “uso prioritário” (≤ 5 dias) · ✔ descarte com responsável
+
+> **HU08 — Histórico e Relatório**
+> Como **gestor**, quero **relatórios de coletas, distribuições e descartes por período**, para **acompanhar indicadores operacionais**.
+> ✔ filtro por período, tipo sanguíneo e hospital
+
+> **HU09 — Cadastro de Hospital**
+> Como **administrador**, quero **cadastrar e ativar/inativar hospitais**, para **que apenas instituições autorizadas solicitem sangue**.
+> ✔ CNPJ único · ✔ inativos não solicitam
+
+> **HU10 — Alerta de Estoque Crítico**
+> Como **gestor**, quero **definir um nível mínimo por tipo e ser alertado abaixo dele**, para **organizar campanhas de doação a tempo**.
+> ✔ mínimo configurável e salvo no banco · ✔ alerta some quando o estoque normaliza
 
 > **HU13 — Aprovação e Recusa de Solicitações**
 > Como **gestor**, quero **aprovar ou recusar cada solicitação**, para **controlar a saída de bolsas**.
