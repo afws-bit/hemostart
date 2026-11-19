@@ -31,10 +31,28 @@ import org.springframework.stereotype.Component;
 @Order(1)
 public class ObservabilidadeAspect {
 
-    private final ObservationRegistry registry;
+    /**
+     * Marca quando a thread está dentro do start()/stop() de uma observação. Os handlers do
+     * Micrometer (métricas, tracing) podem acabar chamando beans interceptados por este aspecto;
+     * sem a trava isso vira recursão infinita (StackOverflowError).
+     */
+    private static final ThreadLocal<Boolean> DENTRO_DO_HANDLER = ThreadLocal.withInitial(() -> false);
 
-    public ObservabilidadeAspect(ObjectProvider<ObservationRegistry> registry) {
-        this.registry = registry.getIfAvailable(() -> ObservationRegistry.NOOP);
+    private final ObjectProvider<ObservationRegistry> provedorRegistry;
+    private volatile ObservationRegistry registry;
+
+    /** O registry é resolvido só no primeiro uso, para não criar referência circular na subida. */
+    public ObservabilidadeAspect(ObjectProvider<ObservationRegistry> provedorRegistry) {
+        this.provedorRegistry = provedorRegistry;
+    }
+
+    private ObservationRegistry registry() {
+        ObservationRegistry atual = registry;
+        if (atual == null) {
+            atual = provedorRegistry.getIfAvailable(() -> ObservationRegistry.NOOP);
+            registry = atual;
+        }
+        return atual;
     }
 
     @Around("execution(public * br.com.rotavital.service..*.*(..)) "
@@ -46,26 +64,38 @@ public class ObservabilidadeAspect {
         return observar("hemostart.servico", "servico", classe, pjp);
     }
 
-    @Around("bean(*Repository)")
+    @Around("bean(*Repository) && this(org.springframework.data.repository.Repository)")
     public Object repositorio(ProceedingJoinPoint pjp) throws Throwable {
         return observar("hemostart.repositorio", "banco", nomeDoRepositorio(pjp), pjp);
     }
 
     private Object observar(String nome, String camada, String classe, ProceedingJoinPoint pjp) throws Throwable {
+        if (DENTRO_DO_HANDLER.get()) {
+            return pjp.proceed();
+        }
         String metodo = pjp.getSignature().getName();
-        Observation observacao = Observation.createNotStarted(nome, registry)
+        Observation observacao = Observation.createNotStarted(nome, registry())
                 .contextualName(classe + "." + metodo)
                 .lowCardinalityKeyValue("camada", camada)
                 .lowCardinalityKeyValue("classe", classe)
-                .lowCardinalityKeyValue("metodo", metodo)
-                .start();
+                .lowCardinalityKeyValue("metodo", metodo);
+        emHandler(observacao::start);
         try (Observation.Scope escopo = observacao.openScope()) {
             return pjp.proceed();
         } catch (Throwable erro) {
             observacao.error(erro);
             throw erro;
         } finally {
-            observacao.stop();
+            emHandler(observacao::stop);
+        }
+    }
+
+    private static void emHandler(Runnable acao) {
+        DENTRO_DO_HANDLER.set(true);
+        try {
+            acao.run();
+        } finally {
+            DENTRO_DO_HANDLER.set(false);
         }
     }
 
