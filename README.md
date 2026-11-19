@@ -506,7 +506,7 @@ Esta seção documenta a **Parte 2** do Projeto Integrador: a remodelagem do Rot
 | B | Modelo tático do contexto Estoque | [`modelo-tatico.md`](docs/arquitetura/modelo-tatico.md) |
 | C | Arquitetura em três camadas | este README |
 | D | Projeção com microsserviços e ADRs | [`projecao-microsservicos.md`](docs/arquitetura/projecao-microsservicos.md) · [`adr/`](docs/arquitetura/adr) |
-| E | Três cenários com orçamento | [`cenarios-orcamento.md`](docs/arquitetura/cenarios-orcamento.md) · [`planilha_orcamento.pdf`](docs/arquitetura/planilha_orcamento.pdf) |
+| E | Três cenários com orçamento | [`cenarios-orcamento.md`](docs/arquitetura/cenarios-orcamento.md) · [`planilha_orcamento.pdf`](docs/arquitetura/planilha_orcamento__.pdf) |
 
 ---
 
@@ -706,7 +706,7 @@ Detalhes em [`docs/arquitetura/projecao-microsservicos.md`](docs/arquitetura/pro
 
 ## E. Três Cenários com Orçamento
 
-Detalhes em [`docs/arquitetura/cenarios-orcamento.md`](docs/arquitetura/cenarios-orcamento.md). Planilha exportada em [`planilha_orcamento.pdf`](docs/arquitetura/planilha_orcamento.pdf).
+Detalhes em [`docs/arquitetura/cenarios-orcamento.md`](docs/arquitetura/cenarios-orcamento.md). Planilha exportada em [`planilha_orcamento__.pdf`](docs/arquitetura/planilha_orcamento__.pdf).
 
 **Provedor e fonte:** Render (PaaS), região **Ohio (US East)**, a mesma do deploy atual. Preços **on-demand em dólar**, sem free tier, reserva ou desconto, lidos pela equipe em [render.com/pricing](https://render.com/pricing#compute) em **18/11/2026**.
 
