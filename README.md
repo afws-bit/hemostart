@@ -193,23 +193,21 @@ Implementa o contrato de API definido pela equipe no documento de Projetos 3 / R
 
 ### Histórias implementadas
 
-> **HU03 — Controle de Estoque por Tipo Sanguíneo**
-> Como **gestor**, quero **ver as bolsas por tipo e status**, para **decidir rapidamente sobre reposição e distribuição**.
-> ✔ painel com os 8 tipos · ✔ vencidas mudam de status automaticamente
+> **HU11 — Agendamento de Doação**
+> Como **doador**, quero **agendar dia e horário para doar**, para **evitar filas e garantir atendimento**.
+> ✔ limite de vagas por horário · ✔ respeita o intervalo mínimo · ✔ cancelamento libera a vaga
 
-> **HU04 — Validação de Compatibilidade Sanguínea**
-> Como **sistema**, quero **validar a compatibilidade ABO/Rh entre bolsa e paciente**, para **liberar apenas bolsas seguras**.
-> ✔ tabela oficial de compatibilidade · ✔ sugestão FEFO · ✔ bloqueio de tipo incompatível
+> **HU12 — Triagem Clínica Pré-Doação**
+> Como **profissional de triagem**, quero **registrar peso, pressão, temperatura e hemoglobina**, para **liberar só doadores aptos**.
+> ✔ hemoglobina mínima por sexo · ✔ coleta bloqueada para inaptos
 
-> **HU05 — Solicitação de Sangue por Hospital**
-> Como **hospital cadastrado**, quero **solicitar bolsas informando tipo, quantidade e urgência**, para **ser atendido conforme a necessidade clínica**.
-> ✔ só hospitais ativos · ✔ urgentes no topo da fila
+- 📄 [Histórias atualizadas (HU11 e HU12 adicionadas)](docs/historias-usuario-rota-vital.md)
 
 - 🐞 Issue tracker:
 
   ![Issue tracker — Entrega 03](docs/img/issues-entrega03.png)
-- 🎥 Screencast do sistema (novas histórias): **_adicionar link do YouTube_**
-- 🎥 Screencast do código: **_adicionar link do YouTube_**
+- 🎥 Screencast do sistema (novas histórias): https://youtu.be/n7OuBEKGsH8
+- 🎥 Screencast do código: https://youtu.be/pqmrW3mxU8o
 
 ## Entrega 04 (09/11)
 
@@ -235,13 +233,7 @@ Implementa o contrato de API definido pela equipe no documento de Projetos 3 / R
 > Como **gestor**, quero **definir um nível mínimo por tipo e ser alertado abaixo dele**, para **organizar campanhas de doação a tempo**.
 > ✔ mínimo configurável e salvo no banco · ✔ alerta some quando o estoque normaliza
 
-> **HU11 — Agendamento de Doação**
-> Como **doador**, quero **agendar dia e horário para doar**, para **evitar filas e garantir atendimento**.
-> ✔ limite de vagas por horário · ✔ respeita o intervalo mínimo · ✔ cancelamento libera a vaga
 
-> **HU12 — Triagem Clínica Pré-Doação**
-> Como **profissional de triagem**, quero **registrar peso, pressão, temperatura e hemoglobina**, para **liberar só doadores aptos**.
-> ✔ hemoglobina mínima por sexo · ✔ coleta bloqueada para inaptos
 
 > **HU13 — Aprovação e Recusa de Solicitações**
 > Como **gestor**, quero **aprovar ou recusar cada solicitação**, para **controlar a saída de bolsas**.
