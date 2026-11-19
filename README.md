@@ -523,85 +523,92 @@ O histórico de commits comprova o TDD.
 
 # 📐 U2 · Parte 2: Planejamento da Remodelagem (DDD e Arquitetura)
 
-Esta seção documenta a entrega da Parte 2 do Projeto Integrador: o planejamento da remodelagem do **Rota Vital** com **Domain-Driven Design (DDD)**, **Arquitetura em Três Camadas**, projeção para **Microsserviços** e simulação de orçamento em nuvem.
+Esta seção documenta a **Parte 2** do Projeto Integrador: remodelagem do Rota Vital com DDD, arquitetura em três camadas, projeção com microsserviços e três cenários de carga com orçamento em nuvem.
 
-## 📁 Documentação Técnica Completa
-
-- 📄 [Relatório Completo em PDF (Parte 2)]()
-
-> Os diagramas, planilhas de orçamento e registros de decisões (ADRs) estão disponíveis na pasta `docs/arquitetura/`.
-
----
+> 📁 Diagramas, planilha de orçamento e ADRs estão em [`docs/arquitetura/`](docs/arquitetura).
 
 ## A. Remodelagem do Domínio com DDD
 
-### 1. Classificação dos Subdomínios
+### 1. Subdomínios
 
-- **Core (Núcleo): Gestão de Estoque de Sangue.**
-  - **Justificativa:** É o coração do sistema, onde residem as regras de negócio críticas (compatibilidade ABO/Rh, validade e FEFO) que trazem vantagem competitiva e salvam vidas.
+| Subdomínio | Tipo | Justificativa |
+|---|---|---|
+| Gestão de Estoque de Sangue | **Core** | Concentra as regras críticas (compatibilidade ABO/Rh, validade, FEFO), que protegem o paciente e diferenciam o sistema. |
+| Requisição Hospitalar | Suporte | Apoia o core com o fluxo de pedido e a fila de prioridade, de regras mais padronizadas. |
+| Expedição | Suporte | Apoia o core com separação, embalagem e rastreio logístico. |
+| Telemetria | Suporte | Monitora a temperatura no transporte e alimenta a Expedição; é necessária, mas não contém a regra central do negócio. |
+| Notificação (e-mail/SMS) | Genérico | Resolvido com soluções de mercado, sem regra específica do hemocentro. |
 
-- **Suporte: Requisição Hospitalar e Expedição.**
-  - **Justificativa:** Apoiam diretamente o core, mas suas regras são mais padronizadas (fluxo de pedido e logística).
+### 2. Bounded Contexts
 
-- **Genérico: Notificação (E-mail/SMS).**
-  - **Justificativa:** Pode ser resolvido com soluções de mercado (SaaS) e não contém regras de negócio específicas do hemocentro.
+1. **Estoque:** armazena as bolsas, valida compatibilidade e controla a validade.
+2. **Requisição:** gerencia os pedidos dos hospitais e a fila de prioridade.
+3. **Expedição:** cuida da separação física, embalagem e rastreio da bolsa até o destino.
+4. **Telemetria:** monitora a temperatura e a integridade das bolsas durante o transporte.
 
-### 2. Bounded Contexts (Contextos Delimitados)
+### 3. Linguagem ubíqua
 
-- **Estoque:** Responsável por armazenar, validar a compatibilidade e controlar a validade das bolsas de sangue.
-- **Requisição:** Gerencia os pedidos de sangue realizados pelos hospitais e a fila de prioridade.
-- **Expedição:** Cuida da separação física, embalagem e rastreio logístico da bolsa até o destino.
-- **Telemetria:** Monitora a temperatura e a integridade das bolsas durante o transporte.
+Glossário completo, com os termos e o contexto de cada um, em [`docs/arquitetura/glossario.md`](docs/arquitetura/glossario.md). Termo com sentidos diferentes:
 
-### 3. Linguagem Ubíqua (Glossário)
+- **"Bolsa" no Estoque:** o volume de hemocomponente armazenado, com tipo sanguíneo e data de validade.
+- **"Bolsa" na Expedição:** o item logístico a ser embalado, etiquetado e despachado, com acondicionamento térmico.
 
-Acesse o glossário completo em `docs/arquitetura/glossario.md`.
+### 4. Mapa de contextos
 
-Destaque para o termo com duplo sentido:
+```mermaid
+flowchart LR
+    REQ[Requisição] -- "ACL" --> EST[Estoque]
+    EXP[Expedição] -- "Cliente-Fornecedor" --> EST
+    TEL[Telemetria] -- "eventos" --> EXP
+```
 
-- **"Bolsa" (Contexto de Estoque):** Refere-se ao volume de hemocomponente armazenado, com tipagem sanguínea e data de validade.
-- **"Bolsa" (Contexto de Expedição):** Refere-se ao item logístico (pacote) que deve ser embalado, etiquetado e despachado, focado no peso e acondicionamento térmico.
+| Relação | Padrão | Descrição |
+|---|---|---|
+| Requisição → Estoque | Camada Anticorrupção (ACL) | O pedido do hospital chega em formato externo; a ACL traduz para o modelo do Estoque. |
+| Expedição → Estoque | Cliente-Fornecedor | A Expedição solicita a reserva; o Estoque valida e fornece. |
+| Telemetria → Expedição | Publisher-Subscriber | A Telemetria publica leituras; a Expedição reage a violações da cadeia fria. |
 
-### 4. Mapa de Contextos (Context Map)
+**Eventos de domínio (opcional):**
 
-- **Expedição → Estoque:** Relação **Cliente-Fornecedor** (Customer-Supplier). A Expedição solicita a reserva, o Estoque valida e fornece.
-- **Requisição → Estoque:** Relação **Camada Anticorrupção** (ACL). O sistema do hospital envia o pedido em um formato externo, e a ACL traduz para o modelo de domínio do Estoque do Rota Vital.
+| Evento | Publica | Consomem |
+|---|---|---|
+| `BolsaReservada` | Estoque | Requisição, Expedição |
+| `BolsaDistribuida` | Estoque | Requisição |
+| `ReservaLiberada` | Estoque | Requisição |
+| `CadeiaFriaViolada` | Telemetria | Expedição, Estoque |
 
----
+## B. Modelo Tático (contexto core: Estoque)
 
-## B. Modelo Tático (Contexto Core: Estoque)
+Detalhes em [`docs/arquitetura/modelo-tatico.md`](docs/arquitetura/modelo-tatico.md).
 
-**Agregado:** `BolsaSanguinea`.
-
-- **Raiz:** `BolsaSanguinea`.
-- **Entidades:** `Doador` (referenciado por ID).
-- **Objetos de Valor:** `TipoSanguineo` (ABO/Rh), `DataValidade`, `StatusBolsa` (Disponível, Reservada, Expirada).
-
-**Invariante protegida:** Uma bolsa não pode ser reservada/expedida se estiver fora do prazo de validade ou se o tipo sanguíneo não for compatível com o receptor.
-
-**História de Usuário Âncora:** "Como enfermeiro(a), quero registrar uma nova bolsa de sangue para que ela entre no estoque disponível e o sistema alerte antes do vencimento."
-
-**Cenário Gherkin:** O arquivo com o cenário (Dado/Quando/Então) a ser executado na Parte 3 está em `src/test/resources/features/registrar_bolsa.feature`.
-
----
+- **Agregado `BolsaSanguinea`:** a raiz é a única entidade, identificada pelo código único (`BS-xxxxx`).
+  - **Objetos de valor:** `TipoSanguineo` (ABO/Rh), `DataValidade`, `StatusBolsa` (Disponível, Reservada, Distribuída, Expirada, Descartada).
+  - **Referência externa:** `Doador`, apenas por ID.
+- **Invariantes protegidas pela raiz:**
+  1. Só uma bolsa **Disponível** pode ser reservada.
+  2. Uma bolsa **vencida** não pode ser reservada nem distribuída.
+  3. O tipo da bolsa deve ser **compatível** com o do receptor (ABO/Rh).
+  4. Somente a raiz altera o `StatusBolsa`.
+- **História âncora (invariantes 1 a 3):** Como **enfermeiro do estoque central**, quero **reservar uma bolsa compatível com o receptor**, para **garantir que o paciente receba o sangue correto e que a bolsa mais próxima do vencimento não seja desperdiçada**.
+- **Critérios de aceite:**
+  1. Bolsa Disponível, válida e compatível: a reserva muda o status para "Reservada" e vincula a bolsa à requisição.
+  2. Bolsa de tipo incompatível: a reserva é recusada com mensagem de erro e o status continua "Disponível".
+  3. Bolsa vencida: a reserva é recusada com mensagem de erro.
+  4. Bolsa já "Reservada": não pode ser reservada de novo.
+  5. Entre várias bolsas compatíveis e válidas, a sugerida é a de validade mais próxima (FEFO).
+- **Cenário Gherkin (executado na Parte 3):** [`src/test/resources/features/reservar_bolsa.feature`](src/test/resources/features/reservar_bolsa.feature)
 
 ## C. Arquitetura em Três Camadas
 
-Adotamos a separação lógica baseada nos Bounded Contexts.
+- **Apresentação:** controllers REST e telas Thymeleaf (ex.: `EstoqueController`).
+- **Negócio (aplicação + domínio):** casos de uso (ex.: `ReservarBolsa`) e o modelo rico (`BolsaSanguinea`).
+- **Dados:** repositórios JPA, banco de dados e integrações.
+- **Regra de dependência:** cada camada só usa a de baixo. O modelo de domínio não depende de controller, banco nem framework web: a interface do repositório fica no domínio e a implementação JPA fica na camada de dados (Inversão de Dependência).
+- **Lógico × físico:** as três camadas lógicas rodam em **dois tiers físicos**: o container da API (apresentação + negócio) e o PostgreSQL (dados). No Compose são os containers `rotavital_api` e `rotavital_db`. Em produção, a API roda como web service Docker no Render (região Ohio).
 
-- **Apresentação:** Controllers REST e telas (ex: `EstoqueController`).
-- **Negócio (Domínio + Aplicação):** Casos de uso (ex: `RegistrarBolsaUseCase`) e o modelo rico (ex: `BolsaSanguinea`).
-- **Dados:** Repositórios JPA e integrações externas.
+**Estrutura de pacotes atual (monolito da Parte 1):**
 
-**Regra de Dependência:** O domínio não conhece o framework web nem o banco (Inversão de Dependência).
-
-**Lógico x Físico:** Todas as três camadas estão no mesmo tier físico (**Monolito Modular**) na Parte 2, rodando no mesmo container.
-
-### Estrutura de pacotes atual (Monolito da Parte 1)
-
-> Reflete a estrutura real do código entregue até o momento.
-
-```text
+```
 br.com.rotavital
 ├── controller (EstoqueController, RequisicaoController...)
 ├── service (EstoqueService, CompatibilidadeService...)
@@ -611,74 +618,143 @@ br.com.rotavital
 └── dto
 ```
 
-### Estrutura de pacotes proposta (Refatoração Parte 2)
+**Estrutura de pacotes proposta (Parte 2), por contexto e por camada:**
 
-```text
+```
 br.com.rotavital
 ├── estoque
 │   ├── apresentacao (EstoqueController)
 │   ├── negocio
-│   │   ├── aplicacao (RegistrarBolsaUseCase)
-│   │   └── dominio (BolsaSanguinea, TipoSanguineo)
-│   └── dados (BolsaRepositoryJpa)
-├── requisicao
-└── expedicao
+│   │   ├── aplicacao (ReservarBolsa, SugerirBolsaFefo)
+│   │   └── dominio (BolsaSanguinea, TipoSanguineo, DataValidade, StatusBolsa, BolsaRepository)
+│   └── dados (BolsaRepositoryJpa, BolsaEntity)
+├── requisicao   (mesma estrutura: apresentacao / negocio / dados)
+├── expedicao    (mesma estrutura: apresentacao / negocio / dados)
+└── telemetria   (mesma estrutura: apresentacao / negocio / dados)
 ```
 
----
+## D. Projeção com Microsserviços
 
-## D. Projeção com Microsserviços e ADRs
+### Serviços, comunicação e dados
 
-- **Serviços e Comunicação:** Os contextos de Estoque e Expedição seriam extraídos para microsserviços independentes, comunicando-se de forma assíncrona via **Eventos** (ex: Kafka) para não bloquear o fluxo.
-- **Dados:** Aplicação do padrão **Database per Service** (um banco PostgreSQL exclusivo para cada serviço).
-- **Saga:** Para o fluxo de expedição, utilizaríamos uma **Saga por Coreografia**. Se a Expedição falhar (ex: transportadora indisponível), ela emite o evento `ExpedicaoFalhou`, e o Estoque escuta esse evento e executa a compensação, devolvendo a bolsa para o status "Disponível".
+| Serviço | Contexto | Banco próprio | Por que é um serviço |
+|---|---|---|---|
+| `estoque` | Estoque (core) | PostgreSQL | Regras críticas e maior carga; precisa escalar e falhar de forma isolada. |
+| `requisicao` | Requisição | PostgreSQL | Fila de pedidos com ciclo de vida próprio. |
+| `expedicao` | Expedição | PostgreSQL | Logística e rastreio, com ritmo de mudança diferente. |
+| `telemetria` | Telemetria | Banco de séries temporais | Alto volume de escrita e eventos. |
 
-### Tabela Comparativa
+- **Consultas:** REST síncrono.
+- **Mudanças de estado:** eventos de domínio por fila/broker (comunicação assíncrona, ver ADR 0002).
+- **Dados:** um banco por serviço.
 
-| Aspecto | Monolito Modular (Atual) | Microsserviços (Projeção) |
+### Saga: atender uma requisição (coreografada)
+
+1. `requisicao` registra o pedido (**Pendente**) e publica `RequisicaoCriada`.
+2. `estoque` escolhe a bolsa por FEFO, a reserva e publica `BolsaReservada`.
+3. `expedicao` cria o despacho e publica `BolsaDespachada`.
+4. `requisicao` marca o pedido como **Atendido**.
+
+**Compensações:**
+
+- Se `expedicao` falhar ou a `telemetria` publicar `CadeiaFriaViolada`, a `expedicao` publica `DespachoFalhou`; o `estoque` libera a reserva (a bolsa volta a **Disponível**, ou é descartada se houve violação) e publica `ReservaLiberada`; a `requisicao` volta a **Pendente**.
+- Se o `estoque` não achar bolsa compatível, publica `ReservaRecusada` e a requisição fica **Pendente**.
+
+### Serverless (opcional)
+
+| Parte | Vira função? | Motivo |
 |---|---|---|
-| **Unidade de Deploy** | Um único container (API inteira). | Três containers (Estoque, Requisição, Expedição). |
-| **Escala** | Escala o sistema inteiro (mesmo que só o Estoque precise). | Escala apenas o serviço gargalo (ex: só a Expedição). |
-| **Consistência de Dados** | Forte (ACID no mesmo banco). | Eventual (Sagas e eventos). |
-| **Custo Inicial** | Baixo. | Alto (mais servidores e complexidade). |
-| **Complexidade** | Baixa/Média. | Alta (monitoramento, tracing, rede). |
+| Emitir a guia quando a requisição é atendida | Sim | Acionada por evento, sem estado, curta. |
+| Processar leituras de telemetria | Sim | Eventos curtos e independentes. |
+| Reserva de bolsa (Estoque) | Não | Exige transação e conexões com o banco; o cold start prejudica a latência. |
+| Fila de requisições | Não | Mantém estado e ordem. |
 
-### ADRs (Architecture Decision Records)
+### Monolito modular × microsserviços × serverless
 
-- **ADR 0001: Decomposição do Rota Vital** — Decisão de iniciar como Monolito Modular e planejar a extração para Microsserviços na Parte 3.
-- **ADR 0002: Estratégia de Compensação (Saga)** — Uso de eventos assíncronos para garantir a integridade do estoque em caso de falha na expedição.
+| Critério | Monolito modular | Microsserviços | Serverless (parcial) |
+|---|---|---|---|
+| Unidade de deploy | Um artefato | Um por serviço | Por função |
+| Escala | Tudo junto | Por serviço | Automática por evento |
+| Consistência dos dados | Transação local (ACID) | Eventual, com sagas | Eventual |
+| Custo | Menor em carga baixa | Maior (instância e banco por serviço) | Paga por uso; bom em carga irregular |
+| Complexidade de operação | Baixa | Alta (rede, tracing, contratos) | Média (limites, cold start, conexões) |
 
----
+### ADRs
+
+- [ADR 0001 — Decomposição do Rota Vital](docs/arquitetura/adr/0001-decomposicao.md)
+- [ADR 0002 — Comunicação assíncrona](docs/arquitetura/adr/0002-comunicacao-assincrona.md)
 
 ## E. Três Cenários com Orçamento
 
-**Premissas de Carga (Conforme planilha):**
+Provedor: **Render** (PaaS), região **Ohio (US East)**, a mesma do deploy atual. Preços **on-demand em dólar**, sem free tier, reserva ou desconto, lidos em [render.com/pricing](https://render.com/pricing#compute) em **18/11/2026**. Planilha com as fórmulas: [`planilha-orcamento-rota-vital.xlsx`](docs/arquitetura/planilha-orcamento-rota-vital.xlsx) (exportação em [PDF](docs/arquitetura/planilha_orcamento.pdf)).
 
-- **Baixo:** Pico de 5 req/s, 2 instâncias e pool de 1 conexão.
-- **Moderado:** Pico de 40 req/s, 2 instâncias e pool de 6 conexões.
-- **Alto:** Pico de 300 req/s, 9 instâncias e pool de 45 conexões.
+### Premissas de carga
 
-**Orçamento:** A planilha completa com os custos do Render (Web Services, PostgreSQL, Redis, etc.), fontes e datas de consulta (18/11/2026) está disponível em `docs/arquitetura/planilha_orcamento.pdf`.
+| | Baixo | Moderado | Alto |
+|---|---|---|---|
+| Usuários | 100 | 1.000 | 10.000 |
+| Pedidos por dia | 200 | 2.000 | 20.000 |
+| Pico de requisições (λ) | 5 req/s | 40 req/s | 300 req/s |
+| Disponibilidade desejada | 99% | 99,5% | 99,9% |
+| Tempo médio de resposta (W) | 0,3 s | 0,3 s | 0,3 s |
+| Tempo médio no banco por requisição | 0,1 s | 0,1 s | 0,1 s |
+| Capacidade por instância (plano 1c-2g) | 20 simultâneas | 20 simultâneas | 20 simultâneas |
+| Utilização-alvo | 50% | 50% | 50% |
 
-### Resumo de Custos (Render — Região Ohio / US East — On-Demand)
+### Lei de Little (L = λ × W)
 
-- **Cenário Baixo:** Custo mensal de **U$ 97,00** (custo por pedido: **U$ 0,0162**).
-- **Cenário Moderado:** Custo mensal de **U$ 149,25** (custo por pedido: **U$ 0,0025**).
-- **Cenário Alto:** Custo mensal de **U$ 566,25** (custo por pedido: **U$ 0,0009**).
+| | Baixo | Moderado | Alto |
+|---|---|---|---|
+| Requisições simultâneas L = λ × W | 5 × 0,3 = **1,5** | 40 × 0,3 = **12** | 300 × 0,3 = **90** |
+| Capacidade efetiva por instância (20 × 50%) | 10 | 10 | 10 |
+| Instâncias pela Lei de Little ⌈L ÷ 10⌉ | 1 | 2 | 9 |
+| **Instâncias adotadas** (mínimo de 2 para HA) | **2** | **2** | **9** |
+| Conexões simultâneas com o banco (λ × 0,1 s) | 0,5 | 4 | 30 |
+| **Pool de conexões** (× margem 1,5) | **1** | **6** | **45** |
+| Limite de conexões do plano do banco | 100 | 100 | 100 |
+| Indisponibilidade permitida no mês | 438 min | 219 min | 43,8 min |
 
-> Nota-se o ganho de escala: à medida que a demanda cresce, o custo por pedido cai drasticamente, validando a viabilidade financeira do projeto.
+### O que muda entre os cenários
 
----
+- **Baixo:** 2 instâncias da API (alta disponibilidade) e um PostgreSQL pequeno, sem réplica nem cache.
+- **Moderado:** réplica/HA do banco, cache (Key Value) para o painel de estoque e tráfego que passa da banda incluída.
+- **Alto:** 9 instâncias da API, banco maior (`1c-2g`) com réplica, mais armazenamento, cache de 1 GB e muito mais tráfego de saída.
+
+Diagramas por cenário: `docs/arquitetura/img/` (fontes em `docs/arquitetura/`).
+
+### Orçamento mensal (USD)
+
+Todas as linhas: região Ohio (US East), fonte [render.com/pricing#compute](https://render.com/pricing#compute), consulta em 18/11/2026.
+
+| Item | Preço unit. | Baixo | Moderado | Alto |
+|---|---|---|---|---|
+| Workspace Render Pro (necessário para mais de uma instância) | $25/mês | 1 → $25,00 | 1 → $25,00 | 1 → $25,00 |
+| Web service `1c-2g` (1 CPU, 2 GB) | $25/mês | 2 → $50,00 | 2 → $50,00 | 9 → $225,00 |
+| PostgreSQL primário | `0.5c-1g` $19 · `1c-2g` $40 | 1 → $19,00 | 1 → $19,00 | 1 → $40,00 |
+| PostgreSQL réplica/HA* | mesmo plano do primário | — | 1 → $19,00 | 1 → $40,00 |
+| Armazenamento do banco | $0,30/GB | 10 GB → $3,00 | 50 GB → $15,00 | 200 GB → $60,00 |
+| Balanceador de carga | incluso | $0,00 | $0,00 | $0,00 |
+| Tráfego de saída excedente (25 GB incluídos no Pro) | $0,15/GB | 0 GB → $0,00 | 75 GB → $11,25 | 975 GB → $146,25 |
+| Cache Key Value | 256 MB $10 · 1 GB $20 | — | 1 → $10,00 | 1 → $20,00 |
+| Logs e monitoramento | incluso no Pro | $0,00 | $0,00 | $0,00 |
+| **Total mensal** | | **$97,00** | **$149,25** | **$556,25** |
+| Pedidos por mês (pedidos/dia × 30) | | 6.000 | 60.000 | 600.000 |
+| **Custo por pedido** | | **$0,0162** | **$0,0025** | **$0,0009** |
+
+\* A página de preços lista réplicas e alta disponibilidade como recursos, mas não informa o preço. Assumimos o mesmo valor do plano do primário.
+
+**Leitura:** o custo total sobe cerca de 54% do cenário baixo para o moderado e 273% do moderado para o alto, mas o custo por pedido cai 85% e depois 63%: há ganho de escala. No cenário alto, o tráfego de saída passa a ser o maior item depois das instâncias.
 
 ## 🤖 Uso de Inteligência Artificial
 
-O uso de IA foi permitido e declarado. A ferramenta utilizada foi o **DeepSeek (Chat)**. Ela foi empregada como uma assistente de produtividade para:
+Categoria **Condicionado** (PO-CESAR-021). Ferramentas usadas e finalidade:
 
-- Auxiliar na estruturação inicial do `Dockerfile` e do `compose.yaml`.
-- Gerar o boilerplate dos testes JUnit e a sintaxe YAML do GitHub Actions.
-- Auxiliar na formatação dos arquivos Markdown (README, ADRs, Gherkin) e revisão da sintaxe.
+| Ferramenta | Finalidade | Como foi validado |
+|---|---|---|
+| **DeepSeek (Chat)** | Estruturação inicial do `Dockerfile` e do `compose.yaml`; boilerplate dos testes JUnit e do YAML do GitHub Actions; formatação em Markdown. | Código executado localmente e revisado pela equipe antes do commit. |
+| **Claude (Anthropic)** | Revisão da Parte 2 contra o enunciado; rascunho do glossário, do modelo tático, dos ADRs e da estrutura da planilha de orçamento (fórmulas da Lei de Little). | Conteúdo conferido pelo squad contra o enunciado; fórmulas conferidas manualmente. |
 
-**Validação:** Todo o código, cálculos de orçamento e textos gerados pela IA foram revisados, executados localmente e compreendidos pela equipe antes de serem commitados, garantindo a integridade e veracidade do projeto. Preços de IA não foram usados como fonte.
+**Preços:** nenhum preço veio de sugestão de IA. Todos foram lidos pela equipe na página oficial do Render ([render.com/pricing](https://render.com/pricing#compute)) em 18/11/2026; as capturas de tela estão em `docs/arquitetura/img/`. Os valores de carga das premissas são estimativas da equipe. Foram usados apenas os dados sintéticos do Rota Vital.
 
 ---
 
