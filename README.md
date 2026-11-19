@@ -780,7 +780,7 @@ Capturas de tela das páginas de preços e do painel do Render, em [`docs/arquit
 
 ![Tabela de preços do Render, continuação](docs/arquitetura/imgs/render-pricing-webservices2.png)
 
-![Planilha de orçamento consolidada](docs/arquitetura/imgs/planilha_orcamento_consolidado.png)
+![Planilha de orçamento consolidada](docs/arquitetura/imgs/render_orcamento_consolidado.png)
 
 ---
 
