@@ -266,7 +266,7 @@ Implementa o contrato de API definido pela equipe no documento de Projetos 3 / R
 
 ## Apresentação final (09/11 a 13/11)
 
-- 🎤 Slides / vídeo da apresentação: **_adicionar link_**
+- 🎤 Slides da apresentação: [rota-vital-apresentacao.pdf](docs/rota-vital-apresentacao.pdf)
 
 ---
 
