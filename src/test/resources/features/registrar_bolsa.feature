@@ -22,3 +22,8 @@ Funcionalidade: Reservar bolsa de sangue
     Dado uma bolsa "BS-00003" do tipo "O-" com validade anterior a hoje
     Quando eu tento reservar a bolsa "BS-00003"
     Então a reserva deve ser recusada por vencimento
+
+  Cenário: Bolsa já reservada não pode ser reservada de novo
+    Dado uma bolsa "BS-00004" do tipo "O-" com status "Reservada"
+    Quando eu tento reservar a bolsa "BS-00004"
+    Então a reserva deve ser recusada porque a bolsa não está disponível
