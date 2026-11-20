@@ -319,11 +319,26 @@ Implementa o contrato de API definido pela equipe no documento de Projetos 3 / R
 
 Para medir: `cd docs/rsd/benchmark` e `python benchmark_rede.py --origem "sua rede, cidade"`.
 
-### 📈 EST — Probabilidade de desabastecimento (U2)
+### 📈 EST — Probabilidade de Desabastecimento e Métricas Revisadas (U2)
 
-- 📄 [Relatório de achados: método (Poisson), premissas, resultados e recomendações](docs/est/relatorio-desabastecimento.md)
-- No sistema: **Relatórios → Risco de Desabastecimento** · API: `GET /api/estatisticas/desabastecimento?horizonteDias=7&janelaDias=30`
-- Desperdício agora medido **por semana** (últimas 8 semanas), o que dá média, mediana e desvio padrão com significado.
+Para a Unidade 2, a disciplina de Estatística exigiu a modelagem preditiva de desabastecimento e a revisão das métricas de desperdício. Todo o embasamento teórico, premissas e resultados estão documentados no relatório técnico.
+
+- 📄 **[Relatório de Achados (Poisson, Premissas, Resultados e Recomendações)](docs/est/relatorio-desabastecimento.md)**
+
+#### 1. Modelo Preditivo de Desabastecimento (Poisson)
+- **O Método:** Utilizamos a distribuição de Poisson para modelar a demanda futura de bolsas por tipo sanguíneo, assumindo que os pedidos chegam de forma independente e com taxa média constante (janela móvel de 30 dias).
+- **A Conta:** A demanda em um horizonte \(H\) é dada por \(D \sim Poisson(\lambda \cdot H)\). O estoque útil (\(k\)) é calculado subtraindo o nível mínimo (HU10) do estoque disponível menos as bolsas que vencerão no período.
+- **O Risco:** O risco de desabastecimento é \(P(D > k)\). O sistema classifica esse risco em **BAIXO, MODERADO ou ALTO**.
+- **No Sistema:** O painel de relatórios exibe o card "Risco de Desabastecimento", consumindo o endpoint `GET /api/estatisticas/desabastecimento?horizonteDias=7&janelaDias=30`.
+
+#### 2. Revisão da Métrica de Desperdício
+- **O Problema Anterior:** Na Parte 1, a métrica contava cada bolsa descartada como `1.0`, o que resultava em média 1 e desvio padrão 0 (sem variação estatística real).
+- **A Solução (PI3-84):** A métrica foi revisada para agrupar os descartes **por semana** (nas últimas 8 semanas). Agora o sistema calcula a **média, mediana e o desvio padrão amostral** (dividindo por \(n-1\)), permitindo identificar se o desperdício está concentrado ou pulverizado.
+- **No Sistema:** Implementado no `EstatisticaService.java` e validado pela classe de testes `EstatisticaDesabastecimentoTest.java`.
+
+#### 3. Dados e Premissas (Transparência)
+- **Dados:** O sistema utiliza exclusivamente os dados sintéticos gerados pelo próprio Rota Vital (coletas, distribuições e vencimentos).
+- **Premissas:** Eventos independentes, taxa média constante no período e análise isolada por tipo sanguíneo (não considerando, nesta versão, a substituição de tipos universais como O-).
 
 ### Relatório de Algoritmos e Estrutura de Dados U1
 
