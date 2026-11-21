@@ -707,7 +707,7 @@ br.com.rotavital
 
 Detalhes em [`docs/arquitetura/projecao-microsservicos.md`](docs/arquitetura/projecao-microsservicos.md).
 
-### Serviços, comunicação e dados
+### Serviços, comunicação e dados:
 
 | Serviço | Contexto | Banco próprio | Por que é um serviço |
 |---|---|---|---|
