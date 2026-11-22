@@ -25,4 +25,4 @@ COPY --from=build /app/target/*.jar app.jar
 ENV SPRING_H2_CONSOLE_ENABLED=false
 
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-XX:MaxRAMPercentage=65", "-XX:+ExitOnOutOfMemoryError", "-jar", "app.jar"]

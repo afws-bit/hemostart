@@ -2,6 +2,7 @@ package br.com.rotavital.service;
 
 import br.com.rotavital.model.BolsaSangue;
 import br.com.rotavital.model.StatusBolsa;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -11,8 +12,21 @@ import java.util.concurrent.atomic.*;
 @Service
 public class BenchmarkService {
 
+    /** Teto de segurança: acima disso a massa não cabe no heap de uma instância pequena. */
+    static final int MASSA_MAXIMA = 2_000_000;
+
+    /**
+     * Tamanho da massa sintética. O padrão (200 mil) cabe na instância Free do Render (512 MB);
+     * para a medição completa em máquina local use --benchmark.massa=2000000.
+     */
+    private final int massaConfigurada;
+
+    public BenchmarkService(@Value("${benchmark.massa:200000}") int massaConfigurada) {
+        this.massaConfigurada = Math.max(1_000, Math.min(massaConfigurada, MASSA_MAXIMA));
+    }
+
     public Map<String, Object> executarBenchmark() throws InterruptedException {
-        int massaSize = 2_000_000;
+        int massaSize = massaConfigurada;
         int warmupRuns = 2;
         int measureRuns = 3;
 
