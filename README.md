@@ -836,6 +836,8 @@ Capturas de tela das páginas de preços e do painel do Render, em [`docs/arquit
 
 ![Planilha de orçamento consolidada](docs/arquitetura/imgs/render_orcamento_consolidado.png)
 
+Observação: O PostgreSQL gratuito rotavital-db expira em 29/11/2026. Os dados foram migrados para o rotavital-db-2 (vence em 23/12/2026) com pg_dump (postgres:16) e pg_restore (postgres:18) via Docker. A aplicação já aponta para o novo banco; a conexão foi validada pelo log HikariPool-1 - Start completed e pelos dados no site. Dumps não são versionados (*.dump no .gitignore). [`docs/arquitetura/imgs/`](docs/arquitetura/imgs/novo_banco.png)
+
 ---
 
 ## 🤖 Uso de Inteligência Artificial
