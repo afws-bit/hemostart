@@ -654,7 +654,7 @@ Detalhes em [`docs/arquitetura/modelo-tatico.md`](docs/arquitetura/modelo-tatico
 
 ### Cenário Gherkin
 
-O cenário (Dado/Quando/Então) que será executado na Parte 3 está em [`src/test/resources/features/reservar_bolsa.feature`](src/test/resources/features/reservar_bolsa.feature).
+O cenário (Dado/Quando/Então) que será executado na Parte 3 está em [`src/test/resources/features/registrar_bolsa.feature`](src/test/resources/features/registrar_bolsa.feature).
 
 ---
 
