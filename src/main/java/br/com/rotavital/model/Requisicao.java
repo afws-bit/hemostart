@@ -58,14 +58,20 @@ public class Requisicao extends EntidadeBase {
 
     // ===================== Regras de negócio =====================
 
+    /** Só uma requisição pendente pode ser aprovada. */
     public void aprovar() {
+        exigirStatus(StatusRequisicao.PENDENTE, "aprovada");
         this.status = StatusRequisicao.APROVADA;
     }
 
     /** HU13 — só pedidos pendentes podem ser recusados, e o motivo é obrigatório. */
     public void recusar(String motivo) {
+        exigirStatus(StatusRequisicao.PENDENTE, "recusada");
+        if (motivo == null || motivo.isBlank()) {
+            throw new IllegalArgumentException("Motivo da recusa é obrigatório");
+        }
         this.status = StatusRequisicao.RECUSADA;
-        this.motivoRecusa = motivo;
+        this.motivoRecusa = motivo.trim();
     }
 
     public void registrarRota(String descricao, Integer km) {
@@ -73,10 +79,22 @@ public class Requisicao extends EntidadeBase {
         this.distanciaKm = km;
     }
 
+    /** Só uma requisição aprovada (com bolsas reservadas) pode ser atendida. */
     public void atender(String responsavel) {
+        exigirStatus(StatusRequisicao.APROVADA, "atendida");
+        if (responsavel == null || responsavel.isBlank()) {
+            throw new IllegalArgumentException("Responsável pela distribuição é obrigatório");
+        }
         this.status = StatusRequisicao.ATENDIDA;
         this.dataAtendimento = LocalDateTime.now();
         this.responsavelDistribuicao = responsavel;
+    }
+
+    private void exigirStatus(StatusRequisicao esperado, String acao) {
+        if (this.status != esperado) {
+            throw new IllegalStateException("Requisição com status '" + status
+                    + "' não pode ser " + acao + " (esperado: '" + esperado + "')");
+        }
     }
 
     public boolean isPendente() { return status == StatusRequisicao.PENDENTE; }

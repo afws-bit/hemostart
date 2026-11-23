@@ -543,8 +543,8 @@ O histórico de commits comprova o TDD.
 ### 🚀 E3 · Deploy Automatizado
 
 - **Provedor de Deploy:** Utilizamos o **Render** (plano Free) pela integração nativa com Docker e GitHub.
-- **Pipeline e Fluxo de Branch (GitHub Flow):** A branch `main` é protegida. O fluxo é: `feature/*` -> Pull Request -> Pipeline (E2) roda -> Se verde, faz merge na `main` -> Render detecta e faz o deploy.
-- **Deploy Automático:** O Render está configurado para a branch `main` usando o `Dockerfile`. A cada merge, o build e o deploy ocorrem sozinhos.
+- **Pipeline e Fluxo de Branch (GitHub Flow):** A branch `master` é protegida. O fluxo é: `feature/*` -> Pull Request -> Pipeline (E2) roda -> Se verde, faz merge na `master` -> Render detecta e faz o deploy.
+- **Deploy Automático (ativo):** O Render está configurado para a branch `master` usando o `Dockerfile`, com Auto-Deploy "On Commit". A cada merge, o build e o deploy ocorrem sozinhos (validado com o commit `chore: teste auto-deploy`).
 - **Segredos (Secrets):** As credenciais do PostgreSQL não estão no código. Elas foram cadastradas no painel de *Environment Variables* do Render.
 - **Rollback:** Caso um deploy dê problema, o rollback é feito via `git revert` (disparando novo deploy automatizado) ou em 1 clique no histórico de deploys do próprio painel do Render.
 
@@ -654,7 +654,7 @@ Detalhes em [`docs/arquitetura/modelo-tatico.md`](docs/arquitetura/modelo-tatico
 
 ### Cenário Gherkin
 
-O cenário (Dado/Quando/Então) que será executado na Parte 3 está em [`src/test/resources/features/registrar_bolsa.feature`](src/test/resources/features/registrar_bolsa.feature).
+O cenário (Dado/Quando/Então) que será executado na Parte 3 está em [`src/test/resources/features/reservar_bolsa.feature`](src/test/resources/features/reservar_bolsa.feature).
 
 ---
 

@@ -10,3 +10,7 @@ observabilidade/.env
 __pycache__/
 .acesso-professor.txt
 observabilidade/.acesso-professor.txt
+
+# binário compilado e dumps do banco (não versionar)
+/hemostart
+*.dump

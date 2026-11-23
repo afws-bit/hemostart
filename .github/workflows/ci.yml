@@ -21,6 +21,13 @@ jobs:
         
     - name: Rodar Testes Automatizados (TDD)
       run: mvn clean test
+
+    - name: Publicar relatório de cobertura (JaCoCo)
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: jacoco-report
+        path: target/site/jacoco/
       
     - name: Build da Imagem Docker
       run: docker build . -t rotavital-api
