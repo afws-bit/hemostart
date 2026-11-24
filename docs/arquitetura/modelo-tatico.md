@@ -23,4 +23,4 @@ Como **enfermeiro do estoque central**, quero **reservar uma bolsa compatível c
 5. Entre várias bolsas compatíveis e válidas, a sugerida é a de validade mais próxima (FEFO). *Política de seleção do serviço de aplicação, não do agregado.*
 
 ## Cenário Gherkin
-Executado na Parte 3: [`reservar_bolsa.feature`](../../src/test/resources/features/reservar_bolsa.feature)
+Executado na Parte 3: [`registrar_bolsa.feature`](../../src/test/resources/features/registrar_bolsa.feature)
