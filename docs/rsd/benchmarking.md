@@ -1,7 +1,7 @@
 # Benchmarking de rede — HemoStart / Rota Vital
 
 > **RSD · Unidade 2 · Critério "Benchmarking (latência/vazão/perda/jitter)" (40%)**
-> Responsáveis: Elisa Martins Galindo Santos e Kelly Priscilla de Siqueira Melo · Revisão: 18/11/2026
+> Responsáveis: Elisa Martins Galindo Santos e Kelly Priscilla de Siqueira Melo · Revisão: 27/11/2026
 
 ## 1. Objetivo
 
@@ -68,42 +68,80 @@ anotar se foi Wi-Fi ou cabo, e a operadora. Para comparar cenários, repita com 
 
 | Item | Valor |
 |---|---|
-| Alvo | <https://hemostart-rotavital-api.onrender.com> (Render, plano gratuito, PostgreSQL 15 gerenciado) |
-| Origem | _preencher: cidade, Wi-Fi ou cabo, operadora_ |
-| Máquina | _preenchido automaticamente no relatorio.md (campo "Sistema")_ |
-| Data e hora | _preenchido automaticamente_ |
-| Parâmetros | 50 amostras por medição, intervalo de 200 ms; carga de 15 s com 1, 5 e 10 clientes |
+| Alvo | <https://hemostart-rotavital-api.onrender.com> (Render, plano gratuito, região Ohio/EUA, PostgreSQL 18 gerenciado) |
+| Origem | Wi-Fi de casa, Recife |
+| Máquina | MacBook Pro, macOS (Darwin 24.3.0), Python 3.14.7 |
+| Data e hora | 27/11/2026, 00:36 |
+| Parâmetros | 50 amostras por medição, intervalo de 200 ms; carga de 15 s com 1, 5 e 10 clientes em `/api/v1/estoque` |
+
+Arquivos brutos desta medição: [`benchmark/resultados/2026-11-27_0036/`](benchmark/resultados/2026-11-27_0036/)
+(`amostras.csv`, `resumo.json` e `relatorio.md`).
 
 ## 6. Resultados
 
-> **Pendente:** colar aqui as tabelas do `relatorio.md` depois de rodar o script.
-> Os valores precisam ser medidos de verdade a partir de uma máquina com acesso à internet. Não usar números de exemplo.
-
 ### 6.1 Latência, jitter e perda
 
-_(tabela do relatorio.md)_
+| Medição | Média (ms) | p50 (ms) | p95 (ms) | Jitter (ms) | Perda | Sucessos |
+|---|---|---|---|---|---|---|
+| Resolução DNS | 2,7 | 2,3 | 4,3 | 0,7 | 0,00% | 20/20 |
+| ICMP ping | 88,7 | 87,5 | 102,9 | 5,4 | 10,00% | 18/20 |
+| Conexão TCP :443 | 89,5 | 87,9 | 101,3 | 4,0 | 0,00% | 30/30 |
+| Handshake TLS | 98,4 | 90,2 | 103,6 | 21,1 | 0,00% | 30/30 |
+| HTTPS GET `/` | 499,9 | 454,3 | 916,8 | 133,6 | 0,00% | 50/50 |
+| HTTPS GET `/api/v1/estoque` | 325,9 | 240,3 | 606,9 | 120,3 | 0,00% | 50/50 |
+| HTTPS GET `/api/v1/solicitacoes` | 247,4 | 223,0 | 465,7 | 40,3 | 0,00% | 50/50 |
+| HTTPS GET `/api/v1/bolsas/alertas-validade` | 245,6 | 222,5 | 415,9 | 36,5 | 0,00% | 50/50 |
+
+Primeira requisição desta rodada (*cold start*): **6.674 ms**, fora das estatísticas acima.
 
 ### 6.2 Vazão sob carga
 
-_(tabela do relatorio.md)_
+| Clientes simultâneos | Requisições | Req/s | KB/s | Média (ms) | p95 (ms) | Perda |
+|---|---|---|---|---|---|---|
+| 1 | 56 | 3,68 | 4,5 | 271,8 | 451,2 | 0,00% |
+| 5 | 163 | 10,60 | 13,0 | 468,6 | 748,8 | 0,00% |
+| 10 | 245 | 15,73 | 19,3 | 626,4 | 1.096,0 | 0,00% |
 
 ## 7. Análise
 
-Roteiro para a análise, depois de ter os números:
+**Onde está o tempo.** Abrir uma conexão nova custa em média 187,9 ms (TCP 89,5 + TLS 98,4). Uma requisição em
+conexão reaproveitada leva de 245 a 500 ms. A conexão nova é quase metade do custo de uma requisição, então o
+keep-alive do navegador e do script é importante.
 
-1. **Onde está o tempo?** Compare TCP + TLS (custo de abrir conexão) com o `GET` em conexão reaproveitada. Se a
-   conexão nova custa mais que a requisição, o keep-alive é essencial.
-2. **Rede ou servidor?** Latência HTTPS − RTT do TCP ≈ tempo de processamento (aplicação + banco). Confira com o
-   card *Cliente → Aplicação* do painel `/rede`, que mede só o servidor.
-3. **Estabilidade:** jitter alto em relação à média indica rede instável (Wi-Fi) ou servidor sobrecarregado.
-4. **Escalabilidade:** se a vazão cresce quase em proporção aos clientes e o p95 sobe pouco, o sistema não está
-   saturado; se a vazão para de crescer e o p95 dispara, achamos o limite.
-5. **Metas:** compare com a seção 5 do plano de implantação (p95 HTTPS ≤ 800 ms, perda ≤ 1%, jitter ≤ 50 ms,
-   ≥ 10 req/s com 10 clientes).
-6. **Cold start:** registre o tempo de acordar e explique o impacto para o primeiro hospital do dia (motivação da Migração 2).
+**Rede ou servidor.** O RTT até a borda é de cerca de 89 ms (ping 88,7 ms e TCP 89,5 ms), coerente com uma ida e volta
+de Recife até a região de Ohio. Subtraindo esse RTT da latência HTTPS, sobra o tempo de processamento: cerca de
+158 ms em `/api/v1/solicitacoes` e `/api/v1/bolsas/alertas-validade`, 236 ms em `/api/v1/estoque` e 411 ms em `/`,
+a página inicial. A maior parte do tempo está no servidor (aplicação e banco), não na rede.
 
-_(escrever a análise aqui)_
+**Estabilidade.** A rede foi estável: jitter de 4,0 ms no TCP e 5,4 ms no ping. A variação aparece no servidor: o
+jitter é de 133,6 ms em `/` e de 120,3 ms em `/api/v1/estoque`, contra cerca de 40 ms nos outros dois endpoints.
+A perda de 10% no ping (2 de 20) não afetou o serviço: TCP, TLS e HTTPS tiveram 0% de perda. O ICMP costuma ter
+prioridade baixa ou limite de taxa na borda, por isso ele não é usado para avaliar a meta de perda.
+
+**Escalabilidade.** De 1 para 5 clientes a vazão quase triplicou (3,68 → 10,60 req/s) e o p95 subiu de 451 para 749 ms.
+De 5 para 10 clientes ela cresceu só 1,5 vez (15,73 req/s) e o p95 passou de 1 segundo (1.096 ms). O sistema começa
+a saturar perto de 10 clientes simultâneos, o que é esperado com uma única instância do plano gratuito.
+
+**Metas** (seção 5 do [plano de implantação](plano-implantacao-migracao.md)):
+
+| Meta | Resultado | Situação |
+|---|---|---|
+| p95 HTTPS ≤ 800 ms | 415,9 a 606,9 ms nos três endpoints da API; 916,8 ms em `/` | Cumprida na API; `/` acima da meta, mas abaixo do nível crítico (2.000 ms) |
+| Perda ≤ 1% | 0,00% em TCP, TLS e HTTPS | Cumprida |
+| Jitter ≤ 50 ms | 36,5 e 40,3 ms em dois endpoints; 120,3 e 133,6 ms em `/api/v1/estoque` e `/` | Parcial |
+| Vazão ≥ 10 req/s com 10 clientes | 15,73 req/s | Cumprida |
+
+**Cold start.** Nesta rodada a primeira requisição levou 6,7 s. Numa tentativa anterior na mesma noite, com o serviço
+parado por inatividade, a aplicação levou cerca de 152 s para iniciar: o log do Render registra
+"Started RotaVitalApplication in 151.698 seconds". Isso passou do limite de 120 s do script, e a medição só foi
+possível na segunda tentativa. Para um hospital, isso significa que o primeiro pedido do dia pode esperar
+mais de 2 minutos. É a principal motivação da migração para um servidor sempre ligado.
 
 ## 8. Conclusão
 
-_(resumo em 3 a 5 linhas: as metas foram cumpridas? qual a principal limitação? o que muda na arquitetura-alvo?)_
+Com o serviço acordado, o HemoStart cumpre as metas de perda (0%) e de vazão (15,73 req/s com 10 clientes), e a API
+fica dentro do p95 de 800 ms. Os pontos fracos são a página inicial (p95 de 917 ms), o jitter alto em `/` e em
+`/api/v1/estoque`, a saturação perto de 10 clientes e, principalmente, o *cold start* de até cerca de 2,5 minutos
+do plano gratuito. A arquitetura-alvo do plano de implantação (instância sempre ligada, banco na sub-rede de dados
+e mais de uma instância da aplicação) ataca exatamente esses pontos. Esta medição fica como linha de base (fase F0)
+para comparar na fase F5.
