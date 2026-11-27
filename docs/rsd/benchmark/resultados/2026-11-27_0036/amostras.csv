@@ -1,0 +1,766 @@
+tipo,alvo,indice,instante,latencia_ms,sucesso,detalhe
+cold_start,/,0,2026-11-27T00:33:07.334,6673.662,1,HTTP 200
+dns,hemostart-rotavital-api.onrender.com,0,2026-11-27T00:33:07.339,3.84,1,
+dns,hemostart-rotavital-api.onrender.com,1,2026-11-27T00:33:07.393,2.588,1,
+dns,hemostart-rotavital-api.onrender.com,2,2026-11-27T00:33:07.452,4.191,1,
+dns,hemostart-rotavital-api.onrender.com,3,2026-11-27T00:33:07.508,3.681,1,
+dns,hemostart-rotavital-api.onrender.com,4,2026-11-27T00:33:07.565,2.34,1,
+dns,hemostart-rotavital-api.onrender.com,5,2026-11-27T00:33:07.619,1.812,1,
+dns,hemostart-rotavital-api.onrender.com,6,2026-11-27T00:33:07.672,2.014,1,
+dns,hemostart-rotavital-api.onrender.com,7,2026-11-27T00:33:07.727,1.85,1,
+dns,hemostart-rotavital-api.onrender.com,8,2026-11-27T00:33:07.779,1.827,1,
+dns,hemostart-rotavital-api.onrender.com,9,2026-11-27T00:33:07.833,1.608,1,
+dns,hemostart-rotavital-api.onrender.com,10,2026-11-27T00:33:07.887,2.242,1,
+dns,hemostart-rotavital-api.onrender.com,11,2026-11-27T00:33:07.944,2.575,1,
+dns,hemostart-rotavital-api.onrender.com,12,2026-11-27T00:33:08.000,2.116,1,
+dns,hemostart-rotavital-api.onrender.com,13,2026-11-27T00:33:08.058,2.519,1,
+dns,hemostart-rotavital-api.onrender.com,14,2026-11-27T00:33:08.110,1.655,1,
+dns,hemostart-rotavital-api.onrender.com,15,2026-11-27T00:33:08.163,1.591,1,
+dns,hemostart-rotavital-api.onrender.com,16,2026-11-27T00:33:08.218,4.147,1,
+dns,hemostart-rotavital-api.onrender.com,17,2026-11-27T00:33:08.276,4.568,1,
+dns,hemostart-rotavital-api.onrender.com,18,2026-11-27T00:33:08.336,4.306,1,
+dns,hemostart-rotavital-api.onrender.com,19,2026-11-27T00:33:08.392,2.995,1,
+icmp,hemostart-rotavital-api.onrender.com,0,2026-11-27T00:33:29.527,90.049,1,
+icmp,hemostart-rotavital-api.onrender.com,1,2026-11-27T00:33:29.528,88.022,1,
+icmp,hemostart-rotavital-api.onrender.com,2,2026-11-27T00:33:29.528,84.216,1,
+icmp,hemostart-rotavital-api.onrender.com,3,2026-11-27T00:33:29.528,84.546,1,
+icmp,hemostart-rotavital-api.onrender.com,4,2026-11-27T00:33:29.528,88.925,1,
+icmp,hemostart-rotavital-api.onrender.com,5,2026-11-27T00:33:29.528,91.288,1,
+icmp,hemostart-rotavital-api.onrender.com,6,2026-11-27T00:33:29.528,85.078,1,
+icmp,hemostart-rotavital-api.onrender.com,7,2026-11-27T00:33:29.528,87.524,1,
+icmp,hemostart-rotavital-api.onrender.com,8,2026-11-27T00:33:29.528,86.678,1,
+icmp,hemostart-rotavital-api.onrender.com,9,2026-11-27T00:33:29.528,83.812,1,
+icmp,hemostart-rotavital-api.onrender.com,10,2026-11-27T00:33:29.528,90.458,1,
+icmp,hemostart-rotavital-api.onrender.com,11,2026-11-27T00:33:29.528,85.737,1,
+icmp,hemostart-rotavital-api.onrender.com,12,2026-11-27T00:33:29.528,91.493,1,
+icmp,hemostart-rotavital-api.onrender.com,13,2026-11-27T00:33:29.528,94.959,1,
+icmp,hemostart-rotavital-api.onrender.com,14,2026-11-27T00:33:29.528,86.827,1,
+icmp,hemostart-rotavital-api.onrender.com,15,2026-11-27T00:33:29.528,102.871,1,
+icmp,hemostart-rotavital-api.onrender.com,16,2026-11-27T00:33:29.528,85.033,1,
+icmp,hemostart-rotavital-api.onrender.com,17,2026-11-27T00:33:29.528,89.643,1,
+icmp,hemostart-rotavital-api.onrender.com,18,2026-11-27T00:33:29.528,,0,sem resposta
+icmp,hemostart-rotavital-api.onrender.com,19,2026-11-27T00:33:29.528,,0,sem resposta
+tcp,hemostart-rotavital-api.onrender.com:443,0,2026-11-27T00:33:29.640,101.26,1,
+tls,hemostart-rotavital-api.onrender.com,0,2026-11-27T00:33:29.731,90.877,1,TLSv1.3
+tcp,hemostart-rotavital-api.onrender.com:443,1,2026-11-27T00:33:30.024,92.096,1,
+tls,hemostart-rotavital-api.onrender.com,1,2026-11-27T00:33:30.116,92.496,1,TLSv1.3
+tcp,hemostart-rotavital-api.onrender.com:443,2,2026-11-27T00:33:30.427,105.659,1,
+tls,hemostart-rotavital-api.onrender.com,2,2026-11-27T00:33:30.517,89.84,1,TLSv1.3
+tcp,hemostart-rotavital-api.onrender.com:443,3,2026-11-27T00:33:30.809,86.898,1,
+tls,hemostart-rotavital-api.onrender.com,3,2026-11-27T00:33:30.894,84.748,1,TLSv1.3
+tcp,hemostart-rotavital-api.onrender.com:443,4,2026-11-27T00:33:31.186,90.544,1,
+tls,hemostart-rotavital-api.onrender.com,4,2026-11-27T00:33:31.272,85.46,1,TLSv1.3
+tcp,hemostart-rotavital-api.onrender.com:443,5,2026-11-27T00:33:31.561,87.372,1,
+tls,hemostart-rotavital-api.onrender.com,5,2026-11-27T00:33:31.657,95.568,1,TLSv1.3
+tcp,hemostart-rotavital-api.onrender.com:443,6,2026-11-27T00:33:31.946,89.152,1,
+tls,hemostart-rotavital-api.onrender.com,6,2026-11-27T00:33:32.037,90.563,1,TLSv1.3
+tcp,hemostart-rotavital-api.onrender.com:443,7,2026-11-27T00:33:32.327,85.467,1,
+tls,hemostart-rotavital-api.onrender.com,7,2026-11-27T00:33:32.420,92.467,1,TLSv1.3
+tcp,hemostart-rotavital-api.onrender.com:443,8,2026-11-27T00:33:32.712,87.418,1,
+tls,hemostart-rotavital-api.onrender.com,8,2026-11-27T00:33:32.802,89.914,1,TLSv1.3
+tcp,hemostart-rotavital-api.onrender.com:443,9,2026-11-27T00:33:33.091,87.248,1,
+tls,hemostart-rotavital-api.onrender.com,9,2026-11-27T00:33:33.183,92.154,1,TLSv1.3
+tcp,hemostart-rotavital-api.onrender.com:443,10,2026-11-27T00:33:33.473,87.632,1,
+tls,hemostart-rotavital-api.onrender.com,10,2026-11-27T00:33:33.565,92.522,1,TLSv1.3
+tcp,hemostart-rotavital-api.onrender.com:443,11,2026-11-27T00:33:33.864,94.273,1,
+tls,hemostart-rotavital-api.onrender.com,11,2026-11-27T00:33:33.954,89.925,1,TLSv1.3
+tcp,hemostart-rotavital-api.onrender.com:443,12,2026-11-27T00:33:34.245,88.866,1,
+tls,hemostart-rotavital-api.onrender.com,12,2026-11-27T00:33:34.333,88.631,1,TLSv1.3
+tcp,hemostart-rotavital-api.onrender.com:443,13,2026-11-27T00:33:34.622,85.071,1,
+tls,hemostart-rotavital-api.onrender.com,13,2026-11-27T00:33:34.709,86.281,1,TLSv1.3
+tcp,hemostart-rotavital-api.onrender.com:443,14,2026-11-27T00:33:35.005,90.897,1,
+tls,hemostart-rotavital-api.onrender.com,14,2026-11-27T00:33:35.091,86.675,1,TLSv1.3
+tcp,hemostart-rotavital-api.onrender.com:443,15,2026-11-27T00:33:35.380,83.539,1,
+tls,hemostart-rotavital-api.onrender.com,15,2026-11-27T00:33:35.474,93.916,1,TLSv1.3
+tcp,hemostart-rotavital-api.onrender.com:443,16,2026-11-27T00:33:35.763,88.584,1,
+tls,hemostart-rotavital-api.onrender.com,16,2026-11-27T00:33:35.854,90.383,1,TLSv1.3
+tcp,hemostart-rotavital-api.onrender.com:443,17,2026-11-27T00:33:36.147,87.624,1,
+tls,hemostart-rotavital-api.onrender.com,17,2026-11-27T00:33:36.238,90.809,1,TLSv1.3
+tcp,hemostart-rotavital-api.onrender.com:443,18,2026-11-27T00:33:36.530,87.47,1,
+tls,hemostart-rotavital-api.onrender.com,18,2026-11-27T00:33:36.634,103.63,1,TLSv1.3
+tcp,hemostart-rotavital-api.onrender.com:443,19,2026-11-27T00:33:36.930,91.036,1,
+tls,hemostart-rotavital-api.onrender.com,19,2026-11-27T00:33:37.021,90.83,1,TLSv1.3
+tcp,hemostart-rotavital-api.onrender.com:443,20,2026-11-27T00:33:37.316,89.561,1,
+tls,hemostart-rotavital-api.onrender.com,20,2026-11-27T00:33:37.406,89.986,1,TLSv1.3
+tcp,hemostart-rotavital-api.onrender.com:443,21,2026-11-27T00:33:37.696,88.294,1,
+tls,hemostart-rotavital-api.onrender.com,21,2026-11-27T00:33:37.784,87.551,1,TLSv1.3
+tcp,hemostart-rotavital-api.onrender.com:443,22,2026-11-27T00:33:38.076,86.778,1,
+tls,hemostart-rotavital-api.onrender.com,22,2026-11-27T00:33:38.166,90.19,1,TLSv1.3
+tcp,hemostart-rotavital-api.onrender.com:443,23,2026-11-27T00:33:38.459,88.03,1,
+tls,hemostart-rotavital-api.onrender.com,23,2026-11-27T00:33:38.553,93.526,1,TLSv1.3
+tcp,hemostart-rotavital-api.onrender.com:443,24,2026-11-27T00:33:38.841,87.73,1,
+tls,hemostart-rotavital-api.onrender.com,24,2026-11-27T00:33:38.926,84.098,1,TLSv1.3
+tcp,hemostart-rotavital-api.onrender.com:443,25,2026-11-27T00:33:39.214,87.862,1,
+tls,hemostart-rotavital-api.onrender.com,25,2026-11-27T00:33:39.300,85.7,1,TLSv1.3
+tcp,hemostart-rotavital-api.onrender.com:443,26,2026-11-27T00:33:39.592,87.252,1,
+tls,hemostart-rotavital-api.onrender.com,26,2026-11-27T00:33:39.930,337.657,1,TLSv1.3
+tcp,hemostart-rotavital-api.onrender.com:443,27,2026-11-27T00:33:40.221,87.457,1,
+tls,hemostart-rotavital-api.onrender.com,27,2026-11-27T00:33:40.310,88.503,1,TLSv1.3
+tcp,hemostart-rotavital-api.onrender.com:443,28,2026-11-27T00:33:40.608,95.41,1,
+tls,hemostart-rotavital-api.onrender.com,28,2026-11-27T00:33:40.702,93.72,1,TLSv1.3
+tcp,hemostart-rotavital-api.onrender.com:443,29,2026-11-27T00:33:40.995,87.995,1,
+tls,hemostart-rotavital-api.onrender.com,29,2026-11-27T00:33:41.078,82.735,1,TLSv1.3
+http,/,0,2026-11-27T00:33:42.580,1290.305,1,HTTP 200
+http,/,1,2026-11-27T00:33:43.395,610.187,1,HTTP 200
+http,/,2,2026-11-27T00:33:44.232,635.537,1,HTTP 200
+http,/,3,2026-11-27T00:33:45.146,711.197,1,HTTP 200
+http,/,4,2026-11-27T00:33:46.264,916.831,1,HTTP 200
+http,/,5,2026-11-27T00:33:47.260,793.211,1,HTTP 200
+http,/,6,2026-11-27T00:33:48.031,565.616,1,HTTP 200
+http,/,7,2026-11-27T00:33:48.822,586.341,1,HTTP 200
+http,/,8,2026-11-27T00:33:49.661,634.078,1,HTTP 200
+http,/,9,2026-11-27T00:33:50.461,598.381,1,HTTP 200
+http,/,10,2026-11-27T00:33:51.430,768.691,1,HTTP 200
+http,/,11,2026-11-27T00:33:52.508,873.57,1,HTTP 200
+http,/,12,2026-11-27T00:33:53.236,522.674,1,HTTP 200
+http,/,13,2026-11-27T00:33:53.837,396.267,1,HTTP 200
+http,/,14,2026-11-27T00:33:54.532,489.221,1,HTTP 200
+http,/,15,2026-11-27T00:33:55.274,536.696,1,HTTP 200
+http,/,16,2026-11-27T00:33:55.928,454.331,1,HTTP 200
+http,/,17,2026-11-27T00:33:56.636,502.259,1,HTTP 200
+http,/,18,2026-11-27T00:33:57.423,585.631,1,HTTP 200
+http,/,19,2026-11-27T00:33:58.243,618.859,1,HTTP 200
+http,/,20,2026-11-27T00:33:58.835,387.53,1,HTTP 200
+http,/,21,2026-11-27T00:33:59.471,431.008,1,HTTP 200
+http,/,22,2026-11-27T00:34:00.598,924.717,1,HTTP 200
+http,/,23,2026-11-27T00:34:01.228,426.531,1,HTTP 200
+http,/,24,2026-11-27T00:34:01.833,402.501,1,HTTP 200
+http,/,25,2026-11-27T00:34:02.442,405.961,1,HTTP 200
+http,/,26,2026-11-27T00:34:03.254,607.873,1,HTTP 200
+http,/,27,2026-11-27T00:34:03.733,273.793,1,HTTP 200
+http,/,28,2026-11-27T00:34:04.427,489.406,1,HTTP 200
+http,/,29,2026-11-27T00:34:05.107,477.067,1,HTTP 200
+http,/,30,2026-11-27T00:34:05.554,243.244,1,HTTP 200
+http,/,31,2026-11-27T00:34:06.041,281.875,1,HTTP 200
+http,/,32,2026-11-27T00:34:06.538,293.66,1,HTTP 200
+http,/,33,2026-11-27T00:34:07.037,294.303,1,HTTP 200
+http,/,34,2026-11-27T00:34:07.561,318.562,1,HTTP 200
+http,/,35,2026-11-27T00:34:08.134,371.678,1,HTTP 200
+http,/,36,2026-11-27T00:34:08.892,553.965,1,HTTP 200
+http,/,37,2026-11-27T00:34:09.340,243.972,1,HTTP 200
+http,/,38,2026-11-27T00:34:09.832,287.808,1,HTTP 200
+http,/,39,2026-11-27T00:34:10.570,533.502,1,HTTP 200
+http,/,40,2026-11-27T00:34:11.145,372.961,1,HTTP 200
+http,/,41,2026-11-27T00:34:11.761,415.527,1,HTTP 200
+http,/,42,2026-11-27T00:34:12.242,280.215,1,HTTP 200
+http,/,43,2026-11-27T00:34:12.833,386.114,1,HTTP 200
+http,/,44,2026-11-27T00:34:13.500,462.051,1,HTTP 200
+http,/,45,2026-11-27T00:34:14.115,413.103,1,HTTP 200
+http,/,46,2026-11-27T00:34:14.734,419.285,1,HTTP 200
+http,/,47,2026-11-27T00:34:15.237,298.117,1,HTTP 200
+http,/,48,2026-11-27T00:34:15.762,323.914,1,HTTP 200
+http,/,49,2026-11-27T00:34:16.250,282.876,1,HTTP 200
+http,/api/v1/estoque,0,2026-11-27T00:34:17.352,890.014,1,HTTP 200
+http,/api/v1/estoque,1,2026-11-27T00:34:18.005,447.919,1,HTTP 200
+http,/api/v1/estoque,2,2026-11-27T00:34:18.446,238.678,1,HTTP 200
+http,/api/v1/estoque,3,2026-11-27T00:34:18.931,280.563,1,HTTP 200
+http,/api/v1/estoque,4,2026-11-27T00:34:19.542,406.016,1,HTTP 200
+http,/api/v1/estoque,5,2026-11-27T00:34:19.972,228.288,1,HTTP 200
+http,/api/v1/estoque,6,2026-11-27T00:34:20.566,393.134,1,HTTP 200
+http,/api/v1/estoque,7,2026-11-27T00:34:21.377,606.861,1,HTTP 200
+http,/api/v1/estoque,8,2026-11-27T00:34:21.822,240.293,1,HTTP 200
+http,/api/v1/estoque,9,2026-11-27T00:34:22.426,398.893,1,HTTP 200
+http,/api/v1/estoque,10,2026-11-27T00:34:22.856,227.167,1,HTTP 200
+http,/api/v1/estoque,11,2026-11-27T00:34:23.330,270.771,1,HTTP 200
+http,/api/v1/estoque,12,2026-11-27T00:34:23.842,311.794,1,HTTP 200
+http,/api/v1/estoque,13,2026-11-27T00:34:25.152,1104.421,1,HTTP 200
+http,/api/v1/estoque,14,2026-11-27T00:34:25.734,381.183,1,HTTP 200
+http,/api/v1/estoque,15,2026-11-27T00:34:26.239,302.364,1,HTTP 200
+http,/api/v1/estoque,16,2026-11-27T00:34:26.688,246.351,1,HTTP 200
+http,/api/v1/estoque,17,2026-11-27T00:34:27.120,229.416,1,HTTP 200
+http,/api/v1/estoque,18,2026-11-27T00:34:27.555,230.096,1,HTTP 200
+http,/api/v1/estoque,19,2026-11-27T00:34:27.991,232.49,1,HTTP 200
+http,/api/v1/estoque,20,2026-11-27T00:34:28.442,245.406,1,HTTP 200
+http,/api/v1/estoque,21,2026-11-27T00:34:28.881,234.04,1,HTTP 200
+http,/api/v1/estoque,22,2026-11-27T00:34:29.318,233.128,1,HTTP 200
+http,/api/v1/estoque,23,2026-11-27T00:34:29.744,223.736,1,HTTP 200
+http,/api/v1/estoque,24,2026-11-27T00:34:30.185,236.165,1,HTTP 200
+http,/api/v1/estoque,25,2026-11-27T00:34:30.614,223.825,1,HTTP 200
+http,/api/v1/estoque,26,2026-11-27T00:34:31.053,238.301,1,HTTP 200
+http,/api/v1/estoque,27,2026-11-27T00:34:31.731,472.189,1,HTTP 200
+http,/api/v1/estoque,28,2026-11-27T00:34:32.168,235.518,1,HTTP 200
+http,/api/v1/estoque,29,2026-11-27T00:34:32.600,227.718,1,HTTP 200
+http,/api/v1/estoque,30,2026-11-27T00:34:33.045,239.367,1,HTTP 200
+http,/api/v1/estoque,31,2026-11-27T00:34:33.533,285.532,1,HTTP 200
+http,/api/v1/estoque,32,2026-11-27T00:34:33.964,226.092,1,HTTP 200
+http,/api/v1/estoque,33,2026-11-27T00:34:34.430,264.002,1,HTTP 200
+http,/api/v1/estoque,34,2026-11-27T00:34:35.065,430.01,1,HTTP 200
+http,/api/v1/estoque,35,2026-11-27T00:34:35.500,229.879,1,HTTP 200
+http,/api/v1/estoque,36,2026-11-27T00:34:35.941,235.868,1,HTTP 200
+http,/api/v1/estoque,37,2026-11-27T00:34:36.374,228.849,1,HTTP 200
+http,/api/v1/estoque,38,2026-11-27T00:34:36.803,223.948,1,HTTP 200
+http,/api/v1/estoque,39,2026-11-27T00:34:37.235,228.281,1,HTTP 200
+http,/api/v1/estoque,40,2026-11-27T00:34:37.666,229.751,1,HTTP 200
+http,/api/v1/estoque,41,2026-11-27T00:34:38.144,277.514,1,HTTP 200
+http,/api/v1/estoque,42,2026-11-27T00:34:38.577,227.68,1,HTTP 200
+http,/api/v1/estoque,43,2026-11-27T00:34:39.010,228.46,1,HTTP 200
+http,/api/v1/estoque,44,2026-11-27T00:34:39.804,592.103,1,HTTP 200
+http,/api/v1/estoque,45,2026-11-27T00:34:40.432,425.016,1,HTTP 200
+http,/api/v1/estoque,46,2026-11-27T00:34:41.150,513.164,1,HTTP 200
+http,/api/v1/estoque,47,2026-11-27T00:34:41.771,416.112,1,HTTP 200
+http,/api/v1/estoque,48,2026-11-27T00:34:42.271,298.807,1,HTTP 200
+http,/api/v1/estoque,49,2026-11-27T00:34:42.733,259.655,1,HTTP 200
+http,/api/v1/solicitacoes,0,2026-11-27T00:34:43.801,852.559,1,HTTP 200
+http,/api/v1/solicitacoes,1,2026-11-27T00:34:44.228,224.125,1,HTTP 200
+http,/api/v1/solicitacoes,2,2026-11-27T00:34:44.653,223.044,1,HTTP 200
+http,/api/v1/solicitacoes,3,2026-11-27T00:34:45.073,218.42,1,HTTP 200
+http,/api/v1/solicitacoes,4,2026-11-27T00:34:45.499,220.839,1,HTTP 200
+http,/api/v1/solicitacoes,5,2026-11-27T00:34:45.933,230.463,1,HTTP 200
+http,/api/v1/solicitacoes,6,2026-11-27T00:34:46.364,225.519,1,HTTP 200
+http,/api/v1/solicitacoes,7,2026-11-27T00:34:46.791,226.447,1,HTTP 200
+http,/api/v1/solicitacoes,8,2026-11-27T00:34:47.222,230.542,1,HTTP 200
+http,/api/v1/solicitacoes,9,2026-11-27T00:34:47.889,465.663,1,HTTP 200
+http,/api/v1/solicitacoes,10,2026-11-27T00:34:48.308,217.851,1,HTTP 200
+http,/api/v1/solicitacoes,11,2026-11-27T00:34:48.733,221.14,1,HTTP 200
+http,/api/v1/solicitacoes,12,2026-11-27T00:34:49.160,222.352,1,HTTP 200
+http,/api/v1/solicitacoes,13,2026-11-27T00:34:49.581,218.307,1,HTTP 200
+http,/api/v1/solicitacoes,14,2026-11-27T00:34:50.013,226.558,1,HTTP 200
+http,/api/v1/solicitacoes,15,2026-11-27T00:34:50.436,223.126,1,HTTP 200
+http,/api/v1/solicitacoes,16,2026-11-27T00:34:50.930,289.357,1,HTTP 200
+http,/api/v1/solicitacoes,17,2026-11-27T00:34:51.368,234.756,1,HTTP 200
+http,/api/v1/solicitacoes,18,2026-11-27T00:34:51.792,218.776,1,HTTP 200
+http,/api/v1/solicitacoes,19,2026-11-27T00:34:52.218,221.156,1,HTTP 200
+http,/api/v1/solicitacoes,20,2026-11-27T00:34:52.638,214.293,1,HTTP 200
+http,/api/v1/solicitacoes,21,2026-11-27T00:34:53.058,219.74,1,HTTP 200
+http,/api/v1/solicitacoes,22,2026-11-27T00:34:53.479,220.512,1,HTTP 200
+http,/api/v1/solicitacoes,23,2026-11-27T00:34:53.910,225.533,1,HTTP 200
+http,/api/v1/solicitacoes,24,2026-11-27T00:34:54.337,226.561,1,HTTP 200
+http,/api/v1/solicitacoes,25,2026-11-27T00:34:54.768,229.838,1,HTTP 200
+http,/api/v1/solicitacoes,26,2026-11-27T00:34:55.193,220.25,1,HTTP 200
+http,/api/v1/solicitacoes,27,2026-11-27T00:34:55.860,467.064,1,HTTP 200
+http,/api/v1/solicitacoes,28,2026-11-27T00:34:56.281,215.567,1,HTTP 200
+http,/api/v1/solicitacoes,29,2026-11-27T00:34:56.707,221.818,1,HTTP 200
+http,/api/v1/solicitacoes,30,2026-11-27T00:34:57.129,221.713,1,HTTP 200
+http,/api/v1/solicitacoes,31,2026-11-27T00:34:57.554,220.058,1,HTTP 200
+http,/api/v1/solicitacoes,32,2026-11-27T00:34:57.983,224.246,1,HTTP 200
+http,/api/v1/solicitacoes,33,2026-11-27T00:34:58.416,230.929,1,HTTP 200
+http,/api/v1/solicitacoes,34,2026-11-27T00:34:58.843,224.318,1,HTTP 200
+http,/api/v1/solicitacoes,35,2026-11-27T00:34:59.274,227.084,1,HTTP 200
+http,/api/v1/solicitacoes,36,2026-11-27T00:34:59.695,220.539,1,HTTP 200
+http,/api/v1/solicitacoes,37,2026-11-27T00:35:00.119,219.046,1,HTTP 200
+http,/api/v1/solicitacoes,38,2026-11-27T00:35:00.543,220.795,1,HTTP 200
+http,/api/v1/solicitacoes,39,2026-11-27T00:35:00.966,219.257,1,HTTP 200
+http,/api/v1/solicitacoes,40,2026-11-27T00:35:01.385,217.85,1,HTTP 200
+http,/api/v1/solicitacoes,41,2026-11-27T00:35:01.826,236.726,1,HTTP 200
+http,/api/v1/solicitacoes,42,2026-11-27T00:35:02.275,245.924,1,HTTP 200
+http,/api/v1/solicitacoes,43,2026-11-27T00:35:02.694,216.918,1,HTTP 200
+http,/api/v1/solicitacoes,44,2026-11-27T00:35:03.123,228.433,1,HTTP 200
+http,/api/v1/solicitacoes,45,2026-11-27T00:35:03.552,227.719,1,HTTP 200
+http,/api/v1/solicitacoes,46,2026-11-27T00:35:03.979,226.216,1,HTTP 200
+http,/api/v1/solicitacoes,47,2026-11-27T00:35:04.402,220.334,1,HTTP 200
+http,/api/v1/solicitacoes,48,2026-11-27T00:35:04.835,232.115,1,HTTP 200
+http,/api/v1/solicitacoes,49,2026-11-27T00:35:05.255,215.893,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,0,2026-11-27T00:35:05.880,412.844,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,1,2026-11-27T00:35:06.329,247.895,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,2,2026-11-27T00:35:06.760,225.29,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,3,2026-11-27T00:35:07.185,219.889,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,4,2026-11-27T00:35:07.609,222.867,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,5,2026-11-27T00:35:08.033,221.071,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,6,2026-11-27T00:35:08.456,222.166,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,7,2026-11-27T00:35:08.880,222.146,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,8,2026-11-27T00:35:09.306,220.732,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,9,2026-11-27T00:35:09.744,232.919,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,10,2026-11-27T00:35:10.171,221.883,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,11,2026-11-27T00:35:10.598,222.369,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,12,2026-11-27T00:35:11.050,247.144,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,13,2026-11-27T00:35:11.475,221.233,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,14,2026-11-27T00:35:11.908,227.913,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,15,2026-11-27T00:35:12.332,222.957,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,16,2026-11-27T00:35:12.763,225.673,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,17,2026-11-27T00:35:13.192,225.093,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,18,2026-11-27T00:35:13.866,469.358,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,19,2026-11-27T00:35:14.294,222.473,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,20,2026-11-27T00:35:14.720,221.361,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,21,2026-11-27T00:35:15.140,219.449,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,22,2026-11-27T00:35:15.761,415.9,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,23,2026-11-27T00:35:16.374,407.26,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,24,2026-11-27T00:35:16.811,236.908,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,25,2026-11-27T00:35:17.241,227.027,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,26,2026-11-27T00:35:17.668,221.722,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,27,2026-11-27T00:35:18.094,224.315,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,28,2026-11-27T00:35:18.518,219.408,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,29,2026-11-27T00:35:18.945,226.149,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,30,2026-11-27T00:35:19.371,220.779,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,31,2026-11-27T00:35:19.795,221.333,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,32,2026-11-27T00:35:20.217,220.675,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,33,2026-11-27T00:35:20.644,222.334,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,34,2026-11-27T00:35:21.329,480.47,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,35,2026-11-27T00:35:21.762,228.249,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,36,2026-11-27T00:35:22.185,218.818,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,37,2026-11-27T00:35:22.609,223.099,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,38,2026-11-27T00:35:23.037,222.628,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,39,2026-11-27T00:35:23.469,227.025,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,40,2026-11-27T00:35:23.889,220.212,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,41,2026-11-27T00:35:24.311,218.515,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,42,2026-11-27T00:35:24.730,213.66,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,43,2026-11-27T00:35:25.153,222.214,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,44,2026-11-27T00:35:25.578,219.815,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,45,2026-11-27T00:35:26.007,224.363,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,46,2026-11-27T00:35:26.432,221.649,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,47,2026-11-27T00:35:26.862,224.746,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,48,2026-11-27T00:35:27.300,235.411,1,HTTP 200
+http,/api/v1/bolsas/alertas-validade,49,2026-11-27T00:35:27.721,219.464,1,HTTP 200
+vazao_c1,/api/v1/estoque,0,2026-11-27T00:35:28.389,451.224,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,1,2026-11-27T00:35:28.619,229.449,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,2,2026-11-27T00:35:28.857,238.13,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,3,2026-11-27T00:35:29.096,239.181,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,4,2026-11-27T00:35:29.332,236.077,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,5,2026-11-27T00:35:29.625,292.748,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,6,2026-11-27T00:35:29.856,230.392,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,7,2026-11-27T00:35:30.120,264.864,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,8,2026-11-27T00:35:30.353,232.389,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,9,2026-11-27T00:35:30.591,238.43,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,10,2026-11-27T00:35:30.819,227.815,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,11,2026-11-27T00:35:31.056,236.416,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,12,2026-11-27T00:35:31.287,231.419,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,13,2026-11-27T00:35:31.658,370.8,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,14,2026-11-27T00:35:31.949,290.757,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,15,2026-11-27T00:35:32.330,380.792,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,16,2026-11-27T00:35:32.609,279.234,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,17,2026-11-27T00:35:32.843,233.609,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,18,2026-11-27T00:35:33.076,233.46,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,19,2026-11-27T00:35:33.305,228.535,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,20,2026-11-27T00:35:33.553,248.04,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,21,2026-11-27T00:35:33.790,237.095,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,22,2026-11-27T00:35:34.021,231.235,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,23,2026-11-27T00:35:34.248,226.836,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,24,2026-11-27T00:35:35.093,844.597,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,25,2026-11-27T00:35:35.321,228.653,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,26,2026-11-27T00:35:35.564,242.438,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,27,2026-11-27T00:35:35.834,269.978,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,28,2026-11-27T00:35:36.063,228.991,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,29,2026-11-27T00:35:36.291,227.607,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,30,2026-11-27T00:35:36.525,234.45,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,31,2026-11-27T00:35:36.758,232.303,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,32,2026-11-27T00:35:36.982,224.349,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,33,2026-11-27T00:35:37.228,246.209,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,34,2026-11-27T00:35:37.464,235.46,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,35,2026-11-27T00:35:37.877,413.635,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,36,2026-11-27T00:35:38.105,227.998,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,37,2026-11-27T00:35:38.337,231.89,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,38,2026-11-27T00:35:38.565,227.855,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,39,2026-11-27T00:35:38.799,233.569,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,40,2026-11-27T00:35:39.034,234.748,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,41,2026-11-27T00:35:39.269,235.073,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,42,2026-11-27T00:35:39.497,228.454,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,43,2026-11-27T00:35:39.733,235.292,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,44,2026-11-27T00:35:39.962,229.167,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,45,2026-11-27T00:35:40.187,224.723,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,46,2026-11-27T00:35:40.418,231.384,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,47,2026-11-27T00:35:40.647,228.386,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,48,2026-11-27T00:35:40.930,283.345,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,49,2026-11-27T00:35:41.167,236.986,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,50,2026-11-27T00:35:41.399,231.641,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,51,2026-11-27T00:35:41.632,233.534,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,52,2026-11-27T00:35:42.076,443.494,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,53,2026-11-27T00:35:42.325,249.411,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,54,2026-11-27T00:35:42.562,236.994,1,cliente 0 HTTP 200
+vazao_c1,/api/v1/estoque,55,2026-11-27T00:35:43.160,597.787,1,cliente 0 HTTP 200
+vazao_c5,/api/v1/estoque,0,2026-11-27T00:35:45.725,544.724,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,0,2026-11-27T00:35:45.731,553.001,1,cliente 0 HTTP 200
+vazao_c5,/api/v1/estoque,0,2026-11-27T00:35:45.925,744.723,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,0,2026-11-27T00:35:45.927,748.805,1,cliente 1 HTTP 200
+vazao_c5,/api/v1/estoque,0,2026-11-27T00:35:45.927,744.303,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,1,2026-11-27T00:35:46.125,399.376,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,1,2026-11-27T00:35:46.226,494.727,1,cliente 0 HTTP 200
+vazao_c5,/api/v1/estoque,1,2026-11-27T00:35:46.435,509.87,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,1,2026-11-27T00:35:46.435,508.247,1,cliente 1 HTTP 200
+vazao_c5,/api/v1/estoque,1,2026-11-27T00:35:46.523,595.397,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,2,2026-11-27T00:35:46.626,501.508,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,2,2026-11-27T00:35:46.632,406.034,1,cliente 0 HTTP 200
+vazao_c5,/api/v1/estoque,2,2026-11-27T00:35:46.736,300.964,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,2,2026-11-27T00:35:46.931,495.497,1,cliente 1 HTTP 200
+vazao_c5,/api/v1/estoque,2,2026-11-27T00:35:47.025,502.913,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,3,2026-11-27T00:35:47.045,413.274,1,cliente 0 HTTP 200
+vazao_c5,/api/v1/estoque,3,2026-11-27T00:35:47.126,499.875,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,3,2026-11-27T00:35:47.133,397.182,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,3,2026-11-27T00:35:47.226,294.946,1,cliente 1 HTTP 200
+vazao_c5,/api/v1/estoque,3,2026-11-27T00:35:47.341,315.299,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,4,2026-11-27T00:35:47.527,401.179,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,4,2026-11-27T00:35:47.537,403.795,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,4,2026-11-27T00:35:47.629,403.287,1,cliente 1 HTTP 200
+vazao_c5,/api/v1/estoque,4,2026-11-27T00:35:47.629,288.55,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,5,2026-11-27T00:35:47.758,221.453,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,5,2026-11-27T00:35:47.759,231.239,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,4,2026-11-27T00:35:47.780,734.795,1,cliente 0 HTTP 200
+vazao_c5,/api/v1/estoque,5,2026-11-27T00:35:47.860,230.354,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,5,2026-11-27T00:35:47.860,231.071,1,cliente 1 HTTP 200
+vazao_c5,/api/v1/estoque,5,2026-11-27T00:35:48.036,255.895,1,cliente 0 HTTP 200
+vazao_c5,/api/v1/estoque,6,2026-11-27T00:35:48.129,370.845,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,6,2026-11-27T00:35:48.130,269.553,1,cliente 1 HTTP 200
+vazao_c5,/api/v1/estoque,6,2026-11-27T00:35:48.234,374.633,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,6,2026-11-27T00:35:48.235,476.139,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,6,2026-11-27T00:35:48.436,399.615,1,cliente 0 HTTP 200
+vazao_c5,/api/v1/estoque,7,2026-11-27T00:35:48.531,401.298,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,7,2026-11-27T00:35:48.630,500.667,1,cliente 1 HTTP 200
+vazao_c5,/api/v1/estoque,7,2026-11-27T00:35:48.630,396.06,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,7,2026-11-27T00:35:48.830,595.449,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,7,2026-11-27T00:35:48.830,394.579,1,cliente 0 HTTP 200
+vazao_c5,/api/v1/estoque,8,2026-11-27T00:35:49.022,491.286,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,8,2026-11-27T00:35:49.031,400.801,1,cliente 1 HTTP 200
+vazao_c5,/api/v1/estoque,8,2026-11-27T00:35:49.228,397.308,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,8,2026-11-27T00:35:49.327,696.054,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,8,2026-11-27T00:35:49.431,600.219,1,cliente 0 HTTP 200
+vazao_c5,/api/v1/estoque,9,2026-11-27T00:35:49.431,409.042,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,9,2026-11-27T00:35:49.529,498.214,1,cliente 1 HTTP 200
+vazao_c5,/api/v1/estoque,9,2026-11-27T00:35:49.631,403.778,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,9,2026-11-27T00:35:49.728,401.583,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,10,2026-11-27T00:35:49.831,399.827,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,10,2026-11-27T00:35:50.031,399.098,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,9,2026-11-27T00:35:50.031,600.26,1,cliente 0 HTTP 200
+vazao_c5,/api/v1/estoque,10,2026-11-27T00:35:50.031,501.819,1,cliente 1 HTTP 200
+vazao_c5,/api/v1/estoque,10,2026-11-27T00:35:50.128,400.279,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,11,2026-11-27T00:35:50.231,399.739,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,10,2026-11-27T00:35:50.330,298.681,1,cliente 0 HTTP 200
+vazao_c5,/api/v1/estoque,11,2026-11-27T00:35:50.427,395.334,1,cliente 1 HTTP 200
+vazao_c5,/api/v1/estoque,11,2026-11-27T00:35:50.427,396.358,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,11,2026-11-27T00:35:50.532,403.492,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,12,2026-11-27T00:35:50.725,494.185,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,11,2026-11-27T00:35:50.832,502.056,1,cliente 0 HTTP 200
+vazao_c5,/api/v1/estoque,12,2026-11-27T00:35:50.931,504.311,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,12,2026-11-27T00:35:51.034,502.224,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,12,2026-11-27T00:35:51.034,607.742,1,cliente 1 HTTP 200
+vazao_c5,/api/v1/estoque,13,2026-11-27T00:35:51.135,410.034,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,12,2026-11-27T00:35:51.331,499.021,1,cliente 0 HTTP 200
+vazao_c5,/api/v1/estoque,13,2026-11-27T00:35:51.331,399.616,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,13,2026-11-27T00:35:51.530,495.358,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,13,2026-11-27T00:35:51.626,592.089,1,cliente 1 HTTP 200
+vazao_c5,/api/v1/estoque,14,2026-11-27T00:35:51.627,491.795,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,14,2026-11-27T00:35:51.732,401.432,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,13,2026-11-27T00:35:51.733,401.751,1,cliente 0 HTTP 200
+vazao_c5,/api/v1/estoque,14,2026-11-27T00:35:51.921,391.172,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,15,2026-11-27T00:35:52.033,406.644,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,15,2026-11-27T00:35:52.226,493.151,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,14,2026-11-27T00:35:52.226,493.237,1,cliente 0 HTTP 200
+vazao_c5,/api/v1/estoque,14,2026-11-27T00:35:52.329,702.456,1,cliente 1 HTTP 200
+vazao_c5,/api/v1/estoque,15,2026-11-27T00:35:52.329,408.624,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,16,2026-11-27T00:35:52.527,493.723,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,16,2026-11-27T00:35:52.534,308.068,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,15,2026-11-27T00:35:52.534,308.295,1,cliente 0 HTTP 200
+vazao_c5,/api/v1/estoque,16,2026-11-27T00:35:52.637,307.273,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,16,2026-11-27T00:35:53.241,707.299,1,cliente 0 HTTP 200
+vazao_c5,/api/v1/estoque,17,2026-11-27T00:35:53.242,708.751,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,17,2026-11-27T00:35:53.243,606.286,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,17,2026-11-27T00:35:53.244,716.359,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,15,2026-11-27T00:35:53.244,914.878,1,cliente 1 HTTP 200
+vazao_c5,/api/v1/estoque,18,2026-11-27T00:35:53.542,298.644,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,16,2026-11-27T00:35:53.544,300.142,1,cliente 1 HTTP 200
+vazao_c5,/api/v1/estoque,18,2026-11-27T00:35:53.728,484.376,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,18,2026-11-27T00:35:53.728,485.944,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,17,2026-11-27T00:35:53.734,492.131,1,cliente 0 HTTP 200
+vazao_c5,/api/v1/estoque,19,2026-11-27T00:35:53.955,413.292,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,19,2026-11-27T00:35:53.967,239.182,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,19,2026-11-27T00:35:54.028,299.879,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,18,2026-11-27T00:35:54.143,409.803,1,cliente 0 HTTP 200
+vazao_c5,/api/v1/estoque,20,2026-11-27T00:35:54.185,230.212,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,17,2026-11-27T00:35:54.248,703.704,1,cliente 1 HTTP 200
+vazao_c5,/api/v1/estoque,20,2026-11-27T00:35:54.329,361.447,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,20,2026-11-27T00:35:54.427,398.662,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,19,2026-11-27T00:35:54.532,388.808,1,cliente 0 HTTP 200
+vazao_c5,/api/v1/estoque,18,2026-11-27T00:35:54.533,284.95,1,cliente 1 HTTP 200
+vazao_c5,/api/v1/estoque,21,2026-11-27T00:35:54.533,347.441,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,21,2026-11-27T00:35:54.634,305.233,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,21,2026-11-27T00:35:54.740,312.642,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,20,2026-11-27T00:35:54.930,397.753,1,cliente 0 HTTP 200
+vazao_c5,/api/v1/estoque,19,2026-11-27T00:35:55.033,500.13,1,cliente 1 HTTP 200
+vazao_c5,/api/v1/estoque,22,2026-11-27T00:35:55.039,404.8,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,22,2026-11-27T00:35:55.039,299.075,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,22,2026-11-27T00:35:55.231,698.082,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,21,2026-11-27T00:35:55.231,301.2,1,cliente 0 HTTP 200
+vazao_c5,/api/v1/estoque,23,2026-11-27T00:35:55.334,294.86,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,23,2026-11-27T00:35:55.434,395.663,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,20,2026-11-27T00:35:55.435,401.906,1,cliente 1 HTTP 200
+vazao_c5,/api/v1/estoque,22,2026-11-27T00:35:55.635,404.11,1,cliente 0 HTTP 200
+vazao_c5,/api/v1/estoque,23,2026-11-27T00:35:55.636,404.811,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,24,2026-11-27T00:35:55.736,402.656,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,21,2026-11-27T00:35:55.829,394.36,1,cliente 1 HTTP 200
+vazao_c5,/api/v1/estoque,24,2026-11-27T00:35:55.829,394.937,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,25,2026-11-27T00:35:56.132,395.72,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,23,2026-11-27T00:35:56.423,787.167,1,cliente 0 HTTP 200
+vazao_c5,/api/v1/estoque,24,2026-11-27T00:35:56.429,793.703,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,25,2026-11-27T00:35:56.430,600.181,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,22,2026-11-27T00:35:56.448,618.853,1,cliente 1 HTTP 200
+vazao_c5,/api/v1/estoque,26,2026-11-27T00:35:56.535,402.86,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,25,2026-11-27T00:35:56.836,406.542,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,23,2026-11-27T00:35:57.028,579.81,1,cliente 1 HTTP 200
+vazao_c5,/api/v1/estoque,26,2026-11-27T00:35:57.028,598.641,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,27,2026-11-27T00:35:57.130,595.52,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,26,2026-11-27T00:35:57.233,396.508,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,24,2026-11-27T00:35:57.444,1021.057,1,cliente 0 HTTP 200
+vazao_c5,/api/v1/estoque,24,2026-11-27T00:35:57.631,603.472,1,cliente 1 HTTP 200
+vazao_c5,/api/v1/estoque,27,2026-11-27T00:35:57.672,439.003,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,25,2026-11-27T00:35:57.877,432.979,1,cliente 0 HTTP 200
+vazao_c5,/api/v1/estoque,27,2026-11-27T00:35:57.888,859.783,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,28,2026-11-27T00:35:57.889,758.071,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,25,2026-11-27T00:35:58.060,428.638,1,cliente 1 HTTP 200
+vazao_c5,/api/v1/estoque,28,2026-11-27T00:35:58.060,388.881,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,28,2026-11-27T00:35:58.240,352.393,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,29,2026-11-27T00:35:58.330,269.606,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,29,2026-11-27T00:35:58.331,442.125,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,26,2026-11-27T00:35:58.440,379.94,1,cliente 1 HTTP 200
+vazao_c5,/api/v1/estoque,26,2026-11-27T00:35:58.619,742.572,1,cliente 0 HTTP 200
+vazao_c5,/api/v1/estoque,30,2026-11-27T00:35:58.645,315.113,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,29,2026-11-27T00:35:58.663,421.98,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,27,2026-11-27T00:35:59.004,564.088,1,cliente 1 HTTP 200
+vazao_c5,/api/v1/estoque,30,2026-11-27T00:35:59.038,375.913,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,27,2026-11-27T00:35:59.260,640.687,1,cliente 0 HTTP 200
+vazao_c5,/api/v1/estoque,31,2026-11-27T00:35:59.427,781.836,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,31,2026-11-27T00:35:59.428,389.662,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,28,2026-11-27T00:35:59.435,430.531,1,cliente 1 HTTP 200
+vazao_c5,/api/v1/estoque,28,2026-11-27T00:35:59.656,396.245,1,cliente 0 HTTP 200
+vazao_c5,/api/v1/estoque,30,2026-11-27T00:35:59.746,1414.928,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,32,2026-11-27T00:35:59.931,502.742,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,32,2026-11-27T00:35:59.932,504.682,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,29,2026-11-27T00:35:59.932,497.398,1,cliente 1 HTTP 200
+vazao_c5,/api/v1/estoque,29,2026-11-27T00:36:00.125,468.615,1,cliente 0 HTTP 200
+vazao_c5,/api/v1/estoque,31,2026-11-27T00:36:00.134,388.104,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,33,2026-11-27T00:36:00.336,403.739,1,cliente 4 HTTP 200
+vazao_c5,/api/v1/estoque,30,2026-11-27T00:36:00.338,405.761,1,cliente 1 HTTP 200
+vazao_c5,/api/v1/estoque,32,2026-11-27T00:36:00.531,397.017,1,cliente 3 HTTP 200
+vazao_c5,/api/v1/estoque,33,2026-11-27T00:36:00.533,602.344,1,cliente 2 HTTP 200
+vazao_c5,/api/v1/estoque,30,2026-11-27T00:36:00.548,422.902,1,cliente 0 HTTP 200
+vazao_c10,/api/v1/estoque,0,2026-11-27T00:36:03.130,555.679,1,cliente 9 HTTP 200
+vazao_c10,/api/v1/estoque,0,2026-11-27T00:36:03.233,660.115,1,cliente 5 HTTP 200
+vazao_c10,/api/v1/estoque,0,2026-11-27T00:36:03.236,666.335,1,cliente 2 HTTP 200
+vazao_c10,/api/v1/estoque,0,2026-11-27T00:36:03.428,857.914,1,cliente 1 HTTP 200
+vazao_c10,/api/v1/estoque,0,2026-11-27T00:36:03.428,855.548,1,cliente 7 HTTP 200
+vazao_c10,/api/v1/estoque,0,2026-11-27T00:36:03.429,859.719,1,cliente 4 HTTP 200
+vazao_c10,/api/v1/estoque,0,2026-11-27T00:36:03.442,868.534,1,cliente 6 HTTP 200
+vazao_c10,/api/v1/estoque,0,2026-11-27T00:36:03.529,961.304,1,cliente 0 HTTP 200
+vazao_c10,/api/v1/estoque,0,2026-11-27T00:36:03.529,955.678,1,cliente 8 HTTP 200
+vazao_c10,/api/v1/estoque,0,2026-11-27T00:36:03.695,1124.612,1,cliente 3 HTTP 200
+vazao_c10,/api/v1/estoque,1,2026-11-27T00:36:03.729,496.577,1,cliente 5 HTTP 200
+vazao_c10,/api/v1/estoque,1,2026-11-27T00:36:03.730,599.872,1,cliente 9 HTTP 200
+vazao_c10,/api/v1/estoque,1,2026-11-27T00:36:03.730,493.62,1,cliente 2 HTTP 200
+vazao_c10,/api/v1/estoque,1,2026-11-27T00:36:04.027,585.586,1,cliente 6 HTTP 200
+vazao_c10,/api/v1/estoque,1,2026-11-27T00:36:04.129,434.747,1,cliente 3 HTTP 200
+vazao_c10,/api/v1/estoque,1,2026-11-27T00:36:04.130,600.197,1,cliente 0 HTTP 200
+vazao_c10,/api/v1/estoque,2,2026-11-27T00:36:04.135,405.787,1,cliente 9 HTTP 200
+vazao_c10,/api/v1/estoque,1,2026-11-27T00:36:04.328,899.381,1,cliente 1 HTTP 200
+vazao_c10,/api/v1/estoque,1,2026-11-27T00:36:04.328,899.099,1,cliente 4 HTTP 200
+vazao_c10,/api/v1/estoque,1,2026-11-27T00:36:04.328,798.966,1,cliente 8 HTTP 200
+vazao_c10,/api/v1/estoque,2,2026-11-27T00:36:04.433,703.297,1,cliente 2 HTTP 200
+vazao_c10,/api/v1/estoque,2,2026-11-27T00:36:04.433,406.126,1,cliente 6 HTTP 200
+vazao_c10,/api/v1/estoque,2,2026-11-27T00:36:04.527,397.22,1,cliente 3 HTTP 200
+vazao_c10,/api/v1/estoque,2,2026-11-27T00:36:04.527,797.599,1,cliente 5 HTTP 200
+vazao_c10,/api/v1/estoque,1,2026-11-27T00:36:04.832,1403.818,1,cliente 7 HTTP 200
+vazao_c10,/api/v1/estoque,2,2026-11-27T00:36:05.028,699.519,1,cliente 8 HTTP 200
+vazao_c10,/api/v1/estoque,2,2026-11-27T00:36:05.129,999.731,1,cliente 0 HTTP 200
+vazao_c10,/api/v1/estoque,3,2026-11-27T00:36:05.129,993.974,1,cliente 9 HTTP 200
+vazao_c10,/api/v1/estoque,3,2026-11-27T00:36:05.130,603.151,1,cliente 3 HTTP 200
+vazao_c10,/api/v1/estoque,2,2026-11-27T00:36:05.228,899.883,1,cliente 4 HTTP 200
+vazao_c10,/api/v1/estoque,2,2026-11-27T00:36:05.330,1001.969,1,cliente 1 HTTP 200
+vazao_c10,/api/v1/estoque,3,2026-11-27T00:36:05.330,802.969,1,cliente 5 HTTP 200
+vazao_c10,/api/v1/estoque,3,2026-11-27T00:36:05.532,402.977,1,cliente 0 HTTP 200
+vazao_c10,/api/v1/estoque,3,2026-11-27T00:36:05.533,1099.246,1,cliente 6 HTTP 200
+vazao_c10,/api/v1/estoque,3,2026-11-27T00:36:05.629,1195.348,1,cliente 2 HTTP 200
+vazao_c10,/api/v1/estoque,4,2026-11-27T00:36:05.629,498.934,1,cliente 3 HTTP 200
+vazao_c10,/api/v1/estoque,3,2026-11-27T00:36:05.629,601.103,1,cliente 8 HTTP 200
+vazao_c10,/api/v1/estoque,2,2026-11-27T00:36:05.730,897.91,1,cliente 7 HTTP 200
+vazao_c10,/api/v1/estoque,3,2026-11-27T00:36:05.730,502.287,1,cliente 4 HTTP 200
+vazao_c10,/api/v1/estoque,4,2026-11-27T00:36:05.834,504.001,1,cliente 5 HTTP 200
+vazao_c10,/api/v1/estoque,4,2026-11-27T00:36:05.921,791.691,1,cliente 9 HTTP 200
+vazao_c10,/api/v1/estoque,3,2026-11-27T00:36:06.128,797.959,1,cliente 1 HTTP 200
+vazao_c10,/api/v1/estoque,5,2026-11-27T00:36:06.240,611.31,1,cliente 3 HTTP 200
+vazao_c10,/api/v1/estoque,4,2026-11-27T00:36:06.327,596.507,1,cliente 4 HTTP 200
+vazao_c10,/api/v1/estoque,4,2026-11-27T00:36:06.327,697.935,1,cliente 8 HTTP 200
+vazao_c10,/api/v1/estoque,3,2026-11-27T00:36:06.381,650.986,1,cliente 7 HTTP 200
+vazao_c10,/api/v1/estoque,4,2026-11-27T00:36:06.426,797.893,1,cliente 2 HTTP 200
+vazao_c10,/api/v1/estoque,4,2026-11-27T00:36:06.427,894.445,1,cliente 6 HTTP 200
+vazao_c10,/api/v1/estoque,4,2026-11-27T00:36:06.427,894.744,1,cliente 0 HTTP 200
+vazao_c10,/api/v1/estoque,5,2026-11-27T00:36:06.431,597.282,1,cliente 5 HTTP 200
+vazao_c10,/api/v1/estoque,4,2026-11-27T00:36:06.533,405.707,1,cliente 1 HTTP 200
+vazao_c10,/api/v1/estoque,5,2026-11-27T00:36:06.633,711.501,1,cliente 9 HTTP 200
+vazao_c10,/api/v1/estoque,5,2026-11-27T00:36:06.634,307.538,1,cliente 4 HTTP 200
+vazao_c10,/api/v1/estoque,5,2026-11-27T00:36:06.727,400.35,1,cliente 8 HTTP 200
+vazao_c10,/api/v1/estoque,5,2026-11-27T00:36:06.835,407.422,1,cliente 0 HTTP 200
+vazao_c10,/api/v1/estoque,6,2026-11-27T00:36:06.848,607.63,1,cliente 3 HTTP 200
+vazao_c10,/api/v1/estoque,6,2026-11-27T00:36:06.945,513.602,1,cliente 5 HTTP 200
+vazao_c10,/api/v1/estoque,4,2026-11-27T00:36:07.029,648.072,1,cliente 7 HTTP 200
+vazao_c10,/api/v1/estoque,5,2026-11-27T00:36:07.034,606.753,1,cliente 6 HTTP 200
+vazao_c10,/api/v1/estoque,5,2026-11-27T00:36:07.129,702.721,1,cliente 2 HTTP 200
+vazao_c10,/api/v1/estoque,5,2026-11-27T00:36:07.238,704.148,1,cliente 1 HTTP 200
+vazao_c10,/api/v1/estoque,6,2026-11-27T00:36:07.238,403.204,1,cliente 0 HTTP 200
+vazao_c10,/api/v1/estoque,7,2026-11-27T00:36:07.238,390.611,1,cliente 3 HTTP 200
+vazao_c10,/api/v1/estoque,6,2026-11-27T00:36:07.333,700.068,1,cliente 9 HTTP 200
+vazao_c10,/api/v1/estoque,6,2026-11-27T00:36:07.421,787.015,1,cliente 4 HTTP 200
+vazao_c10,/api/v1/estoque,7,2026-11-27T00:36:07.435,490.428,1,cliente 5 HTTP 200
+vazao_c10,/api/v1/estoque,6,2026-11-27T00:36:07.483,755.971,1,cliente 8 HTTP 200
+vazao_c10,/api/v1/estoque,6,2026-11-27T00:36:07.531,496.763,1,cliente 6 HTTP 200
+vazao_c10,/api/v1/estoque,5,2026-11-27T00:36:07.627,597.952,1,cliente 7 HTTP 200
+vazao_c10,/api/v1/estoque,6,2026-11-27T00:36:07.628,498.562,1,cliente 2 HTTP 200
+vazao_c10,/api/v1/estoque,8,2026-11-27T00:36:07.629,391.079,1,cliente 3 HTTP 200
+vazao_c10,/api/v1/estoque,7,2026-11-27T00:36:07.633,395.292,1,cliente 0 HTTP 200
+vazao_c10,/api/v1/estoque,6,2026-11-27T00:36:07.829,591.172,1,cliente 1 HTTP 200
+vazao_c10,/api/v1/estoque,7,2026-11-27T00:36:07.925,441.97,1,cliente 8 HTTP 200
+vazao_c10,/api/v1/estoque,7,2026-11-27T00:36:07.934,403.693,1,cliente 6 HTTP 200
+vazao_c10,/api/v1/estoque,7,2026-11-27T00:36:08.033,611.081,1,cliente 4 HTTP 200
+vazao_c10,/api/v1/estoque,7,2026-11-27T00:36:08.033,405.335,1,cliente 2 HTTP 200
+vazao_c10,/api/v1/estoque,6,2026-11-27T00:36:08.128,501.187,1,cliente 7 HTTP 200
+vazao_c10,/api/v1/estoque,7,2026-11-27T00:36:08.228,895.483,1,cliente 9 HTTP 200
+vazao_c10,/api/v1/estoque,9,2026-11-27T00:36:08.229,599.075,1,cliente 3 HTTP 200
+vazao_c10,/api/v1/estoque,8,2026-11-27T00:36:08.335,301.896,1,cliente 4 HTTP 200
+vazao_c10,/api/v1/estoque,8,2026-11-27T00:36:08.423,497.487,1,cliente 8 HTTP 200
+vazao_c10,/api/v1/estoque,8,2026-11-27T00:36:08.431,797.443,1,cliente 0 HTTP 200
+vazao_c10,/api/v1/estoque,7,2026-11-27T00:36:08.431,602.216,1,cliente 1 HTTP 200
+vazao_c10,/api/v1/estoque,8,2026-11-27T00:36:08.531,596.687,1,cliente 6 HTTP 200
+vazao_c10,/api/v1/estoque,8,2026-11-27T00:36:08.533,1097.278,1,cliente 5 HTTP 200
+vazao_c10,/api/v1/estoque,8,2026-11-27T00:36:08.533,499.939,1,cliente 2 HTTP 200
+vazao_c10,/api/v1/estoque,8,2026-11-27T00:36:08.629,400.657,1,cliente 9 HTTP 200
+vazao_c10,/api/v1/estoque,7,2026-11-27T00:36:08.631,502.377,1,cliente 7 HTTP 200
+vazao_c10,/api/v1/estoque,9,2026-11-27T00:36:08.729,394.901,1,cliente 4 HTTP 200
+vazao_c10,/api/v1/estoque,10,2026-11-27T00:36:08.840,611.389,1,cliente 3 HTTP 200
+vazao_c10,/api/v1/estoque,9,2026-11-27T00:36:08.930,499.408,1,cliente 0 HTTP 200
+vazao_c10,/api/v1/estoque,8,2026-11-27T00:36:08.930,499.229,1,cliente 1 HTTP 200
+vazao_c10,/api/v1/estoque,9,2026-11-27T00:36:09.132,503.067,1,cliente 9 HTTP 200
+vazao_c10,/api/v1/estoque,9,2026-11-27T00:36:09.225,801.782,1,cliente 8 HTTP 200
+vazao_c10,/api/v1/estoque,9,2026-11-27T00:36:09.330,797.659,1,cliente 5 HTTP 200
+vazao_c10,/api/v1/estoque,9,2026-11-27T00:36:09.332,798.661,1,cliente 2 HTTP 200
+vazao_c10,/api/v1/estoque,9,2026-11-27T00:36:09.332,800.932,1,cliente 6 HTTP 200
+vazao_c10,/api/v1/estoque,8,2026-11-27T00:36:09.332,701.124,1,cliente 7 HTTP 200
+vazao_c10,/api/v1/estoque,10,2026-11-27T00:36:09.332,602.62,1,cliente 4 HTTP 200
+vazao_c10,/api/v1/estoque,11,2026-11-27T00:36:09.534,694.497,1,cliente 3 HTTP 200
+vazao_c10,/api/v1/estoque,10,2026-11-27T00:36:09.535,604.729,1,cliente 0 HTTP 200
+vazao_c10,/api/v1/estoque,10,2026-11-27T00:36:09.643,418.244,1,cliente 8 HTTP 200
+vazao_c10,/api/v1/estoque,10,2026-11-27T00:36:09.643,511.243,1,cliente 9 HTTP 200
+vazao_c10,/api/v1/estoque,10,2026-11-27T00:36:09.730,399.833,1,cliente 5 HTTP 200
+vazao_c10,/api/v1/estoque,10,2026-11-27T00:36:09.931,598.699,1,cliente 6 HTTP 200
+vazao_c10,/api/v1/estoque,11,2026-11-27T00:36:10.030,697.576,1,cliente 4 HTTP 200
+vazao_c10,/api/v1/estoque,9,2026-11-27T00:36:10.033,1103.113,1,cliente 1 HTTP 200
+vazao_c10,/api/v1/estoque,10,2026-11-27T00:36:10.145,812.827,1,cliente 2 HTTP 200
+vazao_c10,/api/v1/estoque,11,2026-11-27T00:36:10.145,501.367,1,cliente 9 HTTP 200
+vazao_c10,/api/v1/estoque,11,2026-11-27T00:36:10.240,509.486,1,cliente 5 HTTP 200
+vazao_c10,/api/v1/estoque,12,2026-11-27T00:36:10.240,705.647,1,cliente 3 HTTP 200
+vazao_c10,/api/v1/estoque,9,2026-11-27T00:36:10.328,996.315,1,cliente 7 HTTP 200
+vazao_c10,/api/v1/estoque,11,2026-11-27T00:36:10.428,784.885,1,cliente 8 HTTP 200
+vazao_c10,/api/v1/estoque,11,2026-11-27T00:36:10.428,893.433,1,cliente 0 HTTP 200
+vazao_c10,/api/v1/estoque,12,2026-11-27T00:36:10.630,599.946,1,cliente 4 HTTP 200
+vazao_c10,/api/v1/estoque,11,2026-11-27T00:36:10.631,486.866,1,cliente 2 HTTP 200
+vazao_c10,/api/v1/estoque,10,2026-11-27T00:36:10.632,598.546,1,cliente 1 HTTP 200
+vazao_c10,/api/v1/estoque,13,2026-11-27T00:36:10.728,487.601,1,cliente 3 HTTP 200
+vazao_c10,/api/v1/estoque,12,2026-11-27T00:36:10.829,400.763,1,cliente 8 HTTP 200
+vazao_c10,/api/v1/estoque,12,2026-11-27T00:36:10.830,590.591,1,cliente 5 HTTP 200
+vazao_c10,/api/v1/estoque,12,2026-11-27T00:36:10.832,687.098,1,cliente 9 HTTP 200
+vazao_c10,/api/v1/estoque,11,2026-11-27T00:36:10.832,901.555,1,cliente 6 HTTP 200
+vazao_c10,/api/v1/estoque,12,2026-11-27T00:36:10.933,504.981,1,cliente 0 HTTP 200
+vazao_c10,/api/v1/estoque,12,2026-11-27T00:36:11.027,395.904,1,cliente 2 HTTP 200
+vazao_c10,/api/v1/estoque,10,2026-11-27T00:36:11.028,699.204,1,cliente 7 HTTP 200
+vazao_c10,/api/v1/estoque,13,2026-11-27T00:36:11.034,403.932,1,cliente 4 HTTP 200
+vazao_c10,/api/v1/estoque,11,2026-11-27T00:36:11.230,597.751,1,cliente 1 HTTP 200
+vazao_c10,/api/v1/estoque,12,2026-11-27T00:36:11.245,412.979,1,cliente 6 HTTP 200
+vazao_c10,/api/v1/estoque,14,2026-11-27T00:36:11.431,703.204,1,cliente 3 HTTP 200
+vazao_c10,/api/v1/estoque,13,2026-11-27T00:36:11.431,599.502,1,cliente 9 HTTP 200
+vazao_c10,/api/v1/estoque,11,2026-11-27T00:36:11.531,502.977,1,cliente 7 HTTP 200
+vazao_c10,/api/v1/estoque,13,2026-11-27T00:36:11.531,702.301,1,cliente 8 HTTP 200
+vazao_c10,/api/v1/estoque,13,2026-11-27T00:36:11.631,800.285,1,cliente 5 HTTP 200
+vazao_c10,/api/v1/estoque,14,2026-11-27T00:36:11.727,693.84,1,cliente 4 HTTP 200
+vazao_c10,/api/v1/estoque,12,2026-11-27T00:36:11.728,498.203,1,cliente 1 HTTP 200
+vazao_c10,/api/v1/estoque,14,2026-11-27T00:36:11.733,301.219,1,cliente 9 HTTP 200
+vazao_c10,/api/v1/estoque,13,2026-11-27T00:36:11.829,802.041,1,cliente 2 HTTP 200
+vazao_c10,/api/v1/estoque,15,2026-11-27T00:36:11.830,399.314,1,cliente 3 HTTP 200
+vazao_c10,/api/v1/estoque,13,2026-11-27T00:36:11.830,897.315,1,cliente 0 HTTP 200
+vazao_c10,/api/v1/estoque,13,2026-11-27T00:36:11.929,684.166,1,cliente 6 HTTP 200
+vazao_c10,/api/v1/estoque,12,2026-11-27T00:36:12.031,500.351,1,cliente 7 HTTP 200
+vazao_c10,/api/v1/estoque,14,2026-11-27T00:36:12.031,400.328,1,cliente 5 HTTP 200
+vazao_c10,/api/v1/estoque,15,2026-11-27T00:36:12.261,533.763,1,cliente 4 HTTP 200
+vazao_c10,/api/v1/estoque,13,2026-11-27T00:36:12.333,604.722,1,cliente 1 HTTP 200
+vazao_c10,/api/v1/estoque,14,2026-11-27T00:36:12.333,503.546,1,cliente 2 HTTP 200
+vazao_c10,/api/v1/estoque,15,2026-11-27T00:36:12.529,796.049,1,cliente 9 HTTP 200
+vazao_c10,/api/v1/estoque,14,2026-11-27T00:36:12.529,998.14,1,cliente 8 HTTP 200
+vazao_c10,/api/v1/estoque,13,2026-11-27T00:36:12.629,597.922,1,cliente 7 HTTP 200
+vazao_c10,/api/v1/estoque,14,2026-11-27T00:36:12.726,796.805,1,cliente 6 HTTP 200
+vazao_c10,/api/v1/estoque,16,2026-11-27T00:36:12.727,896.498,1,cliente 3 HTTP 200
+vazao_c10,/api/v1/estoque,14,2026-11-27T00:36:12.733,400.134,1,cliente 1 HTTP 200
+vazao_c10,/api/v1/estoque,15,2026-11-27T00:36:12.733,399.95,1,cliente 2 HTTP 200
+vazao_c10,/api/v1/estoque,15,2026-11-27T00:36:12.929,897.863,1,cliente 5 HTTP 200
+vazao_c10,/api/v1/estoque,16,2026-11-27T00:36:12.929,400.407,1,cliente 9 HTTP 200
+vazao_c10,/api/v1/estoque,14,2026-11-27T00:36:12.929,1098.784,1,cliente 0 HTTP 200
+vazao_c10,/api/v1/estoque,15,2026-11-27T00:36:12.933,403.983,1,cliente 8 HTTP 200
+vazao_c10,/api/v1/estoque,16,2026-11-27T00:36:13.033,299.916,1,cliente 2 HTTP 200
+vazao_c10,/api/v1/estoque,15,2026-11-27T00:36:13.062,329.553,1,cliente 1 HTTP 200
+vazao_c10,/api/v1/estoque,16,2026-11-27T00:36:13.327,1065.755,1,cliente 4 HTTP 200
+vazao_c10,/api/v1/estoque,15,2026-11-27T00:36:13.334,405.214,1,cliente 0 HTTP 200
+vazao_c10,/api/v1/estoque,14,2026-11-27T00:36:13.580,951.367,1,cliente 7 HTTP 200
+vazao_c10,/api/v1/estoque,16,2026-11-27T00:36:13.634,571.438,1,cliente 1 HTTP 200
+vazao_c10,/api/v1/estoque,16,2026-11-27T00:36:13.732,798.486,1,cliente 8 HTTP 200
+vazao_c10,/api/v1/estoque,17,2026-11-27T00:36:13.732,699.179,1,cliente 2 HTTP 200
+vazao_c10,/api/v1/estoque,16,2026-11-27T00:36:13.732,803.499,1,cliente 5 HTTP 200
+vazao_c10,/api/v1/estoque,16,2026-11-27T00:36:13.931,596.608,1,cliente 0 HTTP 200
+vazao_c10,/api/v1/estoque,15,2026-11-27T00:36:13.932,1205.494,1,cliente 6 HTTP 200
+vazao_c10,/api/v1/estoque,15,2026-11-27T00:36:13.932,351.636,1,cliente 7 HTTP 200
+vazao_c10,/api/v1/estoque,17,2026-11-27T00:36:14.030,702.657,1,cliente 4 HTTP 200
+vazao_c10,/api/v1/estoque,17,2026-11-27T00:36:14.030,298.222,1,cliente 8 HTTP 200
+vazao_c10,/api/v1/estoque,17,2026-11-27T00:36:14.030,1101.117,1,cliente 9 HTTP 200
+vazao_c10,/api/v1/estoque,17,2026-11-27T00:36:14.030,396.527,1,cliente 1 HTTP 200
+vazao_c10,/api/v1/estoque,18,2026-11-27T00:36:14.129,397.016,1,cliente 2 HTTP 200
+vazao_c10,/api/v1/estoque,17,2026-11-27T00:36:14.129,396.793,1,cliente 5 HTTP 200
+vazao_c10,/api/v1/estoque,17,2026-11-27T00:36:14.176,1449.095,1,cliente 3 HTTP 200
+vazao_c10,/api/v1/estoque,17,2026-11-27T00:36:14.236,305.32,1,cliente 0 HTTP 200
+vazao_c10,/api/v1/estoque,16,2026-11-27T00:36:14.237,304.89,1,cliente 7 HTTP 200
+vazao_c10,/api/v1/estoque,16,2026-11-27T00:36:14.237,305.177,1,cliente 6 HTTP 200
+vazao_c10,/api/v1/estoque,18,2026-11-27T00:36:14.335,304.692,1,cliente 1 HTTP 200
+vazao_c10,/api/v1/estoque,18,2026-11-27T00:36:14.335,305.172,1,cliente 9 HTTP 200
+vazao_c10,/api/v1/estoque,18,2026-11-27T00:36:14.535,358.729,1,cliente 3 HTTP 200
+vazao_c10,/api/v1/estoque,18,2026-11-27T00:36:14.535,505.248,1,cliente 4 HTTP 200
+vazao_c10,/api/v1/estoque,18,2026-11-27T00:36:14.626,596.355,1,cliente 8 HTTP 200
+vazao_c10,/api/v1/estoque,19,2026-11-27T00:36:14.627,497.838,1,cliente 2 HTTP 200
+vazao_c10,/api/v1/estoque,17,2026-11-27T00:36:14.633,396.185,1,cliente 7 HTTP 200
+vazao_c10,/api/v1/estoque,18,2026-11-27T00:36:14.633,396.773,1,cliente 0 HTTP 200
+vazao_c10,/api/v1/estoque,19,2026-11-27T00:36:14.731,395.518,1,cliente 1 HTTP 200
+vazao_c10,/api/v1/estoque,19,2026-11-27T00:36:14.731,395.397,1,cliente 9 HTTP 200
+vazao_c10,/api/v1/estoque,17,2026-11-27T00:36:14.731,494.444,1,cliente 6 HTTP 200
+vazao_c10,/api/v1/estoque,18,2026-11-27T00:36:14.830,701.117,1,cliente 5 HTTP 200
+vazao_c10,/api/v1/estoque,19,2026-11-27T00:36:14.929,393.915,1,cliente 4 HTTP 200
+vazao_c10,/api/v1/estoque,19,2026-11-27T00:36:15.033,498.103,1,cliente 3 HTTP 200
+vazao_c10,/api/v1/estoque,19,2026-11-27T00:36:15.130,503.659,1,cliente 8 HTTP 200
+vazao_c10,/api/v1/estoque,19,2026-11-27T00:36:15.131,497.46,1,cliente 0 HTTP 200
+vazao_c10,/api/v1/estoque,20,2026-11-27T00:36:15.232,501.384,1,cliente 9 HTTP 200
+vazao_c10,/api/v1/estoque,18,2026-11-27T00:36:15.233,599.632,1,cliente 7 HTTP 200
+vazao_c10,/api/v1/estoque,19,2026-11-27T00:36:15.430,600.056,1,cliente 5 HTTP 200
+vazao_c10,/api/v1/estoque,20,2026-11-27T00:36:15.431,700.35,1,cliente 1 HTTP 200
+vazao_c10,/api/v1/estoque,20,2026-11-27T00:36:15.431,398.252,1,cliente 3 HTTP 200
+vazao_c10,/api/v1/estoque,20,2026-11-27T00:36:15.438,308.147,1,cliente 8 HTTP 200
+vazao_c10,/api/v1/estoque,18,2026-11-27T00:36:15.632,900.294,1,cliente 6 HTTP 200
+vazao_c10,/api/v1/estoque,20,2026-11-27T00:36:15.632,1005.311,1,cliente 2 HTTP 200
+vazao_c10,/api/v1/estoque,20,2026-11-27T00:36:15.633,703.63,1,cliente 4 HTTP 200
+vazao_c10,/api/v1/estoque,20,2026-11-27T00:36:15.735,603.88,1,cliente 0 HTTP 200
+vazao_c10,/api/v1/estoque,19,2026-11-27T00:36:15.831,598.836,1,cliente 7 HTTP 200
+vazao_c10,/api/v1/estoque,20,2026-11-27T00:36:15.832,401.256,1,cliente 5 HTTP 200
+vazao_c10,/api/v1/estoque,21,2026-11-27T00:36:15.931,698.255,1,cliente 9 HTTP 200
+vazao_c10,/api/v1/estoque,21,2026-11-27T00:36:15.931,499.852,1,cliente 3 HTTP 200
+vazao_c10,/api/v1/estoque,21,2026-11-27T00:36:16.030,591.622,1,cliente 8 HTTP 200
+vazao_c10,/api/v1/estoque,21,2026-11-27T00:36:16.032,600.877,1,cliente 1 HTTP 200
+vazao_c10,/api/v1/estoque,21,2026-11-27T00:36:16.032,399.996,1,cliente 2 HTTP 200
+vazao_c10,/api/v1/estoque,19,2026-11-27T00:36:16.127,495.373,1,cliente 6 HTTP 200
+vazao_c10,/api/v1/estoque,21,2026-11-27T00:36:16.226,593.74,1,cliente 4 HTTP 200
+vazao_c10,/api/v1/estoque,21,2026-11-27T00:36:16.227,492.184,1,cliente 0 HTTP 200
+vazao_c10,/api/v1/estoque,22,2026-11-27T00:36:16.382,451.061,1,cliente 3 HTTP 200
+vazao_c10,/api/v1/estoque,20,2026-11-27T00:36:16.431,599.332,1,cliente 7 HTTP 200
+vazao_c10,/api/v1/estoque,22,2026-11-27T00:36:16.431,399.266,1,cliente 1 HTTP 200
+vazao_c10,/api/v1/estoque,22,2026-11-27T00:36:16.530,499.883,1,cliente 8 HTTP 200
+vazao_c10,/api/v1/estoque,20,2026-11-27T00:36:16.629,502.183,1,cliente 6 HTTP 200
+vazao_c10,/api/v1/estoque,23,2026-11-27T00:36:16.630,247.884,1,cliente 3 HTTP 200
+vazao_c10,/api/v1/estoque,22,2026-11-27T00:36:16.630,597.748,1,cliente 2 HTTP 200
+vazao_c10,/api/v1/estoque,22,2026-11-27T00:36:16.927,700.286,1,cliente 0 HTTP 200
+vazao_c10,/api/v1/estoque,21,2026-11-27T00:36:16.928,1096.032,1,cliente 5 HTTP 200
+vazao_c10,/api/v1/estoque,23,2026-11-27T00:36:16.928,398.078,1,cliente 8 HTTP 200
+vazao_c10,/api/v1/estoque,23,2026-11-27T00:36:17.027,596.295,1,cliente 1 HTTP 200
+vazao_c10,/api/v1/estoque,22,2026-11-27T00:36:17.028,1097.22,1,cliente 9 HTTP 200
+vazao_c10,/api/v1/estoque,21,2026-11-27T00:36:17.033,601.654,1,cliente 7 HTTP 200
+vazao_c10,/api/v1/estoque,24,2026-11-27T00:36:17.130,499.555,1,cliente 3 HTTP 200
+vazao_c10,/api/v1/estoque,21,2026-11-27T00:36:17.130,501.095,1,cliente 6 HTTP 200
+vazao_c10,/api/v1/estoque,23,2026-11-27T00:36:17.131,500.368,1,cliente 2 HTTP 200
+vazao_c10,/api/v1/estoque,22,2026-11-27T00:36:17.332,1105.851,1,cliente 4 HTTP 200
+vazao_c10,/api/v1/estoque,24,2026-11-27T00:36:17.431,502.6,1,cliente 8 HTTP 200
+vazao_c10,/api/v1/estoque,22,2026-11-27T00:36:17.531,603.436,1,cliente 5 HTTP 200
+vazao_c10,/api/v1/estoque,23,2026-11-27T00:36:17.532,604.557,1,cliente 0 HTTP 200
+vazao_c10,/api/v1/estoque,22,2026-11-27T00:36:17.631,500.489,1,cliente 6 HTTP 200
+vazao_c10,/api/v1/estoque,25,2026-11-27T00:36:17.725,595.536,1,cliente 3 HTTP 200
+vazao_c10,/api/v1/estoque,24,2026-11-27T00:36:17.733,602.198,1,cliente 2 HTTP 200
+vazao_c10,/api/v1/estoque,23,2026-11-27T00:36:17.826,494.094,1,cliente 4 HTTP 200
+vazao_c10,/api/v1/estoque,24,2026-11-27T00:36:17.827,799.081,1,cliente 1 HTTP 200
+vazao_c10,/api/v1/estoque,23,2026-11-27T00:36:18.030,1002.373,1,cliente 9 HTTP 200
+vazao_c10,/api/v1/estoque,25,2026-11-27T00:36:18.032,601.688,1,cliente 8 HTTP 200
+vazao_c10,/api/v1/estoque,22,2026-11-27T00:36:18.124,1091.147,1,cliente 7 HTTP 200
+vazao_c10,/api/v1/estoque,24,2026-11-27T00:36:18.124,592.31,1,cliente 0 HTTP 200
+vazao_c10,/api/v1/estoque,23,2026-11-27T00:36:18.130,598.898,1,cliente 5 HTTP 200
