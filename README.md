@@ -152,7 +152,7 @@ Implementa o contrato de API definido pela equipe no documento de Projetos 3 / R
 | João Lucas Mendes dos Santos | jlms@cesar.school |
 | Kelly Priscilla de Siqueira Melo | kpsm@cesar.school |
 | Mateus Henrique Diniz Silva | mhds@cesar.school |
-
+| Gabriela Bayo de Barros Russell | gbbr@cesar.school | 
 ### Membros anteriores / novos
 
 | Nome completo | E-mail CESAR School | Entrada | Saída |
